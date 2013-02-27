@@ -1,6 +1,7 @@
 package com.label305.kamav2_android;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
 
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.label305.kamav2_android.KamaParam.AUTH_TYPE;
 import com.label305.kamav2_android.auth.AuthDatabaseHelper;
 import com.label305.kamav2_android.exceptions.KamaException_HttpResponse;
 import com.label305.kamav2_android.exceptions.KamaException_Json;
@@ -37,5 +39,14 @@ public class KamaHelper extends JsonHelper {
 		} catch (IOException e) {
 			throw new KamaException_Json(e);
 		}
+	}
+	
+	@Override
+	protected Map<String, String> setHeaders(Map<String, String> headerData, AUTH_TYPE authType) throws KamaException_Not_Authorized {
+		Map<String, String> finalHeaderData = this.setAuthHeader(headerData, authType);
+		
+		finalHeaderData.put("Accept", "application/vnd.kama-v1+json");
+		
+		return finalHeaderData;
 	}
 }

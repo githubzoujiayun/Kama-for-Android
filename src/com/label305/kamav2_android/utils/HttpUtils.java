@@ -8,14 +8,13 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
-
-import com.label305.kamav2_android.exceptions.KamaException;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
+import com.label305.kamav2_android.exceptions.KamaException;
 
 public class HttpUtils {
 	/**

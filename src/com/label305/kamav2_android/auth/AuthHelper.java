@@ -7,9 +7,9 @@ import net.smartam.leeloo.common.exception.OAuthSystemException;
 
 import com.j256.ormlite.dao.Dao;
 import com.label305.kamav2_android.KamaParam;
+import com.label305.kamav2_android.auth.objects.AuthData;
 import com.label305.kamav2_android.exceptions.KamaException_Database;
 import com.label305.kamav2_android.exceptions.KamaException_Not_Authorized;
-import com.label305.kamav2_android.objects.AuthData;
 
 public class AuthHelper {
 	

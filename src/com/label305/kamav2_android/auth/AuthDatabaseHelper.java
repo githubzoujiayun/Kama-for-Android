@@ -12,7 +12,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
-import com.label305.kamav2_android.objects.AuthData;
+import com.label305.kamav2_android.auth.objects.AuthData;
 
 public class AuthDatabaseHelper extends OrmLiteSqliteOpenHelper {
 

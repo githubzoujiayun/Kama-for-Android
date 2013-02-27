@@ -14,11 +14,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.j256.ormlite.dao.Dao;
 import com.label305.kamav2_android.auth.AuthDatabaseHelper;
+import com.label305.kamav2_android.auth.objects.AuthData;
 import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.KamaException_HttpResponse;
 import com.label305.kamav2_android.exceptions.KamaException_Json;
 import com.label305.kamav2_android.exceptions.KamaException_Not_Authorized;
-import com.label305.kamav2_android.objects.AuthData;
 
 public class JsonHelper {
 
@@ -37,27 +37,27 @@ public class JsonHelper {
 
 	public <T> T get(String url, Class<T> retType, List<NameValuePair> urlData, Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws KamaException {
 		String finalUrl = this.setUrlParams(url, urlData, authType);
-		headerData = this.setAuthHeader(headerData, authType);
+		Map<String, String> finalHeaderData = this.setAuthHeader(headerData, authType);
 
-		HttpResponse httpResponse = HttpHelper.get(finalUrl, headerData);
+		HttpResponse httpResponse = HttpHelper.get(finalUrl, finalHeaderData);
 
 		return getObject(httpResponse, retType);
 	}
 
 	public <T> T post(String url, Class<T> retType, List<NameValuePair> urlData, List<NameValuePair> postData, Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws KamaException {
-		url = this.setUrlParams(url, urlData, authType);
-		headerData = this.setAuthHeader(headerData, authType);
+		String finalUrl = this.setUrlParams(url, urlData, authType);
+		Map<String, String> finalHeaderData = this.setAuthHeader(headerData, authType);
 
-		HttpResponse httpResponse = HttpHelper.post(url, headerData, postData);
+		HttpResponse httpResponse = HttpHelper.post(finalUrl, finalHeaderData, postData);
 
 		return getObject(httpResponse, retType);
 	}
 
 	public <T> T put(String url, List<NameValuePair> urlData, List<NameValuePair> putData, Map<String, String> headerData, KamaParam.AUTH_TYPE authType, Class<T> retType) throws KamaException {
-		url = this.setUrlParams(url, urlData, authType);
-		headerData = this.setAuthHeader(headerData, authType);
+		String finalUrl = this.setUrlParams(url, urlData, authType);
+		Map<String, String> finalHeaderData = this.setHeaders(headerData, authType);
 
-		HttpResponse httpResponse = HttpHelper.put(url, headerData, putData);
+		HttpResponse httpResponse = HttpHelper.put(finalUrl, finalHeaderData, putData);
 
 		return getObject(httpResponse, retType);
 	}
@@ -81,6 +81,14 @@ public class JsonHelper {
 		}
 
 		return retVal;
+	}
+	
+	protected Map<String, String> setHeaders(Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws KamaException_Not_Authorized {
+		Map<String, String> finalHeaderData = setAuthHeader(headerData, authType);
+		
+		finalHeaderData.put("Accept", "application/json");
+
+		return finalHeaderData;
 	}
 
 	protected Map<String, String> setAuthHeader(Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws KamaException_Not_Authorized {

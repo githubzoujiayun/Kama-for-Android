@@ -1,4 +1,4 @@
-package com.label305.kamav2_android.objects;
+package com.label305.kamav2_android.auth.objects;
 
 import com.j256.ormlite.field.DatabaseField;
 
