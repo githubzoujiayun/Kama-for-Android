@@ -17,6 +17,11 @@ import com.label305.kamav2_android.exceptions.KamaException;
 
 public class HttpHelper {
 
+	private AndroidHttpClient httpClient;
+	
+	
+	HttpHelper() {}
+	
 	/**
 	 * Execute a POST request on the url configured
 	 * 
@@ -24,9 +29,9 @@ public class HttpHelper {
 	 * @throws KamaException
 	 * 
 	 */
-	public static HttpResponse post(String url, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
+	public HttpResponse post(String url, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
 
-		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
+		httpClient = AndroidHttpClient.newInstance("Android");
 		HttpResponse response;
 		
 		try {
@@ -49,8 +54,6 @@ public class HttpHelper {
 
 		} catch (Exception e) {
 			throw new KamaException(e);
-		} finally { 
-			if(httpClient != null) httpClient.close();
 		}
 
 		return response;
@@ -62,9 +65,9 @@ public class HttpHelper {
 	 * @return response data
 	 * @throws KamaException 
 	 */
-	public static HttpResponse put(String url, Map<String, String> headerData, List<NameValuePair> putData) throws KamaException {
+	public HttpResponse put(String url, Map<String, String> headerData, List<NameValuePair> putData) throws KamaException {
 
-		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
+		httpClient = AndroidHttpClient.newInstance("Android");
 		HttpResponse response;
 		
 		try {
@@ -86,8 +89,6 @@ public class HttpHelper {
 
 		} catch (Exception e) {
 			throw new KamaException(e);
-		} finally { 
-			if(httpClient != null) httpClient.close();
 		}
 
 		return response;
@@ -99,9 +100,9 @@ public class HttpHelper {
 	 * @return response data
 	 * @throws KamaException 
 	 */
-	public static HttpResponse get(String url, Map<String, String> headerData) throws KamaException {
+	public HttpResponse get(String url, Map<String, String> headerData) throws KamaException {
 
-		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
+		httpClient = AndroidHttpClient.newInstance("Android");
 		
 		HttpResponse response;
 		
@@ -120,13 +121,15 @@ public class HttpHelper {
 
 		} catch (Exception e) {
 			throw new KamaException(e);
-		} finally { 
-			if(httpClient != null) httpClient.close();
 		}
 
 		return response;
 	}
-
+	
+	
+	public void close() {
+		if(httpClient != null) httpClient.close();
+	}
 
 	
 }

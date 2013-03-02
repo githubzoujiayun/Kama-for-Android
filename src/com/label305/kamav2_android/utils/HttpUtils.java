@@ -14,7 +14,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.label305.kamav2_android.exceptions.KamaException;
+import com.label305.kamav2_android.exceptions.KamaException_Json;
 
 public class HttpUtils {
 	/**
@@ -59,22 +59,22 @@ public class HttpUtils {
 		return compressed;
 	}
 
-	public static final String decompress(byte[] compressed) throws IOException {
+	private static String decompress(byte[] compressed) throws IOException {
 		final int BUFFER_SIZE = 32;
-		ByteArrayInputStream is = new ByteArrayInputStream(compressed);
-		GZIPInputStream gis = new GZIPInputStream(is, BUFFER_SIZE);
-		StringBuilder string = new StringBuilder();
-		byte[] data = new byte[BUFFER_SIZE];
-		int bytesRead;
-		while ((bytesRead = gis.read(data)) != -1) {
-			string.append(new String(data, 0, bytesRead));
-		}
-		gis.close();
-		is.close();
-		return string.toString();
+	    ByteArrayInputStream is = new ByteArrayInputStream(compressed);
+	    GZIPInputStream gis = new GZIPInputStream(is, BUFFER_SIZE);
+	    StringBuilder string = new StringBuilder();
+	    byte[] data = new byte[BUFFER_SIZE];
+	    int bytesRead;
+	    while ((bytesRead = gis.read(data)) != -1) {
+	        string.append(new String(data, 0, bytesRead));
+	    }
+	    gis.close();
+	    is.close();
+	    return string.toString();
 	}
 
-	String getStringFromResponse(HttpResponse response) throws KamaException {
+	public static String getStringFromResponse(HttpResponse response) throws KamaException_Json {
 		String responseString = "";
 
 		try {
@@ -85,7 +85,7 @@ public class HttpUtils {
 					responseString = EntityUtils.toString(response.getEntity());
 			}
 		} catch(Exception e) {
-			throw new KamaException(e);
+			throw new KamaException_Json(e);
 		}
 
 		return responseString;
