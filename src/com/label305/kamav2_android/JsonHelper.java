@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -281,17 +282,29 @@ public class JsonHelper {
 	protected String setUrlParams(String url, List<NameValuePair> urlData, KamaParam.AUTH_TYPE authType) {
 		String finalUrl = url;
 
+		boolean hasParam = false;
 		if (needsAuthUrl(authType) || (urlData != null && !urlData.isEmpty())) {
 			finalUrl += KamaParam.URLPARAM;
 		}
 
 		if (needsAuthUrl(authType)) {
 			finalUrl += KamaParam.getApiKey();
+			hasParam = true;
 		}
 
-		if (urlData != null) {
-			for (NameValuePair data : urlData) {
+		if (urlData != null && !urlData.isEmpty()) {
+			if (hasParam) {
+				finalUrl += KamaParam.URLPARAMCONCAT;
+			}
+
+			Iterator<NameValuePair> iterator = urlData.iterator();
+			while (iterator.hasNext()) {
+				NameValuePair data = iterator.next();
 				finalUrl += data.getName() + "=" + data.getValue();
+
+				if (iterator.hasNext()) {
+					finalUrl += KamaParam.URLPARAMCONCAT;
+				}
 			}
 		}
 		return finalUrl;
