@@ -10,6 +10,8 @@ import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 
+import android.content.Context;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -33,10 +35,10 @@ public class JsonHelper {
 	protected AuthDatabaseHelper databaseHelper;
 	protected ObjectMapper mapper;
 
-	public JsonHelper(AuthDatabaseHelper databaseHelper, String AppKey) {
-		this.databaseHelper = databaseHelper;
+	public JsonHelper(Context context, String appKey) {
+		this.databaseHelper = AuthDatabaseHelper.getHelper(context);
 
-		KamaParam.APPKEY = AppKey;
+		KamaParam.APPKEY = appKey;
 
 		mapper = new ObjectMapper();
 	}
