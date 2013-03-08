@@ -26,7 +26,7 @@ public class AuthHelper {
 		MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
 
 		try {
-			authToken = new AuthData(oAuthClient.authenticate(authUrl, KamaParam.APPKEY, login, password));
+			authToken = new AuthData(oAuthClient.authenticate(authUrl, KamaParam.APIKEY, login, password));
 			if (authToken.getToken() != null && authToken.getToken().length() > 0) {
 				// store in database
 				// get our dao
@@ -51,7 +51,7 @@ public class AuthHelper {
 		MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
 
 		try {
-			authToken = new AuthData(oAuthClient.authenticateFacebook(authUrl, KamaParam.APPKEY, accessToken));
+			authToken = new AuthData(oAuthClient.authenticateFacebook(authUrl, KamaParam.APIKEY, accessToken));
 			if (authToken.getToken() != null && authToken.getToken().length() > 0) {
 				// store in database
 				// get our dao

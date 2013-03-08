@@ -17,8 +17,8 @@ import com.label305.kamav2_android.exceptions.KamaException_Not_Authorized;
 
 public class KamaHelper extends JsonHelper {
 
-	public KamaHelper(Context context, String appKey) {
-		super(context, appKey);
+	public KamaHelper(Context context, String apiKey) {
+		super(context, apiKey);
 	}
 
 	@Override

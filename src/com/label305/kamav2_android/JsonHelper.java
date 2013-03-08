@@ -35,10 +35,10 @@ public class JsonHelper {
 	protected AuthDatabaseHelper databaseHelper;
 	protected ObjectMapper mapper;
 
-	public JsonHelper(Context context, String appKey) {
+	public JsonHelper(Context context, String apiKey) {
 		this.databaseHelper = AuthDatabaseHelper.getHelper(context);
 
-		KamaParam.APPKEY = appKey;
+		KamaParam.APIKEY = apiKey;
 
 		mapper = new ObjectMapper();
 	}

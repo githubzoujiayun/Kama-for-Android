@@ -2,7 +2,7 @@ package com.label305.kamav2_android;
 
 public class KamaParam {
 
-	public static String APPKEY = "";
+	public static String APIKEY = "";
 	
 	public static String URLPARAM = "?";
 	
@@ -11,7 +11,7 @@ public class KamaParam {
 	public static final String RESPONSE = "response";
 	
 	public static String getApiKey() {
-		return "apikey=" + APPKEY;
+		return "apikey=" + APIKEY;
 	}
 	
 }
