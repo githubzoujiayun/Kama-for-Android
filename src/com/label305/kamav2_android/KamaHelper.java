@@ -11,9 +11,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.label305.kamav2_android.KamaParam.AUTH_TYPE;
-import com.label305.kamav2_android.exceptions.KamaException_HttpResponse;
-import com.label305.kamav2_android.exceptions.KamaException_Json;
-import com.label305.kamav2_android.exceptions.KamaException_Not_Authorized;
+import com.label305.kamav2_android.exceptions.HttpResponseKamaException;
+import com.label305.kamav2_android.exceptions.JsonKamaException;
+import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 
 public class KamaHelper extends JsonHelper {
 
@@ -22,7 +22,7 @@ public class KamaHelper extends JsonHelper {
 	}
 
 	@Override
-	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws KamaException_Json, KamaException_Not_Authorized, KamaException_HttpResponse {
+	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
 		JsonParser jsonParser = super.getJsonParserFromResponse(response);
 		JsonNode jsonResponse = null;
 
@@ -32,14 +32,14 @@ public class KamaHelper extends JsonHelper {
 			return retVal.traverse();
 
 		} catch (JsonParseException e) {
-			throw new KamaException_Json(e);
+			throw new JsonKamaException(e);
 		} catch (IOException e) {
-			throw new KamaException_Json(e);
+			throw new JsonKamaException(e);
 		}
 	}
 
 	@Override
-	protected Map<String, String> setHeaders(Map<String, String> headerData, AUTH_TYPE authType) throws KamaException_Not_Authorized {
+	protected Map<String, String> setHeaders(Map<String, String> headerData, AUTH_TYPE authType) throws NotAuthorizedKamaException {
 		Map<String, String> finalHeaderData = this.setAuthHeader(headerData, authType);
 
 		finalHeaderData.put("Accept", "application/vnd.kama-v1+json");

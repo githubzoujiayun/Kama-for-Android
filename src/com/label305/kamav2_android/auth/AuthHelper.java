@@ -8,8 +8,8 @@ import net.smartam.leeloo.common.exception.OAuthSystemException;
 import com.j256.ormlite.dao.Dao;
 import com.label305.kamav2_android.KamaParam;
 import com.label305.kamav2_android.auth.objects.AuthData;
-import com.label305.kamav2_android.exceptions.KamaException_Database;
-import com.label305.kamav2_android.exceptions.KamaException_Not_Authorized;
+import com.label305.kamav2_android.exceptions.DatabaseKamaException;
+import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 
 public class AuthHelper {
 	
@@ -22,7 +22,7 @@ public class AuthHelper {
 	}
 	
 	
-	public boolean authenticate(String authUrl, String login, String password) throws KamaException_Not_Authorized, KamaException_Database {
+	public boolean authenticate(String authUrl, String login, String password) throws NotAuthorizedKamaException, DatabaseKamaException {
 		MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
 
 		try {
@@ -37,17 +37,17 @@ public class AuthHelper {
 				return true;
 			}
 		} catch(OAuthProblemException e) {
-			throw new KamaException_Not_Authorized(e);
+			throw new NotAuthorizedKamaException(e);
 		} catch (OAuthSystemException e) {
-			throw new KamaException_Not_Authorized(e);
+			throw new NotAuthorizedKamaException(e);
 		} catch (SQLException e) {
-			throw new KamaException_Database(e);
+			throw new DatabaseKamaException(e);
 		}
 
 		return false;
 	}
 
-	public boolean authenticateFacebook(String authUrl, String accessToken) throws KamaException_Not_Authorized, KamaException_Database {
+	public boolean authenticateFacebook(String authUrl, String accessToken) throws NotAuthorizedKamaException, DatabaseKamaException {
 		MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
 
 		try {
@@ -62,11 +62,11 @@ public class AuthHelper {
 				return true;
 			}
 		} catch(OAuthProblemException e) {
-			throw new KamaException_Not_Authorized(e);
+			throw new NotAuthorizedKamaException(e);
 		} catch (OAuthSystemException e) {
-			throw new KamaException_Not_Authorized(e);
+			throw new NotAuthorizedKamaException(e);
 		} catch (SQLException e) {
-			throw new KamaException_Database(e);
+			throw new DatabaseKamaException(e);
 		}
 
 		return false;

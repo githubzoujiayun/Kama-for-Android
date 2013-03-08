@@ -14,7 +14,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.label305.kamav2_android.exceptions.KamaException_Json;
+import com.label305.kamav2_android.exceptions.JsonKamaException;
 
 public class HttpUtils {
 	/**
@@ -74,7 +74,7 @@ public class HttpUtils {
 	    return string.toString();
 	}
 
-	public static String getStringFromResponse(HttpResponse response) throws KamaException_Json {
+	public static String getStringFromResponse(HttpResponse response) throws JsonKamaException {
 		String responseString = "";
 
 		try {
@@ -85,7 +85,7 @@ public class HttpUtils {
 					responseString = EntityUtils.toString(response.getEntity());
 			}
 		} catch(Exception e) {
-			throw new KamaException_Json(e);
+			throw new JsonKamaException(e);
 		}
 
 		return responseString;

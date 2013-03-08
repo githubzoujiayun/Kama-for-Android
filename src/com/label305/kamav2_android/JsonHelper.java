@@ -24,9 +24,9 @@ import com.label305.kamav2_android.KamaParam.AUTH_TYPE;
 import com.label305.kamav2_android.auth.AuthDatabaseHelper;
 import com.label305.kamav2_android.auth.objects.AuthData;
 import com.label305.kamav2_android.exceptions.KamaException;
-import com.label305.kamav2_android.exceptions.KamaException_HttpResponse;
-import com.label305.kamav2_android.exceptions.KamaException_Json;
-import com.label305.kamav2_android.exceptions.KamaException_Not_Authorized;
+import com.label305.kamav2_android.exceptions.HttpResponseKamaException;
+import com.label305.kamav2_android.exceptions.JsonKamaException;
+import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
 
 public class JsonHelper {
@@ -221,7 +221,7 @@ public class JsonHelper {
 		}
 	}
 
-	protected <T, U> T getObject(HttpResponse httpResponse, Class<T> retType, Class<U> listType, String listTitle) throws KamaException_Json, KamaException_Not_Authorized, KamaException_HttpResponse {
+	protected <T, U> T getObject(HttpResponse httpResponse, Class<T> retType, Class<U> listType, String listTitle) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
 		JsonParser jsonParser = getJsonParserFromResponse(httpResponse);
 		T retVal = null;
 
@@ -241,17 +241,17 @@ public class JsonHelper {
 				retVal = mapper.readValue(jsonParser, retType);
 			}
 		} catch (JsonParseException e) {
-			throw new KamaException_Json(e);
+			throw new JsonKamaException(e);
 		} catch (JsonMappingException e) {
-			throw new KamaException_Json(e);
+			throw new JsonKamaException(e);
 		} catch (IOException e) {
-			throw new KamaException_Json(e);
+			throw new JsonKamaException(e);
 		}
 
 		return retVal;
 	}
 
-	protected Map<String, String> setHeaders(Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws KamaException_Not_Authorized {
+	protected Map<String, String> setHeaders(Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws NotAuthorizedKamaException {
 		Map<String, String> finalHeaderData = setAuthHeader(headerData, authType);
 
 		finalHeaderData.put("Accept", "application/json");
@@ -259,7 +259,7 @@ public class JsonHelper {
 		return finalHeaderData;
 	}
 
-	protected Map<String, String> setAuthHeader(Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws KamaException_Not_Authorized {
+	protected Map<String, String> setAuthHeader(Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws NotAuthorizedKamaException {
 		Map<String, String> finalHeaderData = headerData;
 		if (needsOAuthHeader(authType) && isAuthenticated())
 			finalHeaderData.put("Authorization", "OAuth2 " + authToken.getToken());
@@ -310,7 +310,7 @@ public class JsonHelper {
 		return finalUrl;
 	}
 
-	public boolean isAuthenticated() throws KamaException_Not_Authorized {
+	public boolean isAuthenticated() throws NotAuthorizedKamaException {
 
 		boolean authenticated = false;
 
@@ -330,7 +330,7 @@ public class JsonHelper {
 		return authenticated;
 	}
 
-	private void getAuthToken() throws KamaException_Not_Authorized {
+	private void getAuthToken() throws NotAuthorizedKamaException {
 
 		try {
 			// get our dao
@@ -342,11 +342,11 @@ public class JsonHelper {
 				authToken = new AuthData(kamaData.get(0).getToken());
 			}
 		} catch (SQLException e) {
-			throw new KamaException_Not_Authorized(e);
+			throw new NotAuthorizedKamaException(e);
 		}
 	}
 
-	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws KamaException_Json, KamaException_Not_Authorized, KamaException_HttpResponse {
+	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
 
 		switch (response.getStatusLine().getStatusCode()) {
 		case 200:
@@ -355,21 +355,21 @@ public class JsonHelper {
 			try {
 				jp = jsonFactory.createJsonParser(HttpUtils.getStringFromResponse(response));
 			} catch (JsonParseException e) {
-				throw new KamaException_Json(e);
+				throw new JsonKamaException(e);
 			} catch (IOException e) {
-				throw new KamaException_Json(e);
+				throw new JsonKamaException(e);
 			}
 			return jp;
 		case 400:
-			throw new KamaException_HttpResponse("Bad Request");
+			throw new HttpResponseKamaException("Bad Request");
 		case 401:
-			throw new KamaException_Not_Authorized("Unauthorized Action");
+			throw new NotAuthorizedKamaException("Unauthorized Action");
 		case 404:
-			throw new KamaException_HttpResponse("Not Found");
+			throw new HttpResponseKamaException("Not Found");
 		case 500:
-			throw new KamaException_HttpResponse("Internal Server Error");
+			throw new HttpResponseKamaException("Internal Server Error");
 		default:
-			throw new KamaException_HttpResponse("Unexpected Error");
+			throw new HttpResponseKamaException("Unexpected Error");
 		}
 
 	}
