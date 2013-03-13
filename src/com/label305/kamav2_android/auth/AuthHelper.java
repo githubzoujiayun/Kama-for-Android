@@ -7,6 +7,7 @@ import net.smartam.leeloo.common.exception.OAuthSystemException;
 import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.table.TableUtils;
 import com.label305.kamav2_android.KamaParam;
 import com.label305.kamav2_android.auth.objects.AuthData;
 import com.label305.kamav2_android.exceptions.DatabaseKamaException;
@@ -21,12 +22,8 @@ public class AuthHelper {
 		try {
 			AuthData authToken = new AuthData(oAuthClient.authenticate(authUrl, KamaParam.APIKEY, login, password));
 			if (authToken.getToken() != null && authToken.getToken().length() > 0) {
-				// store in database
-				// get our dao
 				Dao<AuthData, Integer> kamaDao = databaseHelper.getAuthDataDao();
-
 				kamaDao.create(authToken);
-
 				return true;
 			}
 		} catch (OAuthProblemException e) {
@@ -48,12 +45,8 @@ public class AuthHelper {
 		try {
 			AuthData authToken = new AuthData(oAuthClient.authenticateFacebook(authUrl, KamaParam.APIKEY, accessToken));
 			if (authToken.getToken() != null && authToken.getToken().length() > 0) {
-				// store in database
-				// get our dao
 				Dao<AuthData, Integer> kamaDao = databaseHelper.getAuthDataDao();
-
 				kamaDao.create(authToken);
-
 				return true;
 			}
 		} catch (OAuthProblemException e) {
@@ -65,5 +58,15 @@ public class AuthHelper {
 		}
 
 		return false;
+	}
+
+	public static void logOut(Context context) throws DatabaseKamaException {
+		AuthDatabaseHelper databaseHelper = AuthDatabaseHelper.getHelper(context);
+
+		try {
+			TableUtils.clearTable(databaseHelper.getConnectionSource(), AuthData.class);
+		} catch (SQLException e) {
+			throw new DatabaseKamaException(e);
+		}
 	}
 }
