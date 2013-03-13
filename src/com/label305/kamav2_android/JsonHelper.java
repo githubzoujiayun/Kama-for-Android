@@ -315,21 +315,22 @@ public class JsonHelper {
 		return finalUrl;
 	}
 
-	public boolean isAuthenticated() throws NotAuthorizedKamaException {
-
+	public boolean isAuthenticated() {
 		boolean authenticated = false;
 
 		if (authToken != null && authToken.getToken() != null && authToken.getToken().length() > 0)
 			authenticated = true;
 		else {
-			getAuthToken();
-
-			if (authToken != null && authToken.getToken() != null && authToken.getToken().length() > 0) {
-				authenticated = true;
-			} else {
+			try {
+				getAuthToken();
+				if (authToken != null && authToken.getToken() != null && authToken.getToken().length() > 0) {
+					authenticated = true;
+				} else {
+					authenticated = false;
+				}
+			} catch (NotAuthorizedKamaException e) {
 				authenticated = false;
 			}
-
 		}
 
 		return authenticated;
