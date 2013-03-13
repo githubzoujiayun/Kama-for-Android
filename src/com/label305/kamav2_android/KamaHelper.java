@@ -21,7 +21,6 @@ public class KamaHelper extends JsonHelper {
 		super(context, apiKey);
 	}
 
-	@Override
 	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
 		JsonParser jsonParser = super.getJsonParserFromResponse(response);
 		JsonNode jsonResponse = null;
@@ -38,12 +37,9 @@ public class KamaHelper extends JsonHelper {
 		}
 	}
 
-	@Override
 	protected Map<String, String> setHeaders(Map<String, String> headerData, AUTH_TYPE authType) throws NotAuthorizedKamaException {
-		Map<String, String> finalHeaderData = this.setAuthHeader(headerData, authType);
-
+		Map<String, String> finalHeaderData = setAuthHeader(headerData, authType);
 		finalHeaderData.put("Accept", "application/vnd.kama-v1+json");
-
 		return finalHeaderData;
 	}
 }

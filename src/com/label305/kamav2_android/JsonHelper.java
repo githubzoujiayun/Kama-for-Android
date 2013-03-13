@@ -23,49 +23,46 @@ import com.j256.ormlite.dao.Dao;
 import com.label305.kamav2_android.KamaParam.AUTH_TYPE;
 import com.label305.kamav2_android.auth.AuthDatabaseHelper;
 import com.label305.kamav2_android.auth.objects.AuthData;
-import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.HttpResponseKamaException;
 import com.label305.kamav2_android.exceptions.JsonKamaException;
+import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
 
 public class JsonHelper {
 
-	protected AuthData authToken = null;
+	protected ObjectMapper mapper = new ObjectMapper();
 
-	protected AuthDatabaseHelper databaseHelper;
-	protected ObjectMapper mapper;
+	private AuthDatabaseHelper mAuthDatabaseHelper;
+	private String mApiKey;
 
 	public JsonHelper(Context context, String apiKey) {
-		this.databaseHelper = AuthDatabaseHelper.getHelper(context);
-
-		KamaParam.APIKEY = apiKey;
-
-		mapper = new ObjectMapper();
+		mAuthDatabaseHelper = AuthDatabaseHelper.getHelper(context);
+		mApiKey = apiKey;
 	}
 
 	public <T, U> T get(String url, Class<T> retType, AUTH_TYPE authType, String objTitle) throws KamaException {
-		return this.get(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>());
+		return get(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>());
 	}
 
 	public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType) throws KamaException {
-		return this.get(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>());
+		return get(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>());
 	}
 
 	public <T, U> T get(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, List<NameValuePair> urlData) throws KamaException {
-		return this.get(url, retType, null, objTitle, authType, urlData, new HashMap<String, String>());
+		return get(url, retType, null, objTitle, authType, urlData, new HashMap<String, String>());
 	}
 
 	public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> urlData) throws KamaException {
-		return this.get(url, retType, listType, listTitle, authType, urlData, new HashMap<String, String>());
+		return get(url, retType, listType, listTitle, authType, urlData, new HashMap<String, String>());
 	}
 
 	public <T, U> T get(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, Map<String, String> headerData) throws KamaException {
-		return this.get(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), headerData);
+		return get(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), headerData);
 	}
 
 	public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, Map<String, String> headerData) throws KamaException {
-		return this.get(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), headerData);
+		return get(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), headerData);
 	}
 
 	/**
@@ -87,8 +84,8 @@ public class JsonHelper {
 	 * @throws KamaException
 	 */
 	public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> urlData, Map<String, String> headerData) throws KamaException {
-		String finalUrl = this.setUrlParams(url, urlData, authType);
-		Map<String, String> finalHeaderData = this.setHeaders(headerData, authType);
+		String finalUrl = setUrlParams(url, urlData, authType);
+		Map<String, String> finalHeaderData = setHeaders(headerData, authType);
 
 		HttpHelper httpHelper = new HttpHelper();
 
@@ -102,27 +99,27 @@ public class JsonHelper {
 	}
 
 	public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> postData) throws KamaException {
-		return this.post(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
+		return post(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T post(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, List<NameValuePair> postData) throws KamaException {
-		return this.post(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
+		return post(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> urlData, List<NameValuePair> postData) throws KamaException {
-		return this.post(url, retType, listType, listTitle, authType, urlData, new HashMap<String, String>(), postData);
+		return post(url, retType, listType, listTitle, authType, urlData, new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T post(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, List<NameValuePair> urlData, List<NameValuePair> postData) throws KamaException {
-		return this.post(url, retType, null, objTitle, authType, urlData, new HashMap<String, String>(), postData);
+		return post(url, retType, null, objTitle, authType, urlData, new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T post(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
-		return this.post(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
+		return post(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
 	}
 
 	public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
-		return this.post(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
+		return post(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
 	}
 
 	/**
@@ -147,8 +144,8 @@ public class JsonHelper {
 	 */
 	public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> urlData, Map<String, String> headerData,
 			List<NameValuePair> postData) throws KamaException {
-		String finalUrl = this.setUrlParams(url, urlData, authType);
-		Map<String, String> finalHeaderData = this.setHeaders(headerData, authType);
+		String finalUrl = setUrlParams(url, urlData, authType);
+		Map<String, String> finalHeaderData = setHeaders(headerData, authType);
 
 		HttpHelper httpHelper = new HttpHelper();
 
@@ -162,27 +159,27 @@ public class JsonHelper {
 	}
 
 	public <T, U> T put(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, List<NameValuePair> postData) throws KamaException {
-		return this.put(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
+		return put(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> postData) throws KamaException {
-		return this.put(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
+		return put(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T put(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, List<NameValuePair> urlData, List<NameValuePair> postData) throws KamaException {
-		return this.put(url, retType, null, objTitle, authType, urlData, new HashMap<String, String>(), postData);
+		return put(url, retType, null, objTitle, authType, urlData, new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> urlData, List<NameValuePair> postData) throws KamaException {
-		return this.put(url, retType, listType, listTitle, authType, urlData, new HashMap<String, String>(), postData);
+		return put(url, retType, listType, listTitle, authType, urlData, new HashMap<String, String>(), postData);
 	}
 
 	public <T, U> T put(String url, Class<T> retType, AUTH_TYPE authType, String objTitle, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
-		return this.put(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
+		return put(url, retType, null, objTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
 	}
 
 	public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
-		return this.put(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
+		return put(url, retType, listType, listTitle, authType, new ArrayList<NameValuePair>(), headerData, postData);
 	}
 
 	/**
@@ -207,8 +204,8 @@ public class JsonHelper {
 	 */
 	public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType, List<NameValuePair> urlData, Map<String, String> headerData, List<NameValuePair> putData)
 			throws KamaException {
-		String finalUrl = this.setUrlParams(url, urlData, authType);
-		Map<String, String> finalHeaderData = this.setHeaders(headerData, authType);
+		String finalUrl = setUrlParams(url, urlData, authType);
+		Map<String, String> finalHeaderData = setHeaders(headerData, authType);
 
 		HttpHelper httpHelper = new HttpHelper();
 
@@ -238,7 +235,7 @@ public class JsonHelper {
 				}
 
 			} else {
-				if(objTitle != null) {
+				if (objTitle != null) {
 					JsonNode response = mapper.readTree(jsonParser);
 					JsonNode responseStr = response.get(objTitle);
 					jsonParser = responseStr.traverse();
@@ -266,8 +263,10 @@ public class JsonHelper {
 
 	protected Map<String, String> setAuthHeader(Map<String, String> headerData, KamaParam.AUTH_TYPE authType) throws NotAuthorizedKamaException {
 		Map<String, String> finalHeaderData = headerData;
-		if (needsOAuthHeader(authType) && isAuthenticated())
+		if (needsOAuthHeader(authType)) {
+			AuthData authToken = getAuthToken();
 			finalHeaderData.put("Authorization", "OAuth2 " + authToken.getToken());
+		}
 
 		return finalHeaderData;
 	}
@@ -293,7 +292,7 @@ public class JsonHelper {
 		}
 
 		if (needsAuthUrl(authType)) {
-			finalUrl += KamaParam.getApiKey();
+			finalUrl += KamaParam.APIKEYPARAM + mApiKey;
 			hasParam = true;
 		}
 
@@ -318,29 +317,25 @@ public class JsonHelper {
 	public boolean isAuthenticated() {
 		boolean authenticated = false;
 
-		if (authToken != null && authToken.getToken() != null && authToken.getToken().length() > 0)
-			authenticated = true;
-		else {
-			try {
-				getAuthToken();
-				if (authToken != null && authToken.getToken() != null && authToken.getToken().length() > 0) {
-					authenticated = true;
-				} else {
-					authenticated = false;
-				}
-			} catch (NotAuthorizedKamaException e) {
+		try {
+			AuthData authToken = getAuthToken();
+			if (authToken != null && authToken.getToken() != null && authToken.getToken().length() > 0) {
+				authenticated = true;
+			} else {
 				authenticated = false;
 			}
+		} catch (NotAuthorizedKamaException e) {
+			authenticated = false;
 		}
 
 		return authenticated;
 	}
 
-	private void getAuthToken() throws NotAuthorizedKamaException {
-
+	private AuthData getAuthToken() throws NotAuthorizedKamaException {
+		AuthData authToken = null;
 		try {
 			// get our dao
-			Dao<AuthData, Integer> kamaDao = databaseHelper.getAuthDataDao();
+			Dao<AuthData, Integer> kamaDao = mAuthDatabaseHelper.getAuthDataDao();
 
 			List<AuthData> kamaData = kamaDao.queryForAll();
 
@@ -350,6 +345,8 @@ public class JsonHelper {
 		} catch (SQLException e) {
 			throw new NotAuthorizedKamaException(e);
 		}
+
+		return authToken;
 	}
 
 	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
