@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import net.smartam.leeloo.common.exception.OAuthProblemException;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
+import android.content.Context;
 
 import com.j256.ormlite.dao.Dao;
 import com.label305.kamav2_android.KamaParam;
@@ -12,21 +13,13 @@ import com.label305.kamav2_android.exceptions.DatabaseKamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 
 public class AuthHelper {
-	
-	private AuthData authToken;
-	
-	private AuthDatabaseHelper databaseHelper;
-	
-	AuthHelper(AuthDatabaseHelper databaseHelper) {
-		this.databaseHelper = databaseHelper;
-	}
-	
-	
-	public boolean authenticate(String authUrl, String login, String password) throws NotAuthorizedKamaException, DatabaseKamaException {
+
+	public static boolean authenticate(Context context, String authUrl, String login, String password) throws NotAuthorizedKamaException, DatabaseKamaException {
+		AuthDatabaseHelper databaseHelper = AuthDatabaseHelper.getHelper(context);
 		MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
 
 		try {
-			authToken = new AuthData(oAuthClient.authenticate(authUrl, KamaParam.APIKEY, login, password));
+			AuthData authToken = new AuthData(oAuthClient.authenticate(authUrl, KamaParam.APIKEY, login, password));
 			if (authToken.getToken() != null && authToken.getToken().length() > 0) {
 				// store in database
 				// get our dao
@@ -36,7 +29,7 @@ public class AuthHelper {
 
 				return true;
 			}
-		} catch(OAuthProblemException e) {
+		} catch (OAuthProblemException e) {
 			throw new NotAuthorizedKamaException(e);
 		} catch (OAuthSystemException e) {
 			throw new NotAuthorizedKamaException(e);
@@ -47,21 +40,23 @@ public class AuthHelper {
 		return false;
 	}
 
-	public boolean authenticateFacebook(String authUrl, String accessToken) throws NotAuthorizedKamaException, DatabaseKamaException {
+	public static boolean authenticateFacebook(Context context, String authUrl, String accessToken) throws NotAuthorizedKamaException, DatabaseKamaException {
+		AuthDatabaseHelper databaseHelper = AuthDatabaseHelper.getHelper(context);
+
 		MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
 
 		try {
-			authToken = new AuthData(oAuthClient.authenticateFacebook(authUrl, KamaParam.APIKEY, accessToken));
+			AuthData authToken = new AuthData(oAuthClient.authenticateFacebook(authUrl, KamaParam.APIKEY, accessToken));
 			if (authToken.getToken() != null && authToken.getToken().length() > 0) {
 				// store in database
 				// get our dao
 				Dao<AuthData, Integer> kamaDao = databaseHelper.getAuthDataDao();
 
 				kamaDao.create(authToken);
-				
+
 				return true;
 			}
-		} catch(OAuthProblemException e) {
+		} catch (OAuthProblemException e) {
 			throw new NotAuthorizedKamaException(e);
 		} catch (OAuthSystemException e) {
 			throw new NotAuthorizedKamaException(e);
