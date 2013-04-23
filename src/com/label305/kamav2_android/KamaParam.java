@@ -4,7 +4,7 @@ public class KamaParam {
 
 	public static String URLPARAM = "?";
 	public static String URLPARAMCONCAT = "&";
-	public static String APIKEYPARAM = "apikey=";
+	public static String APIKEYPARAM = "apikey";
 
 	public static enum AUTH_TYPE {
 		NONE, OAUTH2, APIKEY, OAUTHANDKEY

@@ -1,5 +1,6 @@
 package com.label305.kamav2_android;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,13 +16,11 @@ import android.net.http.AndroidHttpClient;
 
 import com.label305.kamav2_android.exceptions.KamaException;
 
-public class HttpHelper {
+/**
+ * A helper class to execute GET, POST and PUT requests.
+ */
+public abstract class HttpHelper {
 
-	private AndroidHttpClient httpClient;
-	
-	
-	HttpHelper() {}
-	
 	/**
 	 * Execute a POST request on the url configured
 	 * 
@@ -29,14 +28,14 @@ public class HttpHelper {
 	 * @throws KamaException
 	 * 
 	 */
-	public HttpResponse post(String url, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
+	public static HttpResponse post(String url, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
 
-		httpClient = AndroidHttpClient.newInstance("Android");
+		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
 		HttpResponse response;
-		
+
 		try {
 			HttpPost httpPost = new HttpPost(url);
-			
+
 			Iterator<String> keys = headerData.keySet().iterator();
 			Iterator<String> values = headerData.values().iterator();
 
@@ -52,8 +51,10 @@ public class HttpHelper {
 
 			response = httpClient.execute(httpPost);
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new KamaException(e);
+		} finally {
+			httpClient.close();
 		}
 
 		return response;
@@ -63,13 +64,13 @@ public class HttpHelper {
 	 * Execute a PUT request on the url configured
 	 * 
 	 * @return response data
-	 * @throws KamaException 
+	 * @throws KamaException
 	 */
-	public HttpResponse put(String url, Map<String, String> headerData, List<NameValuePair> putData) throws KamaException {
+	public static HttpResponse put(String url, Map<String, String> headerData, List<NameValuePair> putData) throws KamaException {
 
-		httpClient = AndroidHttpClient.newInstance("Android");
+		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
 		HttpResponse response;
-		
+
 		try {
 			HttpPut httpPut = new HttpPut(url);
 			Iterator<String> keys = headerData.keySet().iterator();
@@ -87,8 +88,10 @@ public class HttpHelper {
 
 			response = httpClient.execute(httpPut);
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new KamaException(e);
+		} finally {
+			httpClient.close();
 		}
 
 		return response;
@@ -98,14 +101,14 @@ public class HttpHelper {
 	 * Execute a GET request on the url configured
 	 * 
 	 * @return response data
-	 * @throws KamaException 
+	 * @throws KamaException
 	 */
-	public HttpResponse get(String url, Map<String, String> headerData) throws KamaException {
+	public static HttpResponse get(String url, Map<String, String> headerData) throws KamaException {
 
-		httpClient = AndroidHttpClient.newInstance("Android");
-		
+		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
+
 		HttpResponse response;
-		
+
 		try {
 			HttpGet httpGet = new HttpGet(url);
 			Iterator<String> keys = headerData.keySet().iterator();
@@ -119,17 +122,13 @@ public class HttpHelper {
 
 			response = httpClient.execute(httpGet);
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new KamaException(e);
+		} finally {
+			httpClient.close();
 		}
 
 		return response;
 	}
-	
-	
-	public void close() {
-		if(httpClient != null) httpClient.close();
-	}
 
-	
 }
