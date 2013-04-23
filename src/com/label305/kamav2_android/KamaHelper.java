@@ -140,6 +140,7 @@ public class KamaHelper extends JsonHelper {
 		return super.put(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, putData);
 	}
 
+	@Override
 	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException,
 			HttpResponseKamaException {
 		JsonParser jsonParser = super.getJsonParserFromResponse(response);

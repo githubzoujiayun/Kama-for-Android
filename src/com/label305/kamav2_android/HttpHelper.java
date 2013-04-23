@@ -19,7 +19,9 @@ import com.label305.kamav2_android.exceptions.KamaException;
 /**
  * A helper class to execute GET, POST and PUT requests.
  */
-public abstract class HttpHelper {
+public class HttpHelper {
+
+	AndroidHttpClient mHttpClient = AndroidHttpClient.newInstance("Android");
 
 	/**
 	 * Execute a POST request on the url configured
@@ -28,11 +30,7 @@ public abstract class HttpHelper {
 	 * @throws KamaException
 	 * 
 	 */
-	public static HttpResponse post(String url, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
-
-		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
-		HttpResponse response;
-
+	public HttpResponse post(String url, Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
 		try {
 			HttpPost httpPost = new HttpPost(url);
 
@@ -49,15 +47,10 @@ public abstract class HttpHelper {
 
 			AndroidHttpClient.modifyRequestToAcceptGzipResponse(httpPost);
 
-			response = httpClient.execute(httpPost);
-
+			return mHttpClient.execute(httpPost);
 		} catch (IOException e) {
 			throw new KamaException(e);
-		} finally {
-			httpClient.close();
 		}
-
-		return response;
 	}
 
 	/**
@@ -66,11 +59,7 @@ public abstract class HttpHelper {
 	 * @return response data
 	 * @throws KamaException
 	 */
-	public static HttpResponse put(String url, Map<String, String> headerData, List<NameValuePair> putData) throws KamaException {
-
-		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
-		HttpResponse response;
-
+	public HttpResponse put(String url, Map<String, String> headerData, List<NameValuePair> putData) throws KamaException {
 		try {
 			HttpPut httpPut = new HttpPut(url);
 			Iterator<String> keys = headerData.keySet().iterator();
@@ -86,15 +75,11 @@ public abstract class HttpHelper {
 
 			AndroidHttpClient.modifyRequestToAcceptGzipResponse(httpPut);
 
-			response = httpClient.execute(httpPut);
+			return mHttpClient.execute(httpPut);
 
 		} catch (IOException e) {
 			throw new KamaException(e);
-		} finally {
-			httpClient.close();
 		}
-
-		return response;
 	}
 
 	/**
@@ -103,12 +88,7 @@ public abstract class HttpHelper {
 	 * @return response data
 	 * @throws KamaException
 	 */
-	public static HttpResponse get(String url, Map<String, String> headerData) throws KamaException {
-
-		AndroidHttpClient httpClient = AndroidHttpClient.newInstance("Android");
-
-		HttpResponse response;
-
+	public HttpResponse get(String url, Map<String, String> headerData) throws KamaException {
 		try {
 			HttpGet httpGet = new HttpGet(url);
 			Iterator<String> keys = headerData.keySet().iterator();
@@ -119,16 +99,14 @@ public abstract class HttpHelper {
 			}
 
 			AndroidHttpClient.modifyRequestToAcceptGzipResponse(httpGet);
-
-			response = httpClient.execute(httpGet);
-
+			return mHttpClient.execute(httpGet);
 		} catch (IOException e) {
 			throw new KamaException(e);
-		} finally {
-			httpClient.close();
 		}
+	}
 
-		return response;
+	public void close() {
+		mHttpClient.close();
 	}
 
 }

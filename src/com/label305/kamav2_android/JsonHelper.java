@@ -73,8 +73,13 @@ public class JsonHelper {
 		String finalUrl = addUrlParams(url, urlData);
 		Map<String, String> finalHeaderData = addNecessaryHeaders(headerData);
 
-		HttpResponse httpResponse = HttpHelper.get(finalUrl, finalHeaderData);
-		return parseObject(httpResponse, retType, listType, listTitle);
+		HttpHelper httpHelper = new HttpHelper();
+		try {
+			HttpResponse httpResponse = httpHelper.get(finalUrl, finalHeaderData);
+			return parseObject(httpResponse, retType, listType, listTitle);
+		} finally {
+			httpHelper.close();
+		}
 	}
 
 	public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> postData) throws KamaException {
@@ -130,8 +135,13 @@ public class JsonHelper {
 		String finalUrl = addUrlParams(url, urlData);
 		Map<String, String> finalHeaderData = addNecessaryHeaders(headerData);
 
-		HttpResponse httpResponse = HttpHelper.post(finalUrl, finalHeaderData, postData);
-		return parseObject(httpResponse, retType, listType, listTitle);
+		HttpHelper httpHelper = new HttpHelper();
+		try {
+			HttpResponse httpResponse = httpHelper.post(finalUrl, finalHeaderData, postData);
+			return parseObject(httpResponse, retType, listType, listTitle);
+		} finally {
+			httpHelper.close();
+		}
 	}
 
 	public <T, U> T put(String url, Class<T> retType, String objTitle, List<NameValuePair> postData) throws KamaException {
@@ -187,8 +197,13 @@ public class JsonHelper {
 		String finalUrl = addUrlParams(url, urlData);
 		Map<String, String> finalHeaderData = addNecessaryHeaders(headerData);
 
-		HttpResponse httpResponse = HttpHelper.put(finalUrl, finalHeaderData, putData);
-		return parseObject(httpResponse, retType, listType, listTitle);
+		HttpHelper httpHelper = new HttpHelper();
+		try {
+			HttpResponse httpResponse = httpHelper.put(finalUrl, finalHeaderData, putData);
+			return parseObject(httpResponse, retType, listType, listTitle);
+		} finally {
+			httpHelper.close();
+		}
 	}
 
 	protected <T, U> T parseObject(HttpResponse httpResponse, Class<T> retType, Class<U> listType, String objTitle) throws JsonKamaException,
