@@ -64,7 +64,7 @@ public class KamaHelper extends JsonHelper {
 	public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
 			Map<String, String> headerData, AUTH_TYPE authType) throws KamaException {
 		List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
-		Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData);
+		Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
 		return super.get(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData);
 	}
 
@@ -100,7 +100,7 @@ public class KamaHelper extends JsonHelper {
 	public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
 			Map<String, String> headerData, List<NameValuePair> postData, AUTH_TYPE authType) throws KamaException {
 		List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
-		Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData);
+		Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
 		return super.post(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, postData);
 	}
 
@@ -136,21 +136,18 @@ public class KamaHelper extends JsonHelper {
 	public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
 			Map<String, String> headerData, List<NameValuePair> putData, AUTH_TYPE authType) throws KamaException {
 		List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
-		Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData);
+		Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
 		return super.put(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, putData);
 	}
 
 	@Override
 	protected JsonParser getJsonParserFromResponse(HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException,
 			HttpResponseKamaException {
-		JsonParser jsonParser = super.getJsonParserFromResponse(response);
-		JsonNode jsonResponse = null;
-
 		try {
-			jsonResponse = mapper.readTree(jsonParser);
+			JsonParser jsonParser = super.getJsonParserFromResponse(response);
+			JsonNode jsonResponse = mapper.readTree(jsonParser);
 			JsonNode retVal = jsonResponse.get(KamaParam.RESPONSE);
 			return retVal.traverse();
-
 		} catch (JsonParseException e) {
 			throw new JsonKamaException(e);
 		} catch (IOException e) {
@@ -172,8 +169,15 @@ public class KamaHelper extends JsonHelper {
 		}
 	}
 
+	@Override
+	protected Map<String, String> addNecessaryHeaders(Map<String, String> headerData) {
+		Map<String, String> modifiedHeaderData = super.addNecessaryHeaders(headerData);
+		modifiedHeaderData.put("Accept", "application/vnd.kama-v1+json");
+		return modifiedHeaderData;
+	}
+
 	protected Map<String, String> addNecessaryHeaders(Map<String, String> headerData, AUTH_TYPE authType) throws NotAuthorizedKamaException {
-		Map<String, String> modifiedHeaderData = headerData;
+		Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData);
 		if (needsOAuthHeader(authType)) {
 			if (modifiedHeaderData == null) {
 				modifiedHeaderData = new HashMap<String, String>();
