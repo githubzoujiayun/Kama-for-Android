@@ -314,6 +314,5 @@ public class JsonHelper {
 		default:
 			throw new HttpResponseKamaException("Unexpected Error. Statuscode: " + response.getStatusLine().getStatusCode());
 		}
-
 	}
 }
