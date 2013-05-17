@@ -11,4 +11,8 @@ public class JsonKamaException extends KamaException {
 		super(e);
 	}
 
+    public JsonKamaException(String message){
+        super(message);
+    }
+
 }

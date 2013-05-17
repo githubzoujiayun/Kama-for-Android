@@ -11,6 +11,7 @@ import com.label305.kamav2_android.exceptions.JsonKamaException;
 import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
+import com.label305.stan.asyncutils.Buggy;
 import com.label305.stan.utils.HttpHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -65,7 +66,7 @@ public class JsonHelper {
         try {
             try {
                 HttpResponse httpResponse = httpHelper.get(finalUrl, finalHeaderData);
-                return parseObject(httpResponse, retType, listType, listTitle);
+                return parseObject(url, httpResponse, retType, listType, listTitle);
             } catch (IOException e) {
                 throw new KamaException(e);
             }
@@ -122,7 +123,7 @@ public class JsonHelper {
         try {
             try {
                 HttpResponse httpResponse = httpHelper.post(finalUrl, finalHeaderData, postData);
-                return parseObject(httpResponse, retType, listType, listTitle);
+                return parseObject(url, httpResponse, retType, listType, listTitle);
             } catch (IOException e) {
                 throw new KamaException(e);
             }
@@ -179,7 +180,7 @@ public class JsonHelper {
         try {
             try {
                 HttpResponse httpResponse = httpHelper.put(finalUrl, finalHeaderData, putData);
-                return parseObject(httpResponse, retType, listType, listTitle);
+                return parseObject(url, httpResponse, retType, listType, listTitle);
             } catch (IOException e) {
                 throw new KamaException(e);
             }
@@ -188,9 +189,9 @@ public class JsonHelper {
         }
     }
 
-    protected <T, U> T parseObject(HttpResponse httpResponse, Class<T> retType, Class<U> listType, String objTitle) throws JsonKamaException,
+    protected <T, U> T parseObject(String url, HttpResponse httpResponse, Class<T> retType, Class<U> listType, String objTitle) throws JsonKamaException,
             NotAuthorizedKamaException, HttpResponseKamaException {
-        JsonParser jsonParser = getJsonParserFromResponse(httpResponse);
+        JsonParser jsonParser = getJsonParserFromResponse(url, httpResponse);
         T retVal = null;
 
         try {
@@ -201,6 +202,10 @@ public class JsonHelper {
                 else {
                     JsonNode response = mapper.readTree(jsonParser);
                     JsonNode responseStr = response.get(objTitle);
+                    if (responseStr == null) {
+                        Buggy.report(new Exception("Unexpected jsontitle. Not found: " + objTitle), url);
+                        throw new JsonKamaException("Unexpected jsontitle. Not found: " + objTitle);
+                    }
                     JsonParser jp1 = responseStr.traverse();
                     retVal = mapper.readValue(jp1, mapper.getTypeFactory().constructCollectionType(List.class, listType));
                 }
@@ -214,8 +219,10 @@ public class JsonHelper {
                 retVal = mapper.readValue(jsonParser, retType);
             }
         } catch (JsonParseException e) {
+            Buggy.report(e, url);
             throw new JsonKamaException(e);
         } catch (JsonMappingException e) {
+            Buggy.report(e, url);
             throw new JsonKamaException(e);
         } catch (IOException e) {
             throw new JsonKamaException(e);
@@ -268,7 +275,7 @@ public class JsonHelper {
         return value.replace(" ", "%20");
     }
 
-    protected JsonParser getJsonParserFromResponse(HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException,
+    protected JsonParser getJsonParserFromResponse(String url, HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException,
             HttpResponseKamaException {
 
         switch (response.getStatusLine().getStatusCode()) {
@@ -278,6 +285,7 @@ public class JsonHelper {
                 try {
                     jp = jsonFactory.createJsonParser(HttpUtils.getStringFromResponse(response));
                 } catch (JsonParseException e) {
+                    Buggy.report(e, url);
                     throw new JsonKamaException(e);
                 } catch (IOException e) {
                     throw new JsonKamaException(e);
