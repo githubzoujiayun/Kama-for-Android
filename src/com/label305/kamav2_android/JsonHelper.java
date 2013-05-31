@@ -302,15 +302,17 @@ public class JsonHelper {
 			}
 			return jp;
 		case 400:
-			throw new HttpResponseKamaException("Bad Request. " + responseString);
+			throw new HttpResponseKamaException("Bad Request. " + url + "\n" + responseString);
 		case 401:
-			throw new NotAuthorizedKamaException("Unauthorized Action. " + responseString);
+			throw new NotAuthorizedKamaException("Unauthorized Action. " + url + "\n" + responseString);
 		case 404:
-			throw new HttpResponseKamaException("Not Found. " + responseString);
+			throw new HttpResponseKamaException("Not Found. " + url + "\n" + responseString);
 		case 500:
-			throw new HttpResponseKamaException("Internal Server Error. " + responseString);
+			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString), url);
+			throw new HttpResponseKamaException("Internal Server Error. " + url + "\n" + responseString);
 		default:
-			throw new HttpResponseKamaException("Unexpected Error. . " + responseString);
+			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString), url);
+			throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString);
 		}
 	}
 }
