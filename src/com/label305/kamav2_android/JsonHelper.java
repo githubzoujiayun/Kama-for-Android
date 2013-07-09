@@ -288,7 +288,8 @@ public class JsonHelper {
 	protected JsonParser getJsonParserFromResponse(String url, HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
 		String responseString = HttpUtils.getStringFromResponse(response);
 
-		switch (response.getStatusLine().getStatusCode()) {
+		int statusCode = response.getStatusLine().getStatusCode();
+		switch (statusCode) {
 		case 200:
 			JsonFactory jsonFactory = new JsonFactory();
 			JsonParser jp;
@@ -302,17 +303,17 @@ public class JsonHelper {
 			}
 			return jp;
 		case 400:
-			throw new HttpResponseKamaException("Bad Request. " + url + "\n" + responseString);
+			throw new HttpResponseKamaException("Bad Request. " + url + "\n" + responseString, statusCode);
 		case 401:
 			throw new NotAuthorizedKamaException("Unauthorized Action. " + url + "\n" + responseString);
 		case 404:
-			throw new HttpResponseKamaException("Not Found. " + url + "\n" + responseString);
+			throw new HttpResponseKamaException("Not Found. " + url + "\n" + responseString, statusCode);
 		case 500:
-			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString), url);
-			throw new HttpResponseKamaException("Internal Server Error. " + url + "\n" + responseString);
+			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString, statusCode), url);
+			throw new HttpResponseKamaException("Internal Server Error. " + url + "\n" + responseString, statusCode);
 		default:
-			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString), url);
-			throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString);
+			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString, statusCode), url);
+			throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString, statusCode);
 		}
 	}
 }
