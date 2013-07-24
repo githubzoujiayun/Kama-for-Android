@@ -316,4 +316,8 @@ public class JsonHelper {
 		}
 
 	}
+	
+	public static boolean hasInternet(Context cxt) {
+		return HttpHelper.hasInternet(cxt);
+	}
 }
