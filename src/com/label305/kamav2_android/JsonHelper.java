@@ -1,5 +1,17 @@
 package com.label305.kamav2_android;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+
+import android.content.Context;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,11 +25,6 @@ import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
 import com.label305.stan.asyncutils.Buggy;
 import com.label305.stan.utils.HttpHelper;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-
-import java.io.IOException;
-import java.util.*;
 
 public class JsonHelper {
 
