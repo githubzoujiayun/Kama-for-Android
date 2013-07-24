@@ -10,8 +10,6 @@ import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 
-import android.content.Context;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -204,6 +202,69 @@ public class JsonHelper {
 			httpHelper.close();
 		}
 	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public boolean delete(String url) throws KamaException {
+		return delete(url, null, null);
+	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @param headerData
+	 *            Header data
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public boolean delete(String url, Map<String, String> headerData) throws KamaException {
+		return delete(url, null, headerData);
+	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @param urlData
+	 *            Url data
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public boolean delete(String url, List<NameValuePair> urlData) throws KamaException {
+		return delete(url, urlData, null);
+	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @param urlData
+	 *            Url data
+	 * @param headerData
+	 *            Header data
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public boolean delete(String url, List<NameValuePair> urlData, Map<String, String> headerData) throws KamaException {
+		String finalUrl = addUrlParams(url, urlData);
+		Map<String, String> finalHeaderData = addNecessaryHeaders(headerData);
+
+		HttpHelper httpHelper = new HttpHelper();
+		try {
+			try {
+				HttpResponse httpResponse = httpHelper.delete(finalUrl, finalHeaderData);
+				getJsonParserFromResponse(url, httpResponse);
+				return true;
+			} catch (IOException e) {
+				throw new KamaException(e);
+			}
+		} finally {
+			httpHelper.close();
+		}
+	}
+	
 
 	protected <T, U> T parseObject(String url, HttpResponse httpResponse, Class<T> retType, Class<U> listType, String objTitle) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
 		JsonParser jsonParser = getJsonParserFromResponse(url, httpResponse);
@@ -324,7 +385,4 @@ public class JsonHelper {
 		}
 	}
 	
-	public static boolean hasInternet(Context cxt) {
-		return HttpHelper.hasInternet(cxt);
-	}
 }
