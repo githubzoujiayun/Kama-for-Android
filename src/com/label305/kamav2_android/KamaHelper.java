@@ -138,6 +138,21 @@ public class KamaHelper extends JsonHelper {
         Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
         return super.put(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, putData);
     }
+    
+    public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, Map<String, String> headerData, AUTH_TYPE authType) throws KamaException {
+        return delete(url, retType, listType, listTitle, null, headerData, authType);
+    }
+
+    public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType)
+            throws KamaException {
+        return delete(url, retType, listType, listTitle, null, null, authType);
+    }
+
+    public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, Map<String, String> headerData, AUTH_TYPE authType) throws KamaException {
+        List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
+        Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
+        return super.delete(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData);
+    }
 
     @Override
     protected JsonParser getJsonParserFromResponse(String url, HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException,

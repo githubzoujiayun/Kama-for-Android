@@ -206,40 +206,64 @@ public class JsonHelper {
 	/**
 	 * @param url
 	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
 	 * @return true if successfull, otherwise throws exception
 	 * @throws KamaException
 	 */
-	public boolean delete(String url) throws KamaException {
-		return delete(url, null, null);
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle) throws KamaException {
+		return delete(url, retType, listType, listTitle, null, null);
 	}
 	
 	/**
 	 * @param url
 	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
 	 * @param headerData
 	 *            Header data
 	 * @return true if successfull, otherwise throws exception
 	 * @throws KamaException
 	 */
-	public boolean delete(String url, Map<String, String> headerData) throws KamaException {
-		return delete(url, null, headerData);
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, Map<String, String> headerData) throws KamaException {
+		return delete(url, retType, listType, listTitle, null, headerData);
 	}
 	
 	/**
 	 * @param url
 	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
 	 * @param urlData
 	 *            Url data
 	 * @return true if successfull, otherwise throws exception
 	 * @throws KamaException
 	 */
-	public boolean delete(String url, List<NameValuePair> urlData) throws KamaException {
-		return delete(url, urlData, null);
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData) throws KamaException {
+		return delete(url, retType, listType, listTitle, urlData, null);
 	}
 	
 	/**
 	 * @param url
 	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
 	 * @param urlData
 	 *            Url data
 	 * @param headerData
@@ -247,7 +271,7 @@ public class JsonHelper {
 	 * @return true if successfull, otherwise throws exception
 	 * @throws KamaException
 	 */
-	public boolean delete(String url, List<NameValuePair> urlData, Map<String, String> headerData) throws KamaException {
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, Map<String, String> headerData) throws KamaException {
 		String finalUrl = addUrlParams(url, urlData);
 		Map<String, String> finalHeaderData = addNecessaryHeaders(headerData);
 
@@ -255,8 +279,7 @@ public class JsonHelper {
 		try {
 			try {
 				HttpResponse httpResponse = httpHelper.delete(finalUrl, finalHeaderData);
-				getJsonParserFromResponse(url, httpResponse);
-				return true;
+				return parseObject(url, httpResponse, retType, listType, listTitle);
 			} catch (IOException e) {
 				throw new KamaException(e);
 			}
