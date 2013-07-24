@@ -316,4 +316,8 @@ public class JsonHelper {
 			throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString, statusCode);
 		}
 	}
+	
+	public static boolean hasInternet(Context cxt) {
+		return HttpHelper.hasInternet(cxt);
+	}
 }
