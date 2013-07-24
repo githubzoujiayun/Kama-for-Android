@@ -19,7 +19,8 @@ public class AuthHelper {
 		MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
 
 		try {
-			AuthData authToken = new AuthData(oAuthClient.authenticate(authUrl, apiKey, login, password));
+			String authenticate = oAuthClient.authenticate(authUrl, apiKey, login, password);
+			AuthData authToken = new AuthData(authenticate);
 			if (authToken.getToken() != null && authToken.getToken().length() > 0) {
 				Dao<AuthData, Integer> kamaDao = databaseHelper.getAuthDataDao();
 				kamaDao.create(authToken);
