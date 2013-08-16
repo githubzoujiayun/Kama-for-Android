@@ -1,5 +1,15 @@
 package com.label305.kamav2_android;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,11 +23,6 @@ import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
 import com.label305.stan.asyncutils.Buggy;
 import com.label305.stan.utils.HttpHelper;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-
-import java.io.IOException;
-import java.util.*;
 
 public class JsonHelper {
 
@@ -197,6 +202,92 @@ public class JsonHelper {
 			httpHelper.close();
 		}
 	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle) throws KamaException {
+		return delete(url, retType, listType, listTitle, null, null);
+	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
+	 * @param headerData
+	 *            Header data
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, Map<String, String> headerData) throws KamaException {
+		return delete(url, retType, listType, listTitle, null, headerData);
+	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
+	 * @param urlData
+	 *            Url data
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData) throws KamaException {
+		return delete(url, retType, listType, listTitle, urlData, null);
+	}
+	
+	/**
+	 * @param url
+	 *            request url
+	 * @param retType
+	 *            Return class type
+	 * @param listType
+	 *            Element class of list items
+	 * @param listTitle
+	 *            Title of JsonArray
+	 * @param urlData
+	 *            Url data
+	 * @param headerData
+	 *            Header data
+	 * @return true if successfull, otherwise throws exception
+	 * @throws KamaException
+	 */
+	public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, Map<String, String> headerData) throws KamaException {
+		String finalUrl = addUrlParams(url, urlData);
+		Map<String, String> finalHeaderData = addNecessaryHeaders(headerData);
+
+		HttpHelper httpHelper = new HttpHelper();
+		try {
+			try {
+				HttpResponse httpResponse = httpHelper.delete(finalUrl, finalHeaderData);
+				return parseObject(url, httpResponse, retType, listType, listTitle);
+			} catch (IOException e) {
+				throw new KamaException(e);
+			}
+		} finally {
+			httpHelper.close();
+		}
+	}
+	
 
 	protected <T, U> T parseObject(String url, HttpResponse httpResponse, Class<T> retType, Class<U> listType, String objTitle) throws JsonKamaException, NotAuthorizedKamaException, HttpResponseKamaException {
 		JsonParser jsonParser = getJsonParserFromResponse(url, httpResponse);
@@ -316,4 +407,5 @@ public class JsonHelper {
 			throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString, statusCode);
 		}
 	}
+	
 }
