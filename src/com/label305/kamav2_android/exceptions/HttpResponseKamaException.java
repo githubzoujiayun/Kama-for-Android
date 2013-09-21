@@ -33,6 +33,16 @@ public class HttpResponseKamaException extends KamaException {
 		super(e);
 		mHttpCode = httpCode;
 	}
+	
+	public HttpResponseKamaException(Exception e, Object errorObject, int httpCode) {
+		super(e, errorObject);
+		mHttpCode = httpCode;
+	}
+	
+	public HttpResponseKamaException(String e, Object errorObject, int httpCode) {
+		super(e, errorObject);
+		mHttpCode = httpCode;
+	}
 
 	public int getHttpCode() {
 		return mHttpCode;

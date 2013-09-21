@@ -10,6 +10,10 @@ public class JsonKamaException extends KamaException {
 	public JsonKamaException(Exception e) {
 		super(e);
 	}
+	
+	public JsonKamaException(Exception e, String displayMessage) {
+		super(e, displayMessage);
+	}
 
     public JsonKamaException(String message){
         super(message);

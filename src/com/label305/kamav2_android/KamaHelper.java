@@ -35,108 +35,108 @@ public class KamaHelper extends JsonHelper {
     }
 
     public <T, U> T get(String url, Class<T> retType, String objTitle, AUTH_TYPE authType) throws KamaException {
-        return get(url, retType, null, objTitle, null, null, authType);
+        return get(url, retType, null, objTitle, null, null, authType, null, null);
     }
 
     public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, AUTH_TYPE authType) throws KamaException {
-        return get(url, retType, listType, listTitle, null, null, authType);
+        return get(url, retType, listType, listTitle, null, null, authType, null, null);
     }
 
     public <T, U> T get(String url, Class<T> retType, String objTitle, List<NameValuePair> urlData, AUTH_TYPE authType) throws KamaException {
-        return get(url, retType, null, objTitle, urlData, null, authType);
+        return get(url, retType, null, objTitle, urlData, null, authType, null, null);
     }
 
     public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, AUTH_TYPE authType)
             throws KamaException {
-        return get(url, retType, listType, listTitle, urlData, null, authType);
+        return get(url, retType, listType, listTitle, urlData, null, authType, null, null);
     }
 
     public <T, U> T get(String url, Class<T> retType, String objTitle, Map<String, String> headerData, AUTH_TYPE authType) throws KamaException {
-        return get(url, retType, null, objTitle, null, headerData, authType);
+        return get(url, retType, null, objTitle, null, headerData, authType, null, null);
     }
 
     public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, Map<String, String> headerData, AUTH_TYPE authType)
             throws KamaException {
-        return get(url, retType, listType, listTitle, null, headerData, authType);
+        return get(url, retType, listType, listTitle, null, headerData, authType, null, null);
     }
 
-    public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
-                        Map<String, String> headerData, AUTH_TYPE authType) throws KamaException {
+    public <T, U, V> T get(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
+                        Map<String, String> headerData, AUTH_TYPE authType, Class<V> errorObject, String errorTitle) throws KamaException {
         List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
         Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
-        return super.get(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData);
+        return super.get(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, errorObject, errorTitle);
     }
 
     public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> postData, AUTH_TYPE authType)
             throws KamaException {
-        return post(url, retType, listType, listTitle, null, null, postData, authType);
+        return post(url, retType, listType, listTitle, null, null, postData, authType, null, null);
     }
 
     public <T, U> T post(String url, Class<T> retType, String objTitle, List<NameValuePair> postData, AUTH_TYPE authType) throws KamaException {
-        return post(url, retType, null, objTitle, null, null, postData, authType);
+        return post(url, retType, null, objTitle, null, null, postData, authType, null, null);
     }
 
     public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
                          List<NameValuePair> postData, AUTH_TYPE authType) throws KamaException {
-        return post(url, retType, listType, listTitle, urlData, null, postData, authType);
+        return post(url, retType, listType, listTitle, urlData, null, postData, authType, null, null);
     }
 
     public <T, U> T post(String url, Class<T> retType, String objTitle, List<NameValuePair> urlData, List<NameValuePair> postData, AUTH_TYPE authType)
             throws KamaException {
-        return post(url, retType, null, objTitle, urlData, null, postData, authType);
+        return post(url, retType, null, objTitle, urlData, null, postData, authType, null, null);
     }
 
     public <T, U> T post(String url, Class<T> retType, String objTitle, Map<String, String> headerData, List<NameValuePair> postData,
                          AUTH_TYPE authType) throws KamaException {
-        return post(url, retType, null, objTitle, null, headerData, postData, authType);
+        return post(url, retType, null, objTitle, null, headerData, postData, authType, null, null);
     }
 
     public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, Map<String, String> headerData,
                          List<NameValuePair> postData, AUTH_TYPE authType) throws KamaException {
-        return post(url, retType, listType, listTitle, null, headerData, postData, authType);
+        return post(url, retType, listType, listTitle, null, headerData, postData, authType, null, null);
     }
 
-    public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
-                         Map<String, String> headerData, List<NameValuePair> postData, AUTH_TYPE authType) throws KamaException {
+    public <T, U, V> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
+                         Map<String, String> headerData, List<NameValuePair> postData, AUTH_TYPE authType, Class<V> errorObject, String errorTitle) throws KamaException {
         List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
         Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
-        return super.post(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, postData);
+        return super.post(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, postData, errorObject, errorTitle);
     }
 
     public <T, U> T put(String url, Class<T> retType, String objTitle, List<NameValuePair> postData, AUTH_TYPE authType) throws KamaException {
-        return put(url, retType, null, objTitle, null, null, postData, authType);
+        return put(url, retType, null, objTitle, null, null, postData, authType, null, null);
     }
 
     public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> postData, AUTH_TYPE authType)
             throws KamaException {
-        return put(url, retType, listType, listTitle, null, null, postData, authType);
+        return put(url, retType, listType, listTitle, null, null, postData, authType, null, null);
     }
 
     public <T, U> T put(String url, Class<T> retType, String objTitle, List<NameValuePair> urlData, List<NameValuePair> postData, AUTH_TYPE authType)
             throws KamaException {
-        return put(url, retType, null, objTitle, urlData, null, postData, authType);
+        return put(url, retType, null, objTitle, urlData, null, postData, authType, null, null);
     }
 
     public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, List<NameValuePair> postData,
                         AUTH_TYPE authType) throws KamaException {
-        return put(url, retType, listType, listTitle, urlData, null, postData, authType);
+        return put(url, retType, listType, listTitle, urlData, null, postData, authType, null, null);
     }
 
     public <T, U> T put(String url, Class<T> retType, String objTitle, Map<String, String> headerData, List<NameValuePair> postData,
                         AUTH_TYPE authType) throws KamaException {
-        return put(url, retType, null, objTitle, null, headerData, postData, authType);
+        return put(url, retType, null, objTitle, null, headerData, postData, authType, null, null);
     }
 
     public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, Map<String, String> headerData,
                         List<NameValuePair> postData, AUTH_TYPE authType) throws KamaException {
-        return put(url, retType, listType, listTitle, null, headerData, postData, authType);
+        return put(url, retType, listType, listTitle, null, headerData, postData, authType, null, null);
     }
 
-    public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
-                        Map<String, String> headerData, List<NameValuePair> putData, AUTH_TYPE authType) throws KamaException {
+    public <T, U, V> T put(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
+                        Map<String, String> headerData, List<NameValuePair> putData, AUTH_TYPE authType, Class<V> errorObject, String errorTitle) throws KamaException {
         List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
         Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
-        return super.put(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, putData);
+        return super.put(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, putData, errorObject, errorTitle);
     }
     
     public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, Map<String, String> headerData, AUTH_TYPE authType) throws KamaException {
@@ -151,14 +151,14 @@ public class KamaHelper extends JsonHelper {
     public <T, U> T delete(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, Map<String, String> headerData, AUTH_TYPE authType) throws KamaException {
         List<NameValuePair> modifiedUrlData = addNecessaryUrlParams(urlData, authType);
         Map<String, String> modifiedHeaderData = addNecessaryHeaders(headerData, authType);
-        return super.delete(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData);
+        return super.delete(url, retType, listType, listTitle, modifiedUrlData, modifiedHeaderData, null, null);
     }
 
     @Override
-    protected JsonParser getJsonParserFromResponse(String url, HttpResponse response) throws JsonKamaException, NotAuthorizedKamaException,
+    protected <V> JsonParser getJsonParserFromResponse(String url, HttpResponse response, Class<V> errorObject, String errorTitle) throws JsonKamaException, NotAuthorizedKamaException,
             HttpResponseKamaException {
         try {
-            JsonParser jsonParser = super.getJsonParserFromResponse(url, response);
+            JsonParser jsonParser = super.getJsonParserFromResponse(url, response, errorObject, errorTitle);
             JsonNode jsonResponse = mapper.readTree(jsonParser);
             JsonNode retVal = jsonResponse.get(KamaParam.RESPONSE);
             if (retVal == null) {
@@ -296,7 +296,7 @@ public class KamaHelper extends JsonHelper {
 
     @Override
     @Deprecated
-    public <T, U> T get(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, Map<String, String> headerData)
+    public <T, U, V> T get(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData, Map<String, String> headerData, Class<V> errorObj, String errorTitle)
             throws KamaException {
         throw new IllegalStateException("Only use methods which require an AUTH_TYPE!");
     }
@@ -343,8 +343,8 @@ public class KamaHelper extends JsonHelper {
 
     @Override
     @Deprecated
-    public <T, U> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
-                         Map<String, String> headerData, List<NameValuePair> postData) throws KamaException {
+    public <T, U, V> T post(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
+                         Map<String, String> headerData, List<NameValuePair> postData, Class<V> errorObj, String errorTitle) throws KamaException {
         throw new IllegalStateException("Only use methods which require an AUTH_TYPE!");
     }
 
@@ -390,8 +390,8 @@ public class KamaHelper extends JsonHelper {
 
     @Override
     @Deprecated
-    public <T, U> T put(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
-                        Map<String, String> headerData, List<NameValuePair> putData) throws KamaException {
+    public <T, U, V> T put(String url, Class<T> retType, Class<U> listType, String listTitle, List<NameValuePair> urlData,
+                        Map<String, String> headerData, List<NameValuePair> putData, Class<V> errorObj, String errorTitle) throws KamaException {
         throw new IllegalStateException("Only use methods which require an AUTH_TYPE!");
     }
 }
