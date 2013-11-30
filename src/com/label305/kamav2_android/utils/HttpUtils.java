@@ -17,6 +17,7 @@ import android.net.NetworkInfo;
 import com.label305.kamav2_android.exceptions.JsonKamaException;
 
 public class HttpUtils {
+	
 	/**
 	 * Checks if we have a valid Internet Connection on the device.
 	 * 
