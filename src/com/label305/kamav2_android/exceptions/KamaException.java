@@ -8,6 +8,8 @@ public class KamaException extends Exception {
 	private static final long serialVersionUID = 8374881555005292022L;
 	
 	private Object mErrorObj;
+	
+	private int httpStatusCode;
 
 	public KamaException(Exception e) {
 		super(e);
@@ -29,6 +31,20 @@ public class KamaException extends Exception {
 
 	public Object getErrorObj() {
 		return mErrorObj;
+	}
+
+	/**
+	 * @return the httpStatusCode
+	 */
+	public int getHttpStatusCode() {
+		return httpStatusCode;
+	}
+
+	/**
+	 * @param httpStatusCode the httpStatusCode to set
+	 */
+	public void setHttpStatusCode(int httpStatusCode) {
+		this.httpStatusCode = httpStatusCode;
 	}
 
 }
