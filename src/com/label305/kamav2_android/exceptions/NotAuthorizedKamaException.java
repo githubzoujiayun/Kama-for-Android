@@ -9,12 +9,18 @@ public class NotAuthorizedKamaException extends KamaException {
 
 	public NotAuthorizedKamaException(Exception e) {
 		super(e);
-		// TODO Auto-generated constructor stub
+	}
+	
+	public NotAuthorizedKamaException(Exception e, Object errorObj) {
+		super(e, errorObj);
 	}
 
 	public NotAuthorizedKamaException(String e) {
-		// TODO Auto-generated constructor stub
 		super(e);
+	}
+	
+	public NotAuthorizedKamaException(String e, Object errorObj) {
+		super(e, errorObj);
 	}
 
 }
