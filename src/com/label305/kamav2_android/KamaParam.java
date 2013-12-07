@@ -6,10 +6,11 @@ public class KamaParam {
 	public static String URLPARAMCONCAT = "&";
 	public static String APIKEYPARAM = "apikey";
 
-	public static enum AUTH_TYPE {
+	public static final String RESPONSE = "response";
+
+	public static enum AuthenticationType {
 		NONE, OAUTH2, APIKEY, OAUTHANDKEY
 	};
 
-	public static final String RESPONSE = "response";
 
 }
