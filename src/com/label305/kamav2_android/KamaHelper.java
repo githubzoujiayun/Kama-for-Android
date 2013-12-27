@@ -1,6 +1,7 @@
 package com.label305.kamav2_android;
 
 import android.content.Context;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,6 +14,7 @@ import com.label305.kamav2_android.exceptions.JsonKamaException;
 import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.stan.asyncutils.Buggy;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -241,13 +243,14 @@ public class KamaHelper extends JsonHelper {
     private AuthData getAuthToken() throws NotAuthorizedKamaException {
         AuthData authToken = null;
         try {
-            // get our dao
             Dao<AuthData, Integer> kamaDao = mAuthDatabaseHelper.getAuthDataDao();
 
             List<AuthData> kamaData = kamaDao.queryForAll();
 
             if (kamaData != null && kamaData.size() > 0) {
                 authToken = new AuthData(kamaData.get(0).getToken());
+            }else{
+            	throw new NotAuthorizedKamaException("Not Authorized!");
             }
         } catch (SQLException e) {
             throw new NotAuthorizedKamaException(e);
