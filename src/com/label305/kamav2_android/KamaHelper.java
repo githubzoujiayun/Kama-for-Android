@@ -23,7 +23,7 @@ import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.stan.asyncutils.Buggy;
 
-public class KamaHelper extends JsonHelper {
+public final class KamaHelper extends JsonHelper {
 
 	private AuthDatabaseHelper mAuthDatabaseHelper;
 	private String mApiKey;
