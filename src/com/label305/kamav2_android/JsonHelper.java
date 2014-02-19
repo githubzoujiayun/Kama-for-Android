@@ -1,13 +1,5 @@
 package com.label305.kamav2_android;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpResponse;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -21,6 +13,14 @@ import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
 import com.label305.stan.asyncutils.Buggy;
 import com.label305.stan.utils.HttpHelper;
+
+import org.apache.http.HttpResponse;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 /**
@@ -130,7 +130,7 @@ public class JsonHelper {
 	 * @return the parsed object.
 	 */
 	public Object executeGetObject() throws KamaException {
-		validateArguments();
+		validateGetArguments();
 		Object result = get(url, returnTypeClass, false, jsonTitle, urlData, headerData, errorTypeClass, errorTitle);
 		cleanup();
 		return result;
@@ -143,7 +143,7 @@ public class JsonHelper {
 	 * @return a list of parsed objects.
 	 */
 	public List<? extends Object> executeGetObjectsList() throws KamaException {
-		validateArguments();
+		validateGetArguments();
 		List<? extends Object> result = (List<? extends Object>) get(url, returnTypeClass, true, jsonTitle, urlData, headerData, errorTypeClass, errorTitle);
 		cleanup();
 		return result;
@@ -227,6 +227,13 @@ public class JsonHelper {
 		return result;
 	}
 
+    private void validateGetArguments(){
+        validateArguments();
+        if(returnTypeClass == null){
+            throw new IllegalArgumentException("Provide a return type class!");
+        }
+    }
+
 	private void validatePutArguments() {
 		validateArguments();
 		if (putData == null) {
@@ -278,8 +285,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
@@ -312,8 +317,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
@@ -348,8 +351,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
@@ -382,8 +383,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
