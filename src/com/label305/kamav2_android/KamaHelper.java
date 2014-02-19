@@ -1,13 +1,5 @@
 package com.label305.kamav2_android;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpResponse;
-
 import android.content.Context;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -21,7 +13,14 @@ import com.label305.kamav2_android.exceptions.HttpResponseKamaException;
 import com.label305.kamav2_android.exceptions.JsonKamaException;
 import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
-import com.label305.stan.asyncutils.Buggy;
+
+import org.apache.http.HttpResponse;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class KamaHelper extends JsonHelper {
 
@@ -117,12 +116,10 @@ public final class KamaHelper extends JsonHelper {
 			JsonNode jsonResponse = mapper.readTree(jsonParser);
 			JsonNode retVal = jsonResponse.get(KamaParam.RESPONSE);
 			if (retVal == null) {
-				Buggy.report(new Exception("Unexpected jsontitle. Not found: " + KamaParam.RESPONSE), url);
 				throw new JsonKamaException("Unexpected jsontitle. Not found: " + KamaParam.RESPONSE);
 			}
 			return retVal.traverse();
 		} catch (JsonParseException e) {
-			Buggy.report(e, url);
 			throw new JsonKamaException(e);
 		} catch (IOException e) {
 			throw new JsonKamaException(e);

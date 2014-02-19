@@ -11,7 +11,6 @@ import com.label305.kamav2_android.exceptions.JsonKamaException;
 import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
-import com.label305.stan.asyncutils.Buggy;
 import com.label305.stan.utils.HttpHelper;
 
 import org.apache.http.HttpResponse;
@@ -420,10 +419,8 @@ public class JsonHelper {
 		try {
 			retVal = getJsonObject(url, jsonParser, retType, isList, objTitle);
 		} catch (JsonParseException e) {
-			Buggy.report(e, url);
 			throw new JsonKamaException(e);
 		} catch (JsonMappingException e) {
-			Buggy.report(e, url);
 			throw new JsonKamaException(e);
 		} catch (IOException e) {
 			throw new JsonKamaException(e);
@@ -441,7 +438,6 @@ public class JsonHelper {
 				JsonNode response = mapper.readTree(jsonParser);
 				JsonNode responseStr = response.get(objTitle);
 				if (responseStr == null) {
-					Buggy.report(new Exception("Unexpected jsontitle. Not found: " + objTitle), url);
 					throw new JsonKamaException("Unexpected jsontitle. Not found: " + objTitle);
 				}
 				JsonParser jp1 = responseStr.traverse();
@@ -520,7 +516,6 @@ public class JsonHelper {
 			try {
 				jp = jsonFactory.createJsonParser(responseString);
 			} catch (JsonParseException e) {
-				Buggy.report(e, url + "\n\n" + responseString);
 				throw new JsonKamaException(e);
 			} catch (IOException e) {
 				throw new JsonKamaException(e);
@@ -549,10 +544,8 @@ public class JsonHelper {
 				errorObj = getErrorObject(url, responseString, errorObject, errorTitle);
 			}
 
-			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString, statusCode), url);
 			throw new HttpResponseKamaException("Internal Server Error. " + url + "\n" + responseString, errorObj, statusCode);
 		default:
-			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString, statusCode), url);
 			throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString, statusCode);
 		}
 	}
