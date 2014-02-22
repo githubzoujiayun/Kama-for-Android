@@ -1,13 +1,5 @@
 package com.label305.kamav2_android;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpResponse;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -19,8 +11,15 @@ import com.label305.kamav2_android.exceptions.JsonKamaException;
 import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
 import com.label305.kamav2_android.utils.HttpUtils;
-import com.label305.stan.asyncutils.Buggy;
 import com.label305.stan.utils.HttpHelper;
+
+import org.apache.http.HttpResponse;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 /**
@@ -130,7 +129,7 @@ public class JsonHelper {
 	 * @return the parsed object.
 	 */
 	public Object executeGetObject() throws KamaException {
-		validateArguments();
+		validateGetArguments();
 		Object result = get(url, returnTypeClass, false, jsonTitle, urlData, headerData, errorTypeClass, errorTitle);
 		cleanup();
 		return result;
@@ -143,7 +142,7 @@ public class JsonHelper {
 	 * @return a list of parsed objects.
 	 */
 	public List<? extends Object> executeGetObjectsList() throws KamaException {
-		validateArguments();
+		validateGetArguments();
 		List<? extends Object> result = (List<? extends Object>) get(url, returnTypeClass, true, jsonTitle, urlData, headerData, errorTypeClass, errorTitle);
 		cleanup();
 		return result;
@@ -227,6 +226,13 @@ public class JsonHelper {
 		return result;
 	}
 
+    private void validateGetArguments(){
+        validateArguments();
+        if(returnTypeClass == null){
+            throw new IllegalArgumentException("Provide a return type class!");
+        }
+    }
+
 	private void validatePutArguments() {
 		validateArguments();
 		if (putData == null) {
@@ -278,8 +284,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
@@ -312,8 +316,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
@@ -348,8 +350,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
@@ -382,8 +382,6 @@ public class JsonHelper {
 	 *            request url
 	 * @param retType
 	 *            Return class type
-	 * @param listType
-	 *            Element class of list items
 	 * @param jsonTitle
 	 *            Title of JsonArray
 	 * @param urlData
@@ -421,10 +419,8 @@ public class JsonHelper {
 		try {
 			retVal = getJsonObject(url, jsonParser, retType, isList, objTitle);
 		} catch (JsonParseException e) {
-			Buggy.report(e, url);
 			throw new JsonKamaException(e);
 		} catch (JsonMappingException e) {
-			Buggy.report(e, url);
 			throw new JsonKamaException(e);
 		} catch (IOException e) {
 			throw new JsonKamaException(e);
@@ -442,7 +438,6 @@ public class JsonHelper {
 				JsonNode response = mapper.readTree(jsonParser);
 				JsonNode responseStr = response.get(objTitle);
 				if (responseStr == null) {
-					Buggy.report(new Exception("Unexpected jsontitle. Not found: " + objTitle), url);
 					throw new JsonKamaException("Unexpected jsontitle. Not found: " + objTitle);
 				}
 				JsonParser jp1 = responseStr.traverse();
@@ -521,7 +516,6 @@ public class JsonHelper {
 			try {
 				jp = jsonFactory.createJsonParser(responseString);
 			} catch (JsonParseException e) {
-				Buggy.report(e, url + "\n\n" + responseString);
 				throw new JsonKamaException(e);
 			} catch (IOException e) {
 				throw new JsonKamaException(e);
@@ -550,10 +544,8 @@ public class JsonHelper {
 				errorObj = getErrorObject(url, responseString, errorObject, errorTitle);
 			}
 
-			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString, statusCode), url);
 			throw new HttpResponseKamaException("Internal Server Error. " + url + "\n" + responseString, errorObj, statusCode);
 		default:
-			Buggy.report(new HttpResponseKamaException(response.getStatusLine().getStatusCode() + "\n\n" + responseString, statusCode), url);
 			throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString, statusCode);
 		}
 	}
