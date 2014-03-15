@@ -62,39 +62,63 @@ public class JsonHelper {
 		this.headerData = headerData;
 	}
 
-	public void setPostData(Map<String, Object> postData) throws UnsupportedEncodingException {
+	public void setPostData(Map<String, Object> postData) throws KamaException {
         if(postData != null) {
-            this.postData = new UrlEncodedFormEntity(HttpHelper.convert(postData));
+            try {
+                this.postData = new UrlEncodedFormEntity(HttpHelper.convert(postData));
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
         }
 	}
 
-    public void setPostData(String jsonData) throws UnsupportedEncodingException {
+    public void setPostData(String jsonData) throws KamaException {
         if(jsonData != null) {
-            this.postData = new StringEntity(jsonData);
+            try {
+                this.postData = new StringEntity(jsonData);
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
         }
     }
 
-    public void setPutData(Map<String, Object> putData) throws UnsupportedEncodingException {
+    public void setPutData(Map<String, Object> putData) throws KamaException {
         if(putData != null) {
-            this.putData = new UrlEncodedFormEntity(HttpHelper.convert(putData));
+            try {
+                this.putData = new UrlEncodedFormEntity(HttpHelper.convert(putData));
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
         }
     }
 
-    public void setPutData(String jsonData) throws UnsupportedEncodingException {
+    public void setPutData(String jsonData) throws KamaException {
         if(jsonData != null) {
-            this.putData = new StringEntity(jsonData);
+            try {
+                this.putData = new StringEntity(jsonData);
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
         }
     }
 
-    public void setDeleteData(Map<String, Object> deleteData) throws UnsupportedEncodingException {
+    public void setDeleteData(Map<String, Object> deleteData) throws KamaException {
         if(deleteData != null) {
-            this.deleteData = new UrlEncodedFormEntity(HttpHelper.convert(deleteData));
+            try {
+                this.deleteData = new UrlEncodedFormEntity(HttpHelper.convert(deleteData));
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
         }
     }
 
-    public void setDeleteData(String jsonData) throws UnsupportedEncodingException {
+    public void setDeleteData(String jsonData) throws KamaException {
         if(jsonData != null) {
-            this.deleteData = new StringEntity(jsonData);
+            try {
+                this.deleteData = new StringEntity(jsonData);
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
         }
     }
 
