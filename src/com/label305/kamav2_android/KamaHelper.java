@@ -13,6 +13,7 @@ import com.label305.kamav2_android.exceptions.HttpResponseKamaException;
 import com.label305.kamav2_android.exceptions.JsonKamaException;
 import com.label305.kamav2_android.exceptions.KamaException;
 import com.label305.kamav2_android.exceptions.NotAuthorizedKamaException;
+import com.label305.kamav2_android.objects.ErrorObj;
 
 import org.apache.http.HttpResponse;
 
@@ -58,6 +59,10 @@ public final class KamaHelper extends JsonHelper {
 		validateAuthType();
 		setUrlData(addNecessaryUrlParams(getUrlData(), mAuthType));
 		setHeaderData(addNecessaryHeaders(getHeaderData(), mAuthType));
+        if(getErrorTypeClass() == null) {
+            setErrorTypeClass(ErrorObj.class);
+            setErrorTitle("meta");
+        }
 	}
 
 	@Override

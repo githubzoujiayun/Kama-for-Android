@@ -14,8 +14,12 @@ import com.label305.kamav2_android.utils.HttpUtils;
 import com.label305.stan.utils.HttpHelper;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.entity.StringEntity;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,9 +36,9 @@ public class JsonHelper {
 	private String jsonTitle;
 	private Map<String, Object> urlData;
 	private Map<String, Object> headerData;
-	private Map<String, Object> postData;
-	private Map<String, Object> putData;
-	private Map<String, Object> deleteData;
+	private AbstractHttpEntity postData;
+	private AbstractHttpEntity putData;
+	private AbstractHttpEntity deleteData;
 	private Class<?> errorTypeClass;
 	private String errorTitle;
 
@@ -58,17 +62,65 @@ public class JsonHelper {
 		this.headerData = headerData;
 	}
 
-	public void setPostData(Map<String, Object> postData) {
-		this.postData = postData;
+	public void setPostData(Map<String, Object> postData) throws KamaException {
+        if(postData != null) {
+            try {
+                this.postData = new UrlEncodedFormEntity(HttpHelper.convert(postData));
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
+        }
 	}
 
-	public void setPutData(Map<String, Object> putData) {
-		this.putData = putData;
-	}
+    public void setPostData(String jsonData) throws KamaException {
+        if(jsonData != null) {
+            try {
+                this.postData = new StringEntity(jsonData);
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
+        }
+    }
 
-	public void setDeleteData(Map<String, Object> deleteData) {
-		this.deleteData = deleteData;
-	}
+    public void setPutData(Map<String, Object> putData) throws KamaException {
+        if(putData != null) {
+            try {
+                this.putData = new UrlEncodedFormEntity(HttpHelper.convert(putData));
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
+        }
+    }
+
+    public void setPutData(String jsonData) throws KamaException {
+        if(jsonData != null) {
+            try {
+                this.putData = new StringEntity(jsonData);
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
+        }
+    }
+
+    public void setDeleteData(Map<String, Object> deleteData) throws KamaException {
+        if(deleteData != null) {
+            try {
+                this.deleteData = new UrlEncodedFormEntity(HttpHelper.convert(deleteData));
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
+        }
+    }
+
+    public void setDeleteData(String jsonData) throws KamaException {
+        if(jsonData != null) {
+            try {
+                this.deleteData = new StringEntity(jsonData);
+            } catch (UnsupportedEncodingException e) {
+                throw new KamaException(e);
+            }
+        }
+    }
 
 	public void setErrorTypeClass(Class<?> errorTypeClass) {
 		this.errorTypeClass = errorTypeClass;
@@ -98,15 +150,15 @@ public class JsonHelper {
 		return headerData;
 	}
 
-	public Map<String, Object> getPostData() {
+	public AbstractHttpEntity getPostData() {
 		return postData;
 	}
 
-	public Map<String, Object> getPutData() {
+	public AbstractHttpEntity getPutData() {
 		return putData;
 	}
 
-	public Map<String, Object> getDeleteData() {
+	public AbstractHttpEntity getDeleteData() {
 		return deleteData;
 	}
 
@@ -327,7 +379,7 @@ public class JsonHelper {
 	 * @return returns object of Class T
 	 * @throws KamaException
 	 */
-	protected <T, V> T post(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, Map<String, Object> postData,
+	protected <T, V> T post(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, AbstractHttpEntity postData,
 			Class<V> errorObject, String errorTitle) throws KamaException {
 		String finalUrl = addUrlParams(url, urlData);
 		Map<String, Object> finalHeaderData = addNecessaryHeaders(headerData);
@@ -359,7 +411,7 @@ public class JsonHelper {
 	 * @return true if successfull, otherwise throws exception
 	 * @throws KamaException
 	 */
-	protected <T, V> T delete(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, Map<String, Object> deleteData,
+	protected <T, V> T delete(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, AbstractHttpEntity deleteData,
 			Class<V> errorObject, String errorTitle) throws KamaException {
 		String finalUrl = addUrlParams(url, urlData);
 		Map<String, Object> finalHeaderData = addNecessaryHeaders(headerData);
@@ -393,7 +445,7 @@ public class JsonHelper {
 	 * @return returns object of Class T
 	 * @throws KamaException
 	 */
-	public <T, V> T put(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, Map<String, Object> putData, Class<V> errorObject,
+	public <T, V> T put(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, AbstractHttpEntity putData, Class<V> errorObject,
 			String errorTitle) throws KamaException {
 		String finalUrl = addUrlParams(url, urlData);
 		Map<String, Object> finalHeaderData = addNecessaryHeaders(headerData);
