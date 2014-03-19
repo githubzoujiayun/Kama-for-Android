@@ -287,23 +287,14 @@ public class JsonHelper {
 
 	private void validatePutArguments() {
 		validateArguments();
-		if (putData == null) {
-			throw new IllegalArgumentException("Provide put data!");
-		}
 	}
 
 	private void validateDeleteArguments() {
 		validateArguments();
-		if (deleteData == null) {
-			throw new IllegalArgumentException("Provide delete data!");
-		}
 	}
 
 	private void validatePostArguments() {
 		validateArguments();
-		if (postData == null) {
-			throw new IllegalArgumentException("Provide post data!");
-		}
 	}
 
 	private void validateArguments() {
