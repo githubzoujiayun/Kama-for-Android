@@ -301,10 +301,6 @@ public class JsonHelper {
         if (url == null) {
             throw new IllegalArgumentException("Provide an url!");
         }
-
-        if (returnTypeClass == null) {
-            throw new IllegalArgumentException("Provide a return type!");
-        }
     }
 
     protected void cleanup() {
@@ -457,6 +453,11 @@ public class JsonHelper {
     protected <T, V> T parseObject(String url, HttpResponse httpResponse, Class<T> retType, boolean isList, String objTitle, Class<V> errorObject, String errorTitle) throws JsonKamaException,
                                                                                                                                                                              NotAuthorizedKamaException, HttpResponseKamaException, JsonParseException, IOException {
         JsonParser jsonParser = getJsonParserFromResponse(url, httpResponse, errorObject, errorTitle);
+
+        if (retType == null) {
+            return null;
+        }
+
         T retVal = null;
 
         try {
