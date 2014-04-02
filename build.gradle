@@ -1,6 +1,10 @@
 
 apply plugin: 'android-library'
 
+repositories {
+    maven { url 'http://download.crashlytics.com/maven' }
+}
+
 dependencies {
     compile project(':stan')
     compile files('libs/jackson-annotations-2.0.5.jar')
