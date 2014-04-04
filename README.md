@@ -8,8 +8,8 @@ This library includes the [Stan](https://bitbucket.org/Label305/stan-android) li
 To use this library, make the following changes:
 
  * To `settings.gradle`:
- 
-s
+
+
 
 
      include ':kama'
