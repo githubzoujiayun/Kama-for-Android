@@ -17,15 +17,16 @@ repositories {
 dependencies {
     compile project(':stan')
 
-    compile files('libs/jackson-annotations-2.0.5.jar')
-    compile files('libs/jackson-core-2.0.5.jar')
-    compile files('libs/jackson-databind-2.0.5.jar')
-    compile files('libs/jettison-1.2.jar')
-    compile files('libs/oauth2-client.jar')
-    compile files('libs/oauth2-common-0.2-20100928.154856-1.jar')
-    compile files('libs/oauth2-httpclient4.jar')
-    compile files('libs/slf4j-api-1.7.2.jar')
-	
+    compile 'com.fasterxml.jackson.core:jackson-core:2.3.+'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.+'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.+'
+
+    compile 'net.smartam.leeloo:oauth2-client:0.1'
+    compile 'net.smartam.leeloo:oauth2-common:0.1'
+    compile 'net.smartam.leeloo:oauth2-httpclient4:0.1'
+
+    /* Test libraries */
+
     androidTestCompile('org.mockito:mockito-core:1.9.5') { exclude group: 'org.hamcrest' }
 //    androidTestCompile('com.google.dexmaker:dexmaker-mockito:1.1') { exclude group: 'org.hamcrest' }
     androidTestCompile('junit:junit:4.11') { exclude group: 'org.hamcrest' }
