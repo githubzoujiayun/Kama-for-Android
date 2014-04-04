@@ -10,6 +10,7 @@ To use this library, make the following changes:
  * To `settings.gradle`:
 
 
+
      include ':kama'
      include ':stan'
 
@@ -18,6 +19,7 @@ To use this library, make the following changes:
      // You can use the stan library that comes with kama, or provide your own path.
 
  * Your app's `build.gradle`:
+
 
 
      repositories {
