@@ -25,262 +25,269 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "UnusedDeclaration"})
 /**
  * Helper class for executing http requests and parsing output. 
  */
 public class JsonHelper {
 
-    private String url;
-    private Class<?> returnTypeClass;
-    private String jsonTitle;
-    private Map<String, Object> urlData;
-    private Map<String, Object> headerData;
-    private AbstractHttpEntity postData;
-    private AbstractHttpEntity putData;
-    private AbstractHttpEntity deleteData;
-    private Class<?> errorTypeClass;
-    private String errorTitle;
+    private static final int HTTP_OK = 200;
+    private static final int HTTP_BAD_REQUEST = 400;
+    private static final int HTTP_UNAUTHORIZED = 401;
+    private static final int HTTP_NOT_FOUND = 404;
+    private static final int HTTP_INTERNAL_ERROR = 500;
+    private final ObjectMapper mObjectMapper = new ObjectMapper();
 
-    public void setUrl(String url) {
-        this.url = url;
+    private String mUrl;
+    private Class<?> mReturnTypeClass;
+    private String mJsonTitle;
+    private Map<String, Object> mUrlData;
+    private Map<String, Object> mHeaderData;
+    private AbstractHttpEntity mPostData;
+    private AbstractHttpEntity mPutData;
+    private AbstractHttpEntity mDeleteData;
+    private Class<?> mErrorTypeClass;
+    private String mErrorTitle;
+
+    public void setUrl(final String url) {
+        mUrl = url;
     }
 
-    public void setReturnTypeClass(Class<?> returnTypeClass) {
-        this.returnTypeClass = returnTypeClass;
+    public void setReturnTypeClass(final Class<?> returnTypeClass) {
+        mReturnTypeClass = returnTypeClass;
     }
 
-    public void setJsonTitle(String jsonTitle) {
-        this.jsonTitle = jsonTitle;
+    public void setJsonTitle(final String jsonTitle) {
+        mJsonTitle = jsonTitle;
     }
 
-    public void setUrlData(Map<String, Object> urlData) {
-        this.urlData = urlData;
+    public void setUrlData(final Map<String, Object> urlData) {
+        mUrlData = urlData;
     }
 
-    public void setHeaderData(Map<String, Object> headerData) {
-        this.headerData = headerData;
+    public void setHeaderData(final Map<String, Object> headerData) {
+        mHeaderData = headerData;
     }
 
-    public void setPostData(Map<String, Object> postData) throws KamaException {
+    public void setPostData(final Map<String, Object> postData) throws KamaException {
         if (postData != null) {
             try {
-                this.postData = new UrlEncodedFormEntity(HttpHelper.convert(postData));
+                mPostData = new UrlEncodedFormEntity(HttpHelper.convert(postData));
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setPostData(String jsonData) throws KamaException {
+    public void setPostData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                this.postData = new StringEntity(jsonData);
+                mPostData = new StringEntity(jsonData);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setPutData(Map<String, Object> putData) throws KamaException {
+    public void setPutData(final Map<String, Object> putData) throws KamaException {
         if (putData != null) {
             try {
-                this.putData = new UrlEncodedFormEntity(HttpHelper.convert(putData));
+                mPutData = new UrlEncodedFormEntity(HttpHelper.convert(putData));
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setPutData(String jsonData) throws KamaException {
+    public void setPutData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                this.putData = new StringEntity(jsonData);
+                mPutData = new StringEntity(jsonData);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setDeleteData(Map<String, Object> deleteData) throws KamaException {
+    public void setDeleteData(final Map<String, Object> deleteData) throws KamaException {
         if (deleteData != null) {
             try {
-                this.deleteData = new UrlEncodedFormEntity(HttpHelper.convert(deleteData));
+                mDeleteData = new UrlEncodedFormEntity(HttpHelper.convert(deleteData));
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setDeleteData(String jsonData) throws KamaException {
+    public void setDeleteData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                this.deleteData = new StringEntity(jsonData);
+                mDeleteData = new StringEntity(jsonData);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setErrorTypeClass(Class<?> errorTypeClass) {
-        this.errorTypeClass = errorTypeClass;
+    public void setErrorTypeClass(final Class<?> errorTypeClass) {
+        mErrorTypeClass = errorTypeClass;
     }
 
-    public void setErrorTitle(String errorTitle) {
-        this.errorTitle = errorTitle;
+    public void setErrorTitle(final String errorTitle) {
+        mErrorTitle = errorTitle;
     }
 
     public String getUrl() {
-        return url;
+        return mUrl;
     }
 
     public Class<?> getReturnTypeClass() {
-        return returnTypeClass;
+        return mReturnTypeClass;
     }
 
     public String getJsonTitle() {
-        return jsonTitle;
+        return mJsonTitle;
     }
 
     public Map<String, Object> getUrlData() {
-        return urlData;
+        return mUrlData;
     }
 
     public Map<String, Object> getHeaderData() {
-        return headerData;
+        return mHeaderData;
     }
 
     public AbstractHttpEntity getPostData() {
-        return postData;
+        return mPostData;
     }
 
     public AbstractHttpEntity getPutData() {
-        return putData;
+        return mPutData;
     }
 
     public AbstractHttpEntity getDeleteData() {
-        return deleteData;
+        return mDeleteData;
     }
 
     public Class<?> getErrorTypeClass() {
-        return errorTypeClass;
+        return mErrorTypeClass;
     }
 
     public String getErrorTitle() {
-        return errorTitle;
+        return mErrorTitle;
     }
 
     public ObjectMapper getMapper() {
-        return mapper;
+        return mObjectMapper;
     }
 
     /**
-     * Execute a get request for a single object. Required parameters: url,
+     * Execute a get request for a single object. Required parameters: mUrl,
      * returnType.
      *
      * @return the parsed object.
      */
     public Object executeGetObject() throws KamaException {
         validateGetArguments();
-        Object result = get(url, returnTypeClass, false, jsonTitle, urlData, headerData, errorTypeClass, errorTitle);
+        Object result = get(mUrl, mReturnTypeClass, false, mJsonTitle, mUrlData, mHeaderData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     /**
-     * Execute a get request for a list of objects. Required parameters: url,
+     * Execute a get request for a list of objects. Required parameters: mUrl,
      * returnType.
      *
      * @return a list of parsed objects.
      */
-    public List<? extends Object> executeGetObjectsList() throws KamaException {
+    public List<?> executeGetObjectsList() throws KamaException {
         validateGetArguments();
-        List<? extends Object> result = (List<? extends Object>) get(url, returnTypeClass, true, jsonTitle, urlData, headerData, errorTypeClass, errorTitle);
+        List<?> result = (List<?>) get(mUrl, mReturnTypeClass, true, mJsonTitle, mUrlData, mHeaderData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     /**
-     * Execute a post request for a single object. Required parameters: url,
-     * returnType, postData.
+     * Execute a post request for a single object. Required parameters: mUrl,
+     * returnType, mPostData.
      *
      * @return a parsed object.
      */
     public Object executePost() throws KamaException {
         validatePostArguments();
-        Object result = post(url, returnTypeClass, false, jsonTitle, urlData, headerData, postData, errorTypeClass, errorTitle);
+        Object result = post(mUrl, mReturnTypeClass, false, mJsonTitle, mUrlData, mHeaderData, mPostData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     /**
-     * Execute a post request for a list of objects. Required parameters: url,
-     * returnType, postData
+     * Execute a post request for a list of objects. Required parameters: mUrl,
+     * returnType, mPostData
      *
      * @return a list of parsed objects.
      */
-    public List<? extends Object> executePostObjectsList() throws KamaException {
+    public List<?> executePostObjectsList() throws KamaException {
         validatePostArguments();
-        List<? extends Object> result = (List<? extends Object>) post(url, returnTypeClass, true, jsonTitle, urlData, headerData, postData, errorTypeClass, errorTitle);
+        List<?> result = (List<?>) post(mUrl, mReturnTypeClass, true, mJsonTitle, mUrlData, mHeaderData, mPostData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     /**
-     * Execute a put request for a single object. Required parameters: url,
-     * returnType, putData.
+     * Execute a put request for a single object. Required parameters: mUrl,
+     * returnType, mPutData.
      *
      * @return a parsed object.
      */
     public Object executePut() throws KamaException {
         validatePutArguments();
-        Object result = put(url, returnTypeClass, false, jsonTitle, urlData, headerData, putData, errorTypeClass, errorTitle);
+        Object result = put(mUrl, mReturnTypeClass, false, mJsonTitle, mUrlData, mHeaderData, mPutData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     /**
-     * Execute a put request for a list of objects. Required parameters: url,
-     * returnType, putData
+     * Execute a put request for a list of objects. Required parameters: mUrl,
+     * returnType, mPutData
      *
      * @return a list of parsed objects.
      */
-    public List<? extends Object> executePutObjectsList() throws KamaException {
+    public List<?> executePutObjectsList() throws KamaException {
         validatePutArguments();
-        List<? extends Object> result = (List<? extends Object>) put(url, returnTypeClass, true, jsonTitle, urlData, headerData, putData, errorTypeClass, errorTitle);
+        List<?> result = (List<?>) put(mUrl, mReturnTypeClass, true, mJsonTitle, mUrlData, mHeaderData, mPutData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     /**
-     * Execute a delete request for a single object. Required parameters: url,
-     * returnType, deleteData.
+     * Execute a delete request for a single object. Required parameters: mUrl,
+     * returnType, mDeleteData.
      *
      * @return a parsed object.
      */
     public Object executeDelete() throws KamaException {
         validateDeleteArguments();
-        Object result = delete(url, returnTypeClass, false, jsonTitle, urlData, headerData, deleteData, errorTypeClass, errorTitle);
+        Object result = delete(mUrl, mReturnTypeClass, false, mJsonTitle, mUrlData, mHeaderData, mDeleteData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     /**
-     * Execute a delete request for a list of objects. Required parameters: url,
-     * returnType, deleteData
+     * Execute a delete request for a list of objects. Required parameters: mUrl,
+     * returnType, mDeleteData
      *
      * @return a list of parsed objects.
      */
-    public List<? extends Object> executeDeleteObjectsList() throws KamaException {
+    public List<?> executeDeleteObjectsList() throws KamaException {
         validateDeleteArguments();
-        List<? extends Object> result = (List<? extends Object>) delete(url, returnTypeClass, true, jsonTitle, urlData, headerData, deleteData, errorTypeClass, errorTitle);
+        List<?> result = (List<?>) delete(mUrl, mReturnTypeClass, true, mJsonTitle, mUrlData, mHeaderData, mDeleteData, mErrorTypeClass, mErrorTitle);
         cleanup();
         return result;
     }
 
     private void validateGetArguments() {
         validateArguments();
-        if (returnTypeClass == null) {
+        if (mReturnTypeClass == null) {
             throw new IllegalArgumentException("Provide a return type class!");
         }
     }
@@ -298,29 +305,27 @@ public class JsonHelper {
     }
 
     private void validateArguments() {
-        if (url == null) {
+        if (mUrl == null) {
             throw new IllegalArgumentException("Provide an url!");
         }
     }
 
     protected void cleanup() {
-        url = null;
-        returnTypeClass = null;
-        jsonTitle = null;
-        urlData = null;
-        headerData = null;
-        postData = null;
-        putData = null;
-        deleteData = null;
-        errorTypeClass = null;
-        errorTitle = null;
+        mUrl = null;
+        mReturnTypeClass = null;
+        mJsonTitle = null;
+        mUrlData = null;
+        mHeaderData = null;
+        mPostData = null;
+        mPutData = null;
+        mDeleteData = null;
+        mErrorTypeClass = null;
+        mErrorTitle = null;
     }
-
-    protected ObjectMapper mapper = new ObjectMapper();
 
     /**
      * @param url
-     *            request url
+     *            request mUrl
      * @param retType
      *            Return class type
      * @param jsonTitle
@@ -332,19 +337,20 @@ public class JsonHelper {
      * @return returns object of Class T
      * @throws KamaException
      */
-    protected <T, V> T get(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, Class<V> errorObject, String errorTitle)
+    protected <T, V> T get(final String url, final Class<T> retType, final boolean isList, final String jsonTitle, final Map<String, Object> urlData, final Map<String, Object> headerData,
+                           final Class<V> errorObject, final String errorTitle)
             throws KamaException {
         String finalUrl = addUrlParams(url, urlData);
         Map<String, Object> finalHeaderData = addNecessaryHeaders(headerData);
 
         HttpHelper httpHelper = new HttpHelper();
         try {
-            try {
-                HttpResponse httpResponse = httpHelper.get(finalUrl, finalHeaderData);
-                return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
-            } catch (IOException e) {
-                throw new KamaException(e);
-            }
+            HttpResponse httpResponse = httpHelper.get(finalUrl, finalHeaderData);
+            return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
+        } catch (JsonParseException e) {
+            throw new KamaException(e);
+        } catch (IOException e) {
+            throw new KamaException(e);
         } finally {
             httpHelper.close();
         }
@@ -352,7 +358,7 @@ public class JsonHelper {
 
     /**
      * @param url
-     *            request url
+     *            request mUrl
      * @param retType
      *            Return class type
      * @param jsonTitle
@@ -366,19 +372,20 @@ public class JsonHelper {
      * @return returns object of Class T
      * @throws KamaException
      */
-    protected <T, V> T post(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, AbstractHttpEntity postData,
-                            Class<V> errorObject, String errorTitle) throws KamaException {
+    protected <T, V> T post(final String url, final Class<T> retType, final boolean isList, final String jsonTitle, final Map<String, Object> urlData, final Map<String, Object> headerData,
+                            final AbstractHttpEntity postData,
+                            final Class<V> errorObject, final String errorTitle) throws KamaException {
         String finalUrl = addUrlParams(url, urlData);
         Map<String, Object> finalHeaderData = addNecessaryHeaders(headerData);
 
         HttpHelper httpHelper = new HttpHelper();
         try {
-            try {
-                HttpResponse httpResponse = httpHelper.post(finalUrl, finalHeaderData, postData);
-                return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
-            } catch (IOException e) {
-                throw new KamaException(e);
-            }
+            HttpResponse httpResponse = httpHelper.post(finalUrl, finalHeaderData, postData);
+            return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
+        } catch (JsonParseException e) {
+            throw new KamaException(e);
+        } catch (IOException e) {
+            throw new KamaException(e);
         } finally {
             httpHelper.close();
         }
@@ -386,7 +393,7 @@ public class JsonHelper {
 
     /**
      * @param url
-     *            request url
+     *            request mUrl
      * @param retType
      *            Return class type
      * @param jsonTitle
@@ -398,19 +405,20 @@ public class JsonHelper {
      * @return true if successfull, otherwise throws exception
      * @throws KamaException
      */
-    protected <T, V> T delete(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, AbstractHttpEntity deleteData,
-                              Class<V> errorObject, String errorTitle) throws KamaException {
+    protected <T, V> T delete(final String url, final Class<T> retType, final boolean isList, final String jsonTitle, final Map<String, Object> urlData, final Map<String, Object> headerData,
+                              final AbstractHttpEntity deleteData,
+                              final Class<V> errorObject, final String errorTitle) throws KamaException {
         String finalUrl = addUrlParams(url, urlData);
         Map<String, Object> finalHeaderData = addNecessaryHeaders(headerData);
 
         HttpHelper httpHelper = new HttpHelper();
         try {
-            try {
-                HttpResponse httpResponse = httpHelper.delete(finalUrl, finalHeaderData, deleteData);
-                return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
-            } catch (IOException e) {
-                throw new KamaException(e);
-            }
+            HttpResponse httpResponse = httpHelper.delete(finalUrl, finalHeaderData, deleteData);
+            return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
+        } catch (JsonParseException e) {
+            throw new KamaException(e);
+        } catch (IOException e) {
+            throw new KamaException(e);
         } finally {
             httpHelper.close();
         }
@@ -418,7 +426,7 @@ public class JsonHelper {
 
     /**
      * @param url
-     *            request url
+     *            request mUrl
      * @param retType
      *            Return class type
      * @param jsonTitle
@@ -432,36 +440,35 @@ public class JsonHelper {
      * @return returns object of Class T
      * @throws KamaException
      */
-    public <T, V> T put(String url, Class<T> retType, boolean isList, String jsonTitle, Map<String, Object> urlData, Map<String, Object> headerData, AbstractHttpEntity putData, Class<V> errorObject,
-                        String errorTitle) throws KamaException {
+    public <T, V> T put(final String url, final Class<T> retType, final boolean isList, final String jsonTitle, final Map<String, Object> urlData, final Map<String, Object> headerData,
+                        final AbstractHttpEntity putData, final Class<V> errorObject,
+                        final String errorTitle) throws KamaException {
         String finalUrl = addUrlParams(url, urlData);
         Map<String, Object> finalHeaderData = addNecessaryHeaders(headerData);
 
         HttpHelper httpHelper = new HttpHelper();
         try {
-            try {
-                HttpResponse httpResponse = httpHelper.put(finalUrl, finalHeaderData, putData);
-                return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
-            } catch (IOException e) {
-                throw new KamaException(e);
-            }
+            HttpResponse httpResponse = httpHelper.put(finalUrl, finalHeaderData, putData);
+            return parseObject(url, httpResponse, retType, isList, jsonTitle, errorObject, errorTitle);
+        } catch (JsonParseException e) {
+            throw new KamaException(e);
+        } catch (IOException e) {
+            throw new KamaException(e);
         } finally {
             httpHelper.close();
         }
     }
 
-    protected <T, V> T parseObject(String url, HttpResponse httpResponse, Class<T> retType, boolean isList, String objTitle, Class<V> errorObject, String errorTitle) throws JsonKamaException,
-                                                                                                                                                                             NotAuthorizedKamaException, HttpResponseKamaException, JsonParseException, IOException {
+    protected <T, V> T parseObject(final String url, final HttpResponse httpResponse, final Class<T> retType, final boolean isList, final String objTitle, final Class<V> errorObject,
+                                   final String errorTitle) throws KamaException, IOException {
         JsonParser jsonParser = getJsonParserFromResponse(url, httpResponse, errorObject, errorTitle);
 
         if (retType == null) {
             return null;
         }
 
-        T retVal = null;
-
         try {
-            retVal = getJsonObject(url, jsonParser, retType, isList, objTitle);
+            return getJsonObject(url, jsonParser, retType, isList, objTitle);
         } catch (JsonParseException e) {
             throw new JsonKamaException(e);
         } catch (JsonMappingException e) {
@@ -469,36 +476,34 @@ public class JsonHelper {
         } catch (IOException e) {
             throw new JsonKamaException(e);
         }
-
-        return retVal;
     }
 
-    protected <T> T getJsonObject(String url, JsonParser jsonParser, Class<T> retType, boolean isList, String objTitle) throws JsonParseException, JsonMappingException, IOException,
-                                                                                                                               JsonKamaException {
-        T retVal = null;
+    protected <T> T getJsonObject(final String url, JsonParser jsonParser, final Class<T> retType, final boolean isList, final String objTitle) throws IOException, JsonKamaException {
+        T retVal;
         if (isList) {
-            if (jsonParser.isExpectedStartArrayToken())
-                retVal = mapper.readValue(jsonParser, mapper.getTypeFactory().constructCollectionType(List.class, retType));
-            else {
-                JsonNode response = mapper.readTree(jsonParser);
+            if (jsonParser.isExpectedStartArrayToken()) {
+                retVal = mObjectMapper.readValue(jsonParser, mObjectMapper.getTypeFactory().constructCollectionType(List.class, retType));
+            } else {
+                JsonNode response = mObjectMapper.readTree(jsonParser);
                 JsonNode responseStr = response.get(objTitle);
                 if (responseStr == null) {
                     throw new JsonKamaException("Unexpected jsontitle. Not found: " + objTitle);
                 }
                 JsonParser jp1 = responseStr.traverse();
-                retVal = mapper.readValue(jp1, mapper.getTypeFactory().constructCollectionType(List.class, retType));
+                retVal = mObjectMapper.readValue(jp1, mObjectMapper.getTypeFactory().constructCollectionType(List.class, retType));
             }
 
         } else {
             if (retType != null) {
                 if (objTitle != null) {
-                    JsonNode response = mapper.readTree(jsonParser);
+                    JsonNode response = mObjectMapper.readTree(jsonParser);
                     JsonNode responseStr = response.get(objTitle);
                     jsonParser = responseStr.traverse();
                 }
-                retVal = mapper.readValue(jsonParser, retType);
-            } else
+                retVal = mObjectMapper.readValue(jsonParser, retType);
+            } else {
                 return null;
+            }
         }
         return retVal;
     }
@@ -509,7 +514,7 @@ public class JsonHelper {
      * @param headerData
      *            can be null
      */
-    protected Map<String, Object> addNecessaryHeaders(Map<String, Object> headerData) {
+    protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData) {
         Map<String, Object> modifiedHeaderData = headerData;
         if (modifiedHeaderData == null) {
             modifiedHeaderData = new HashMap<String, Object>();
@@ -522,80 +527,96 @@ public class JsonHelper {
     /**
      * Adds the url params to the url.
      *
-     * @param urlData
-     *            can be null.
+     * @param urlData can be null.
      */
-    protected String addUrlParams(String url, Map<String, Object> urlData) {
-        String finalUrl = url;
+    protected static String addUrlParams(final String url, final Map<String, Object> urlData) {
+        StringBuilder urlBuilder = new StringBuilder(url);
 
         if (urlData != null && !urlData.isEmpty()) {
-            finalUrl += KamaParam.URLPARAM;
+            urlBuilder.append(KamaParam.URLPARAM);
 
             for (Iterator<String> iterator = urlData.keySet().iterator(); iterator.hasNext(); ) {
                 String key = iterator.next();
-                finalUrl += key + "=" + replaceInvalidChars(urlData.get(key).toString());
+                urlBuilder.append(key).append('=').append(replaceInvalidChars(urlData.get(key).toString()));
 
                 if (iterator.hasNext()) {
-                    finalUrl += KamaParam.URLPARAMCONCAT;
+                    urlBuilder.append(KamaParam.URLPARAMCONCAT);
                 }
             }
         }
 
-        return finalUrl;
+        return urlBuilder.toString();
     }
 
-    private String replaceInvalidChars(String value) {
+    private static String replaceInvalidChars(final String value) {
         return value.replace(" ", "%20");
     }
 
-    protected <V> JsonParser getJsonParserFromResponse(String url, HttpResponse response, Class<V> errorObject, String errorTitle) throws JsonKamaException, NotAuthorizedKamaException,
-                                                                                                                                          HttpResponseKamaException, JsonParseException, IOException {
+    protected <V> JsonParser getJsonParserFromResponse(final String url, final HttpResponse response, final Class<V> errorObjectClass, final String errorTitle) throws KamaException,
+                                                                                                                                                                       IOException {
+        JsonParser result;
+
         String responseString = HttpUtils.getStringFromResponse(response);
-        V errorObj = null;
-
         int statusCode = response.getStatusLine().getStatusCode();
-        switch (statusCode) {
-            case 200:
-                JsonFactory jsonFactory = new JsonFactory();
-                JsonParser jp;
-                try {
-                    jp = jsonFactory.createJsonParser(responseString);
-                } catch (JsonParseException e) {
-                    throw new JsonKamaException(e);
-                } catch (IOException e) {
-                    throw new JsonKamaException(e);
-                }
-                return jp;
-            case 400:
-                if (errorObject != null) {
-                    errorObj = getErrorObject(url, responseString, errorObject, errorTitle);
-                }
-
-                throw new HttpResponseKamaException("Bad Request. " + url + "\n" + responseString, errorObj, statusCode);
-            case 401:
-                if (errorObject != null) {
-                    errorObj = getErrorObject(url, responseString, errorObject, errorTitle);
-                }
-
-                throw new NotAuthorizedKamaException("Unauthorized Action. " + url + "\n" + responseString, errorObj);
-            case 404:
-                if (errorObject != null) {
-                    errorObj = getErrorObject(url, responseString, errorObject, errorTitle);
-                }
-
-                throw new HttpResponseKamaException("Not Found. " + url + "\n" + responseString, errorObj, statusCode);
-            case 500:
-                if (errorObject != null) {
-                    errorObj = getErrorObject(url, responseString, errorObject, errorTitle);
-                }
-
-                throw new HttpResponseKamaException("Internal Server Error. " + url + "\n" + responseString, errorObj, statusCode);
-            default:
-                throw new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + "\n" + responseString, statusCode);
+        if (statusCode == HTTP_OK) {
+            JsonFactory jsonFactory = new JsonFactory();
+            try {
+                result = jsonFactory.createJsonParser(responseString);
+            } catch (JsonParseException e) {
+                throw new JsonKamaException(e);
+            } catch (IOException e) {
+                throw new JsonKamaException(e);
+            }
+        } else {
+            throw createKamaException(statusCode, responseString, errorObjectClass, errorTitle, url, response);
         }
+        return result;
     }
 
-    private <V> V getErrorObject(String url, String responseString, Class<V> errorObject, String errorTitle) throws JsonParseException, IOException, JsonKamaException {
+    private <V> KamaException createKamaException(final int statusCode, final String responseString, final Class<V> errorObjectClass, final String errorTitle, final String url, final HttpResponse
+            response) {
+        KamaException kamaException;
+
+        V errorObj = null;
+        if (errorObjectClass != null) {
+            try {
+                errorObj = parseErrorObject(url, responseString, errorObjectClass, errorTitle);
+            } catch (JsonKamaException e) {
+                /* We don't care if the error object parsing fails */
+                //noinspection CallToPrintStackTrace
+                e.printStackTrace();
+            } catch (JsonParseException e) {
+                /* We don't care if the error object parsing fails */
+                //noinspection CallToPrintStackTrace
+                e.printStackTrace();
+            } catch (IOException e) {
+                /* We don't care if the error object parsing fails */
+                //noinspection CallToPrintStackTrace
+                e.printStackTrace();
+            }
+        }
+
+        switch (statusCode) {
+            case HTTP_BAD_REQUEST:
+                kamaException = new HttpResponseKamaException("Bad Request. " + url + '\n' + responseString, errorObj, statusCode);
+                break;
+            case HTTP_UNAUTHORIZED:
+                kamaException = new NotAuthorizedKamaException("Unauthorized Action. " + url + '\n' + responseString, errorObj);
+                break;
+            case HTTP_NOT_FOUND:
+                kamaException = new HttpResponseKamaException("Not Found. " + url + '\n' + responseString, errorObj, statusCode);
+                break;
+            case HTTP_INTERNAL_ERROR:
+                kamaException = new HttpResponseKamaException("Internal Server Error. " + url + '\n' + responseString, errorObj, statusCode);
+                break;
+            default:
+                kamaException = new HttpResponseKamaException("Unexpected Error: " + response.getStatusLine() + ". " + url + '\n' + responseString, statusCode);
+        }
+
+        return kamaException;
+    }
+
+    private <V> V parseErrorObject(final String url, final String responseString, final Class<V> errorObject, final String errorTitle) throws JsonParseException, JsonKamaException, IOException {
         JsonFactory jsonFactory = new JsonFactory();
         JsonParser jp = jsonFactory.createJsonParser(responseString);
 
