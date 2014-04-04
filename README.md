@@ -18,23 +18,21 @@ To use this library, make the following changes:
 
  * Your app's `build.gradle`:
 
+        repositories {
+            maven { url 'http://download.crashlytics.com/maven' }
+        }
 
+        dependencies {
+            compile project(':kama')
+        }
 
-     repositories {
-         maven { url 'http://download.crashlytics.com/maven' }
-     }
-
-     dependencies {
-         compile project(':kama')
-     }
-
-     android {
-         packagingOptions {
-             exclude 'META-INF/DEPENDENCIES'
-             exclude 'META-INF/LICENSE.txt'
-             exclude 'META-INF/NOTICE.txt'
-         }
-     }
+        android {
+            packagingOptions {
+                exclude 'META-INF/DEPENDENCIES'
+                exclude 'META-INF/LICENSE.txt'
+                exclude 'META-INF/NOTICE.txt'
+            }
+        }
 
 Usage
 -----
