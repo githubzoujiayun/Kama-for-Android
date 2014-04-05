@@ -3,11 +3,15 @@ package com.label305.kama;
 import android.content.Context;
 
 import com.label305.kama.auth.Authorization;
+import com.label305.kama.exceptions.JsonKamaException;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.exceptions.NotAuthorizedKamaException;
 import com.label305.kama.json.JsonPostExecutor;
 import com.label305.kama.objects.ErrorObj;
+import com.label305.kama.utils.HttpUtils;
 import com.label305.stan.http.PostExecutor;
+
+import org.apache.http.HttpResponse;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +19,7 @@ import java.util.Map;
 
 public class KamaJsonPostExecutor extends JsonPostExecutor {
 
+    private final KamaJsonParser mKamaJsonParser = new KamaJsonParser();
 
     private final String mApiKey;
 
@@ -30,6 +35,11 @@ public class KamaJsonPostExecutor extends JsonPostExecutor {
         super(postExecutor);
         mApiKey = apiKey;
         mContext = context;
+    }
+
+    @Override
+    protected MyJsonParser getJsonParser() {
+        return mKamaJsonParser;
     }
 
     public void setAuthType(final KamaParam.AuthenticationType authType) {
@@ -66,6 +76,13 @@ public class KamaJsonPostExecutor extends JsonPostExecutor {
         if (mAuthType == null) {
             throw new IllegalArgumentException("Provide an AUTH_TYPE!");
         }
+    }
+
+    @Override
+    protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData) {
+        Map<String, Object> modifiedHeaderData = super.addNecessaryHeaders(headerData);
+        modifiedHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_KAMA);
+        return modifiedHeaderData;
     }
 
     protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData, final KamaParam.AuthenticationType authType) throws NotAuthorizedKamaException {

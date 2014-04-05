@@ -76,6 +76,13 @@ public class KamaJsonGetExecutor extends JsonGetExecutor {
         }
     }
 
+    @Override
+    protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData) {
+        Map<String, Object> modifiedHeaderData = super.addNecessaryHeaders(headerData);
+        modifiedHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_KAMA);
+        return modifiedHeaderData;
+    }
+
     protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData, final KamaParam.AuthenticationType authType) throws NotAuthorizedKamaException {
         Map<String, Object> modifiedHeaderData = addNecessaryHeaders(headerData);
         if (needsOAuthHeader(authType)) {

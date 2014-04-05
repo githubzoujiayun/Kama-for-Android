@@ -98,7 +98,7 @@ public class KamaJsonPutExecutor extends JsonPutExecutor {
     @Override
     protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData) {
         Map<String, Object> modifiedHeaderData = super.addNecessaryHeaders(headerData);
-        modifiedHeaderData.put("Accept", "application/vnd.kama-v1+json");
+        modifiedHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_KAMA);
         return modifiedHeaderData;
     }
 
