@@ -24,12 +24,6 @@ import java.util.Map;
  */
 public abstract class JsonRequestExecutor {
 
-    private static final int HTTP_OK = 200;
-    private static final int HTTP_BAD_REQUEST = 400;
-    private static final int HTTP_UNAUTHORIZED = 401;
-    private static final int HTTP_NOT_FOUND = 404;
-    private static final int HTTP_INTERNAL_ERROR = 500;
-
     private final ObjectMapper mObjectMapper = new ObjectMapper();
     private final MyJsonParser mMyJsonParser = new MyJsonParser();
 
