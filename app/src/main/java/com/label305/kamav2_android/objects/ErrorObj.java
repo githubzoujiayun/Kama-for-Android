@@ -3,44 +3,40 @@ package com.label305.kamav2_android.objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Created by Label305 on 22/02/14.
- */
+@SuppressWarnings("UnusedDeclaration")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ErrorObj {
 
     @JsonProperty("code")
-    private int statusCode;
+    private int mStatusCode;
 
     @JsonProperty("message")
-    private String message;
+    private String mMessage;
 
     @JsonProperty("timestamp")
-    private String timestamp;
-
-    public ErrorObj() {}
+    private String mTimestamp;
 
     public int getStatusCode() {
-        return statusCode;
+        return mStatusCode;
     }
 
     public String getMessage() {
-        return message;
+        return mMessage;
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return mTimestamp;
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
+    public void setStatusCode(final int statusCode) {
+        mStatusCode = statusCode;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(final String message) {
+        mMessage = message;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(final String timestamp) {
+        mTimestamp = timestamp;
     }
 }
