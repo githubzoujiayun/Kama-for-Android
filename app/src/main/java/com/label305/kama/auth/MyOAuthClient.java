@@ -16,9 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class MyOAuthClient extends OAuthClient {
+class MyOAuthClient extends OAuthClient {
 
-    public MyOAuthClient(final HttpClient oauthClient) {
+    MyOAuthClient(final HttpClient oauthClient) {
         super(oauthClient);
     }
 
@@ -31,7 +31,7 @@ public class MyOAuthClient extends OAuthClient {
     }
 
     public String authenticate(final String authUrl, final String appKey, final String login, final String password) throws OAuthSystemException, OAuthProblemException {
-        byte[] basicSource = (login + ":" + password).getBytes();
+        byte[] basicSource = (login + ':' + password).getBytes();
         String basic = Base64.encodeToString(basicSource, Base64.NO_WRAP);
         Map<String, String> basicHeader = new HashMap<String, String>();
 

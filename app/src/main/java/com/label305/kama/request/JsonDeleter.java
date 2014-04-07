@@ -1,8 +1,8 @@
-package com.label305.kama.json;
+package com.label305.kama.request;
 
 import com.label305.kama.exceptions.KamaException;
+import com.label305.stan.http.DeleteExecutor;
 import com.label305.stan.http.HttpHelper;
-import com.label305.stan.http.PostExecutor;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -13,42 +13,42 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class JsonPostExecutor extends JsonRequestExecutor {
+public class JsonDeleter extends AbstractJsonRequester {
 
-    private final PostExecutor mPostExecutor;
+    private final DeleteExecutor mDeleteExecutor;
 
-    private AbstractHttpEntity mPostData;
+    private AbstractHttpEntity mDeleteData;
 
-    public JsonPostExecutor() {
-        mPostExecutor = new HttpHelper();
+    public JsonDeleter() {
+        mDeleteExecutor = new HttpHelper();
     }
 
-    public JsonPostExecutor(final PostExecutor postExecutor) {
-        mPostExecutor = postExecutor;
+    public JsonDeleter(final DeleteExecutor deleteExecutor) {
+        mDeleteExecutor = deleteExecutor;
     }
 
-    public void setPostData(final Map<String, Object> postData) throws KamaException {
-        if (postData != null) {
+    public void setDeleteData(final Map<String, Object> deleteData) throws KamaException {
+        if (deleteData != null) {
             try {
-                mPostData = new UrlEncodedFormEntity(HttpHelper.convert(postData));
+                mDeleteData = new UrlEncodedFormEntity(HttpHelper.convert(deleteData));
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setPostData(final String jsonData) throws KamaException {
+    public void setDeleteData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mPostData = new StringEntity(jsonData);
+                mDeleteData = new StringEntity(jsonData);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
         }
     }
 
-    public void setPostData(final AbstractHttpEntity postData) {
-        mPostData = postData;
+    public void setDeleteData(final AbstractHttpEntity deleteData) {
+        mDeleteData = deleteData;
     }
 
     @Override
@@ -61,10 +61,9 @@ public class JsonPostExecutor extends JsonRequestExecutor {
         Map<String, Object> finalHeaderData = addNecessaryHeaders(getHeaderData());
 
         try {
-            return mPostExecutor.post(finalUrl, finalHeaderData, mPostData);
+            return mDeleteExecutor.delete(finalUrl, finalHeaderData, mDeleteData);
         } catch (IOException e) {
             throw new KamaException(e);
         }
     }
-
 }

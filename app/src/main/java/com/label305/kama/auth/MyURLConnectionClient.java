@@ -18,6 +18,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
+@SuppressWarnings("ALL")
 public class MyURLConnectionClient extends URLConnectionClient {
 
     @Override

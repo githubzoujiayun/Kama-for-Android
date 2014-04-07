@@ -1,58 +1,44 @@
 package com.label305.kama.exceptions;
 
+import com.label305.kama.objects.KamaError;
+
 @SuppressWarnings("UnusedDeclaration")
 public class KamaException extends Exception {
 
-    private final Object mErrorObj;
-
-    private int mHttpStatusCode;
+    private final KamaError mKamaError;
 
     public KamaException(final Exception e) {
         super(e);
-        mErrorObj = null;
-        mHttpStatusCode = -1;
+        mKamaError = null;
     }
 
-    public KamaException(final Exception e, final Object errorObj) {
+    public KamaException(final Exception e, final KamaError kamaError) {
         super(e);
-        mErrorObj = errorObj;
-        mHttpStatusCode = -1;
+        mKamaError = kamaError;
     }
 
-    public KamaException(final String e, final Object errorObj) {
-        super(e);
-        mErrorObj = errorObj;
-        mHttpStatusCode = -1;
+    public KamaException(final String message, final Exception e) {
+        super(message, e);
+        mKamaError = null;
     }
 
-    public KamaException(final String e) {
-        super(e);
-        mErrorObj = null;
-        mHttpStatusCode = -1;
+    public KamaException(final String message, final KamaError kamaError) {
+        super(message);
+        mKamaError = kamaError;
     }
 
-    public KamaException(final Object errorObj, final int httpStatusCode) {
-        mErrorObj = errorObj;
-        mHttpStatusCode = httpStatusCode;
+    public KamaException(final String message) {
+        super(message);
+        mKamaError = null;
+    }
+
+    public KamaException(final KamaError kamaError) {
+        mKamaError = kamaError;
     }
 
 
-    public Object getErrorObj() {
-        return mErrorObj;
-    }
-
-    /**
-     * @return the httpStatusCode
-     */
-    public int getHttpStatusCode() {
-        return mHttpStatusCode;
-    }
-
-    /**
-     * @param httpStatusCode the httpStatusCode to set
-     */
-    public void setHttpStatusCode(final int httpStatusCode) {
-        mHttpStatusCode = httpStatusCode;
+    public Object getKamaError() {
+        return mKamaError;
     }
 
 }

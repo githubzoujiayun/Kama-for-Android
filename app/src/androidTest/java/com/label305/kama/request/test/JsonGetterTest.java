@@ -1,9 +1,9 @@
-package com.label305.kama.json.test;
+package com.label305.kama.request.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.label305.kama.KamaParam;
+import com.label305.kama.request.JsonGetter;
+import com.label305.kama.utils.KamaParam;
 import com.label305.kama.exceptions.KamaException;
-import com.label305.kama.json.JsonGetExecutor;
 import com.label305.stan.http.GetExecutor;
 import com.label305.stan.http.StatusCodes;
 
@@ -34,8 +34,8 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({"unchecked", "rawtypes", "DuplicateStringLiteralInspection"})
-public class JsonGetExecutorTest extends TestCase {
+@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection"})
+public class JsonGetterTest extends TestCase {
 
     private static final String MISSING_EXCEPTION = "Missing exception";
 
@@ -47,7 +47,7 @@ public class JsonGetExecutorTest extends TestCase {
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
-    private JsonGetExecutor mJsonGetExecutor;
+    private JsonGetter mJsonGetter;
 
     @Mock
     private GetExecutor mGetExecutor;
@@ -67,21 +67,21 @@ public class JsonGetExecutorTest extends TestCase {
 
         MockitoAnnotations.initMocks(this);
 
-        mJsonGetExecutor = new JsonGetExecutor(mGetExecutor);
+        mJsonGetter = new JsonGetter(mGetExecutor);
 
         when(mGetExecutor.get(anyString(), any(Map.class))).thenReturn(mHttpResponse);
         when(mHttpResponse.getEntity()).thenReturn(mHttpEntity);
     }
 
     public void testGetObject() throws Exception {
-        mJsonGetExecutor.setUrl(URL);
-        mJsonGetExecutor.setReturnTypeClass(RETURN_TYPE);
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        Object result = mJsonGetExecutor.execute();
+        Object result = mJsonGetter.execute();
 
         verify(mGetExecutor).get(eq(URL), any(Map.class));
 
@@ -91,14 +91,14 @@ public class JsonGetExecutorTest extends TestCase {
     }
 
     public void testGetObjectsList() throws Exception {
-        mJsonGetExecutor.setUrl(URL);
-        mJsonGetExecutor.setReturnTypeClass(RETURN_TYPE);
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST));
 
-        Object result = mJsonGetExecutor.executeReturnsObjectsList();
+        Object result = mJsonGetter.executeReturnsObjectsList();
         verify(mGetExecutor).get(eq(URL), any(Map.class));
 
         assertThat(result, is(not(nullValue())));
@@ -109,15 +109,15 @@ public class JsonGetExecutorTest extends TestCase {
     }
 
     public void testGetObjectsListWithTitle() throws Exception {
-        mJsonGetExecutor.setUrl(URL);
-        mJsonGetExecutor.setReturnTypeClass(RETURN_TYPE);
-        mJsonGetExecutor.setJsonTitle(TITLE);
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
+        mJsonGetter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        Object result = mJsonGetExecutor.executeReturnsObjectsList();
+        Object result = mJsonGetter.executeReturnsObjectsList();
         verify(mGetExecutor).get(eq(URL), any(Map.class));
 
         assertThat(result, is(not(nullValue())));
@@ -129,15 +129,15 @@ public class JsonGetExecutorTest extends TestCase {
     }
 
     public void testExecuteGetAddsHeader() throws Exception {
-        mJsonGetExecutor.setUrl(URL);
-        mJsonGetExecutor.setReturnTypeClass(RETURN_TYPE);
-        mJsonGetExecutor.setJsonTitle(TITLE);
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
+        mJsonGetter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        mJsonGetExecutor.executeReturnsObjectsList();
+        mJsonGetter.executeReturnsObjectsList();
 
         ArgumentCaptor<Map> mapArgumentCaptor = ArgumentCaptor.forClass(Map.class);
         verify(mGetExecutor).get(eq(URL), mapArgumentCaptor.capture());
@@ -149,9 +149,9 @@ public class JsonGetExecutorTest extends TestCase {
     }
 
     public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
-        mJsonGetExecutor.setReturnTypeClass(RETURN_TYPE);
+        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
         try {
-            mJsonGetExecutor.execute();
+            mJsonGetter.execute();
             fail(MISSING_EXCEPTION);
         } catch (IllegalArgumentException ignored) {
             /* Success */
@@ -159,9 +159,9 @@ public class JsonGetExecutorTest extends TestCase {
     }
 
     public void testNoReturnTypeClassThrowsIllegalArgumentException() throws KamaException {
-        mJsonGetExecutor.setUrl(URL);
+        mJsonGetter.setUrl(URL);
         try {
-            mJsonGetExecutor.execute();
+            mJsonGetter.execute();
             fail(MISSING_EXCEPTION);
         } catch (IllegalArgumentException ignored) {
             /* Success */
@@ -169,26 +169,25 @@ public class JsonGetExecutorTest extends TestCase {
     }
 
     public void testNonHttpOkResult() throws Exception {
-        mJsonGetExecutor.setUrl(URL);
-        mJsonGetExecutor.setReturnTypeClass(RETURN_TYPE);
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_NOT_FOUND);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         try {
-            mJsonGetExecutor.execute();
+            mJsonGetter.execute();
             fail(MISSING_EXCEPTION);
         } catch (KamaException ignored) {
             /* Success */
         }
     }
 
-    @SuppressWarnings("PublicField")
-    public static class ParseObject {
+    private static class ParseObject {
 
         @JsonProperty("integer")
-        public int mInteger;
+        private int mInteger;
 
     }
 }

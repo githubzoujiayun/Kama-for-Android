@@ -1,10 +1,11 @@
-package com.label305.kama;
+package com.label305.kama.parser;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.label305.kama.utils.KamaParam;
 import com.label305.kama.exceptions.JsonKamaException;
 
 import java.io.IOException;

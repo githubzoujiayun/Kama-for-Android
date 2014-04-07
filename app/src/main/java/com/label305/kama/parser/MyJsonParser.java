@@ -1,4 +1,4 @@
-package com.label305.kama;
+package com.label305.kama.parser;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -57,7 +57,7 @@ public class MyJsonParser {
 
         JsonFactory jsonFactory = new JsonFactory();
         try {
-            result = jsonFactory.createJsonParser(responseString);
+            result = jsonFactory.createParser(responseString);
         } catch (JsonParseException e) {
             throw new JsonKamaException(e);
         } catch (IOException e) {
@@ -66,13 +66,16 @@ public class MyJsonParser {
         return result;
     }
 
-    private <T> T getJsonObject(final JsonParser jsonParser, final Class<? extends T> retType, final String objTitle) throws IOException {
+    private <T> T getJsonObject(final JsonParser jsonParser, final Class<? extends T> retType, final String objTitle) throws IOException, JsonKamaException {
         T result = null;
         if (retType != null) {
             JsonParser currentJsonParser = jsonParser;
             if (objTitle != null) {
                 JsonNode response = mObjectMapper.readTree(currentJsonParser);
                 JsonNode responseStr = response.get(objTitle);
+                if (responseStr == null) {
+                    throw new JsonKamaException("Unexpected jsontitle. Not found: " + objTitle);
+                }
                 currentJsonParser = responseStr.traverse();
             }
             result = mObjectMapper.readValue(currentJsonParser, retType);
@@ -83,7 +86,7 @@ public class MyJsonParser {
     private <T> List<T> getJsonObjectsList(final JsonParser jsonParser, final Class<? extends T> retType, final String objTitle) throws JsonKamaException, IOException {
         JsonParser parser = jsonParser;
         parser.nextToken();
-        if (!parser.isExpectedStartArrayToken()) {
+        if (objTitle != null) {
             JsonNode response = mObjectMapper.readTree(parser);
             JsonNode responseStr = response.get(objTitle);
             if (responseStr == null) {

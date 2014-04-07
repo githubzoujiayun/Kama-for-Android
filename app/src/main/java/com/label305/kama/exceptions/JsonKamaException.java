@@ -7,12 +7,12 @@ public class JsonKamaException extends KamaException {
         super(e);
     }
 
-    public JsonKamaException(final Exception e, final String displayMessage) {
-        super(e, displayMessage);
-    }
-
     public JsonKamaException(final String message) {
         super(message);
+    }
+
+    public JsonKamaException(final String message, final Exception e) {
+        super(message, e);
     }
 
 }

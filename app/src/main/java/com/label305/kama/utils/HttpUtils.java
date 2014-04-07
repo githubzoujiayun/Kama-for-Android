@@ -30,19 +30,7 @@ public class HttpUtils {
     /**
      * Checks if we have a valid Internet Connection on the device.
      *
-     * @return True if device has internet
-     * @deprecated use {@link #isInternetAvailable(android.content.Context)} instead
-     */
-    @Deprecated
-    public static boolean haveInternet(final Context context) {
-        NetworkInfo info = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
-        return !(info == null || !info.isConnected());
-    }
-
-    /**
-     * Checks if we have a valid Internet Connection on the device.
-     *
-     * @return True if device has internet
+     * @return true if device has internet
      */
     public static boolean isInternetAvailable(final Context context) {
         NetworkInfo info = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();

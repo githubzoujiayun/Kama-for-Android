@@ -1,10 +1,10 @@
-package com.label305.kama.json.test;
+package com.label305.kama.request.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.label305.kama.KamaParam;
+import com.label305.kama.request.JsonPoster;
+import com.label305.kama.utils.KamaParam;
 import com.label305.kama.exceptions.KamaException;
-import com.label305.kama.json.JsonPutExecutor;
-import com.label305.stan.http.PutExecutor;
+import com.label305.stan.http.PostExecutor;
 import com.label305.stan.http.StatusCodes;
 
 import junit.framework.TestCase;
@@ -34,8 +34,8 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({"unchecked", "rawtypes", "DuplicateStringLiteralInspection"})
-public class JsonPutExecutorTest extends TestCase {
+@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection"})
+public class JsonPosterTest extends TestCase {
 
     private static final String MISSING_EXCEPTION = "Missing exception";
 
@@ -47,10 +47,11 @@ public class JsonPutExecutorTest extends TestCase {
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
-    private JsonPutExecutor mJsonPutExecutor;
+
+    private JsonPoster mJsonPoster;
 
     @Mock
-    private PutExecutor mPutExecutor;
+    private PostExecutor mPostExecutor;
 
     @Mock
     private HttpResponse mHttpResponse;
@@ -67,39 +68,39 @@ public class JsonPutExecutorTest extends TestCase {
 
         MockitoAnnotations.initMocks(this);
 
-        mJsonPutExecutor = new JsonPutExecutor(mPutExecutor);
+        mJsonPoster = new JsonPoster(mPostExecutor);
 
-        when(mPutExecutor.put(anyString(), any(Map.class), any(HttpEntity.class))).thenReturn(mHttpResponse);
+        when(mPostExecutor.post(anyString(), any(Map.class), any(HttpEntity.class))).thenReturn(mHttpResponse);
         when(mHttpResponse.getEntity()).thenReturn(mHttpEntity);
     }
 
-    public void testPutObject() throws Exception {
-        mJsonPutExecutor.setUrl(URL);
-        mJsonPutExecutor.setReturnTypeClass(RETURN_TYPE);
+    public void testPostObject() throws Exception {
+        mJsonPoster.setUrl(URL);
+        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        Object result = mJsonPutExecutor.execute();
+        Object result = mJsonPoster.execute();
 
-        verify(mPutExecutor).put(eq(URL), any(Map.class), any(HttpEntity.class));
+        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(RETURN_TYPE)));
         assertThat(((ParseObject) result).mInteger, is(4));
     }
 
-    public void testPutObjectsList() throws Exception {
-        mJsonPutExecutor.setUrl(URL);
-        mJsonPutExecutor.setReturnTypeClass(RETURN_TYPE);
+    public void testPostObjectsList() throws Exception {
+        mJsonPoster.setUrl(URL);
+        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST));
 
-        Object result = mJsonPutExecutor.executeReturnsObjectsList();
-        verify(mPutExecutor).put(eq(URL), any(Map.class), any(HttpEntity.class));
+        Object result = mJsonPoster.executeReturnsObjectsList();
+        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(List.class)));
@@ -108,17 +109,17 @@ public class JsonPutExecutorTest extends TestCase {
         assertThat(((List<?>) result).get(0), is(instanceOf(RETURN_TYPE)));
     }
 
-    public void testPutObjectsListWithTitle() throws Exception {
-        mJsonPutExecutor.setUrl(URL);
-        mJsonPutExecutor.setReturnTypeClass(RETURN_TYPE);
-        mJsonPutExecutor.setJsonTitle(TITLE);
+    public void testPostObjectsListWithTitle() throws Exception {
+        mJsonPoster.setUrl(URL);
+        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
+        mJsonPoster.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        Object result = mJsonPutExecutor.executeReturnsObjectsList();
-        verify(mPutExecutor).put(eq(URL), any(Map.class), any(HttpEntity.class));
+        Object result = mJsonPoster.executeReturnsObjectsList();
+        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(List.class)));
@@ -128,19 +129,19 @@ public class JsonPutExecutorTest extends TestCase {
         assertThat(list.get(0), is(instanceOf(RETURN_TYPE)));
     }
 
-    public void testExecutePutAddsHeader() throws Exception {
-        mJsonPutExecutor.setUrl(URL);
-        mJsonPutExecutor.setReturnTypeClass(RETURN_TYPE);
-        mJsonPutExecutor.setJsonTitle(TITLE);
+    public void testExecutePostAddsHeader() throws Exception {
+        mJsonPoster.setUrl(URL);
+        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
+        mJsonPoster.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        mJsonPutExecutor.executeReturnsObjectsList();
+        mJsonPoster.executeReturnsObjectsList();
 
         ArgumentCaptor<Map> mapArgumentCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mPutExecutor).put(eq(URL), mapArgumentCaptor.capture(), any(HttpEntity.class));
+        verify(mPostExecutor).post(eq(URL), mapArgumentCaptor.capture(), any(HttpEntity.class));
 
         Map<String, Object> usedHeaderData = mapArgumentCaptor.getValue();
         assertThat(usedHeaderData.size(), is(greaterThan(0)));
@@ -149,23 +150,23 @@ public class JsonPutExecutorTest extends TestCase {
     }
 
     public void testNoReturnTypeClass() throws Exception {
-        mJsonPutExecutor.setUrl(URL);
+        mJsonPoster.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        Object result = mJsonPutExecutor.execute();
+        Object result = mJsonPoster.execute();
 
-        verify(mPutExecutor).put(eq(URL), any(Map.class), any(HttpEntity.class));
+        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
 
         assertThat(result, is(nullValue()));
     }
 
     public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
-        mJsonPutExecutor.setReturnTypeClass(RETURN_TYPE);
+        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
         try {
-            mJsonPutExecutor.execute();
+            mJsonPoster.execute();
             fail(MISSING_EXCEPTION);
         } catch (IllegalArgumentException ignored) {
             /* Success */
@@ -174,26 +175,25 @@ public class JsonPutExecutorTest extends TestCase {
 
 
     public void testNonHttpOkResult() throws Exception {
-        mJsonPutExecutor.setUrl(URL);
-        mJsonPutExecutor.setReturnTypeClass(RETURN_TYPE);
+        mJsonPoster.setUrl(URL);
+        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_NOT_FOUND);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         try {
-            mJsonPutExecutor.execute();
+            mJsonPoster.execute();
             fail(MISSING_EXCEPTION);
         } catch (KamaException ignored) {
             /* Success */
         }
     }
 
-    @SuppressWarnings("PublicField")
-    public static class ParseObject {
+    private static class ParseObject {
 
         @JsonProperty("integer")
-        public int mInteger;
+        private int mInteger;
 
     }
 }

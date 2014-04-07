@@ -1,8 +1,6 @@
-Kama for Android
-================
+#Kama for Android
 
-Setup
------
+##Setup
 
 This library includes the [Stan](https://bitbucket.org/Label305/stan-android) library.
 To use this library, make the following changes:
@@ -36,6 +34,33 @@ To use this library, make the following changes:
             }
         }
 
-Usage
------
-`Under construction`
+##Usage
+
+###Json
+You can execute HTTP requests and parse their responses by using the `JsonGetter`, `JsonPoster`, `JsonDeleter` and `JsonPutter` classes.
+
+Example:
+
+    JsonGetter jsonGetter = new JsonGetter();
+    jsonGetter.setUrl(MY_URL);
+    jsonGetter.setReturnTypeClass(MyObject.class);
+    jsonGetter.setJsonTitle("my_object");
+    jsonGetter.setUrlData(myUrlData);
+
+
+
+
+###Kama formatted json
+A Kama formatted json response looks like this:
+
+    {
+        "meta": {
+            "code": 200
+        },
+        "response": {
+            "deals": []
+        }
+    }
+
+You can use the classes `KamaGetter`, `KamaPoster`, `KamaDeleter` and `KamaPutter` to do kama requests.
+

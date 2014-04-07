@@ -1,4 +1,4 @@
-package com.label305.kama.json;
+package com.label305.kama.request;
 
 import com.label305.kama.exceptions.KamaException;
 import com.label305.stan.http.GetExecutor;
@@ -9,15 +9,15 @@ import org.apache.http.HttpResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public class JsonGetExecutor extends JsonRequestExecutor {
+public class JsonGetter extends AbstractJsonRequester {
 
     private final GetExecutor mGetExecutor;
 
-    public JsonGetExecutor() {
+    public JsonGetter() {
         mGetExecutor = new HttpHelper();
     }
 
-    public JsonGetExecutor(final GetExecutor getExecutor) {
+    public JsonGetter(final GetExecutor getExecutor) {
         mGetExecutor = getExecutor;
     }
 
