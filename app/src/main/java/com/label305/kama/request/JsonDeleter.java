@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class JsonDeleter extends AbstractJsonRequester {
+public class JsonDeleter<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
     private final DeleteExecutor mDeleteExecutor;
 
@@ -23,7 +23,17 @@ public class JsonDeleter extends AbstractJsonRequester {
         mDeleteExecutor = new HttpHelper();
     }
 
+    public JsonDeleter(final Class<ReturnType> clzz) {
+        super(clzz);
+        mDeleteExecutor = new HttpHelper();
+    }
+
     public JsonDeleter(final DeleteExecutor deleteExecutor) {
+        mDeleteExecutor = deleteExecutor;
+    }
+
+    public JsonDeleter(final Class<ReturnType> clzz, final DeleteExecutor deleteExecutor) {
+        super(clzz);
         mDeleteExecutor = deleteExecutor;
     }
 

@@ -1,6 +1,5 @@
 package com.label305.kama.request;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.exceptions.status.BadRequestKamaException;
 import com.label305.kama.exceptions.status.HttpResponseKamaException;
@@ -19,31 +18,29 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({"UnusedDeclaration"})
 /**
  * An abstract class which can be extended to execute http requests.
  * Executes the request and parses the result to an object type or a list if necessary.
  */
-public abstract class AbstractJsonRequester {
+public abstract class AbstractJsonRequester<ReturnType> {
 
-    private final ObjectMapper mObjectMapper = new ObjectMapper();
-    private final MyJsonParser mMyJsonParser = new MyJsonParser();
+    private final MyJsonParser<ReturnType> mMyJsonParser;
 
     private String mUrl;
-    private Class<?> mReturnTypeClass;
     private String mJsonTitle;
     private Map<String, Object> mUrlData;
     private Map<String, Object> mHeaderData;
 
-    public void setUrl(final String url) {
-        mUrl = url;
+    protected AbstractJsonRequester() {
+        mMyJsonParser = new MyJsonParser<ReturnType>(null);
     }
 
-    /**
-     * Set the class type of the object that will be parsed, or the type of the objects in the list that will be parsed.
-     */
-    public void setReturnTypeClass(final Class<?> returnTypeClass) {
-        mReturnTypeClass = returnTypeClass;
+    protected AbstractJsonRequester(final Class<ReturnType> returnTypeClass) {
+        mMyJsonParser = new MyJsonParser<ReturnType>(returnTypeClass);
+    }
+
+    public void setUrl(final String url) {
+        mUrl = url;
     }
 
     /**
@@ -71,10 +68,6 @@ public abstract class AbstractJsonRequester {
         return mUrl;
     }
 
-    protected Class<?> getReturnTypeClass() {
-        return mReturnTypeClass;
-    }
-
     protected String getJsonTitle() {
         return mJsonTitle;
     }
@@ -93,7 +86,7 @@ public abstract class AbstractJsonRequester {
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
         if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
-            result = mMyJsonParser.parseObject(responseString, mReturnTypeClass, mJsonTitle);
+            result = mMyJsonParser.parseObject(responseString, mJsonTitle);
         } else {
             throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
         }
@@ -107,7 +100,7 @@ public abstract class AbstractJsonRequester {
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
         if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
-            result = mMyJsonParser.parseObjectsList(responseString, mReturnTypeClass, mJsonTitle);
+            result = mMyJsonParser.parseObjectsList(responseString, mJsonTitle);
         } else {
             throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
         }

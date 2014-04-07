@@ -24,15 +24,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractKamaRequester extends AbstractJsonRequester {
+public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
-    private final KamaJsonParser mKamaJsonParser = new KamaJsonParser();
+    private final KamaJsonParser<ReturnType> mKamaJsonParser;
 
     private final String mApiKey;
     private final Context mContext;
     private KamaParam.AuthenticationType mAuthType;
 
     public AbstractKamaRequester(final Context context, final String apiKey) {
+        mKamaJsonParser = new KamaJsonParser<ReturnType>(null);
+        mApiKey = apiKey;
+        mContext = context;
+    }
+
+    public AbstractKamaRequester(final Class<ReturnType> returnTypeClass, final Context context, final String apiKey) {
+        super(returnTypeClass);
+        mKamaJsonParser = new KamaJsonParser<ReturnType>(returnTypeClass);
         mApiKey = apiKey;
         mContext = context;
     }
@@ -45,7 +53,7 @@ public abstract class AbstractKamaRequester extends AbstractJsonRequester {
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
         if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
-            return mKamaJsonParser.parseObject(responseString, getReturnTypeClass(), getJsonTitle());
+            return mKamaJsonParser.parseObject(responseString, getJsonTitle());
         } else {
             throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
         }
@@ -58,7 +66,7 @@ public abstract class AbstractKamaRequester extends AbstractJsonRequester {
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
         if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
-            return mKamaJsonParser.parseObjectsList(responseString, getReturnTypeClass(), getJsonTitle());
+            return mKamaJsonParser.parseObjectsList(responseString, getJsonTitle());
         } else {
             throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
         }
@@ -124,7 +132,7 @@ public abstract class AbstractKamaRequester extends AbstractJsonRequester {
 
         KamaError kamaError = null;
         try {
-            kamaError = new MyJsonParser().parseObject(responseString, KamaError.class, KamaParam.META);
+            kamaError = new MyJsonParser<KamaError>(KamaError.class).parseObject(responseString, KamaParam.META);
         } catch (JsonKamaException e) {
                 /* We don't care if the error object parsing fails */
             //noinspection CallToPrintStackTrace

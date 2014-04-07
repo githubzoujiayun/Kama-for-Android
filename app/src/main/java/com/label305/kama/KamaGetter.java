@@ -11,7 +11,7 @@ import org.apache.http.HttpResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public class KamaGetter extends AbstractKamaRequester {
+public class KamaGetter<ReturnType> extends AbstractKamaRequester<ReturnType> {
 
     private final GetExecutor mGetExecutor;
 
@@ -25,15 +25,21 @@ public class KamaGetter extends AbstractKamaRequester {
         mGetExecutor = getExecutor;
     }
 
+    public KamaGetter(final Class<ReturnType> clzz, final Context context, final String apiKey) {
+        super(clzz, context, apiKey);
+        mGetExecutor = new HttpHelper();
+    }
+
+    public KamaGetter(final Class<ReturnType> clzz, final Context context, final String apiKey, final GetExecutor getExecutor) {
+        super(clzz, context, apiKey);
+        mGetExecutor = getExecutor;
+    }
+
 
     @Override
     protected HttpResponse executeRequest() throws KamaException {
         if (getUrl() == null) {
             throw new IllegalArgumentException("Provide an url!");
-        }
-
-        if (getReturnTypeClass() == null) {
-            throw new IllegalArgumentException("Provide a return type class!");
         }
 
         String finalUrl = addUrlParams(getUrl(), getUrlData());

@@ -30,7 +30,7 @@ import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked", "UnusedDeclaration"})
 public class KamaGetterTest extends AndroidTestCase {
 
     private static final String API_KEY = "kljahhsflkahjsdf";
@@ -42,7 +42,7 @@ public class KamaGetterTest extends AndroidTestCase {
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
 
-    private KamaGetter mKamaGetter;
+    private KamaGetter<ParseObject> mKamaGetter;
 
     @Mock
     private GetExecutor mGetExecutor;
@@ -63,7 +63,7 @@ public class KamaGetterTest extends AndroidTestCase {
 
         MockitoAnnotations.initMocks(this);
 
-        mKamaGetter = new KamaGetter(getContext(), API_KEY, mGetExecutor);
+        mKamaGetter = new KamaGetter<ParseObject>(RETURN_TYPE, getContext(), API_KEY, mGetExecutor);
 
         when(mGetExecutor.get(anyString(), any(Map.class))).thenReturn(mHttpResponse);
         when(mHttpResponse.getEntity()).thenReturn(mHttpEntity);
@@ -72,7 +72,6 @@ public class KamaGetterTest extends AndroidTestCase {
     /* Correct executions have already been tested in JsonGetter. One is enough. */
     public void testGetObject() throws Exception {
         mKamaGetter.setUrl(URL);
-        mKamaGetter.setReturnTypeClass(RETURN_TYPE);
         mKamaGetter.setAuthType(KamaParam.AuthenticationType.APIKEY);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
@@ -91,7 +90,6 @@ public class KamaGetterTest extends AndroidTestCase {
     /* Test KamaError */
     public void testGetKamaError() throws Exception {
         mKamaGetter.setUrl(URL);
-        mKamaGetter.setReturnTypeClass(RETURN_TYPE);
         mKamaGetter.setAuthType(KamaParam.AuthenticationType.APIKEY);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);

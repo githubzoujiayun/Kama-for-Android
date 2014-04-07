@@ -1,9 +1,9 @@
 package com.label305.kama.request.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.request.JsonPoster;
 import com.label305.kama.utils.KamaParam;
-import com.label305.kama.exceptions.KamaException;
 import com.label305.stan.http.PostExecutor;
 import com.label305.stan.http.StatusCodes;
 
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection"})
+@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection", "rawtypes", "UnusedDeclaration", "AccessingNonPublicFieldOfAnotherObject"})
 public class JsonPosterTest extends TestCase {
 
     private static final String MISSING_EXCEPTION = "Missing exception";
@@ -47,8 +47,7 @@ public class JsonPosterTest extends TestCase {
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
-
-    private JsonPoster mJsonPoster;
+    private JsonPoster<ParseObject> mJsonPoster;
 
     @Mock
     private PostExecutor mPostExecutor;
@@ -68,7 +67,7 @@ public class JsonPosterTest extends TestCase {
 
         MockitoAnnotations.initMocks(this);
 
-        mJsonPoster = new JsonPoster(mPostExecutor);
+        mJsonPoster = new JsonPoster<ParseObject>(RETURN_TYPE, mPostExecutor);
 
         when(mPostExecutor.post(anyString(), any(Map.class), any(HttpEntity.class))).thenReturn(mHttpResponse);
         when(mHttpResponse.getEntity()).thenReturn(mHttpEntity);
@@ -76,7 +75,6 @@ public class JsonPosterTest extends TestCase {
 
     public void testPostObject() throws Exception {
         mJsonPoster.setUrl(URL);
-        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
@@ -93,7 +91,6 @@ public class JsonPosterTest extends TestCase {
 
     public void testPostObjectsList() throws Exception {
         mJsonPoster.setUrl(URL);
-        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
@@ -111,7 +108,6 @@ public class JsonPosterTest extends TestCase {
 
     public void testPostObjectsListWithTitle() throws Exception {
         mJsonPoster.setUrl(URL);
-        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
         mJsonPoster.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
@@ -131,7 +127,6 @@ public class JsonPosterTest extends TestCase {
 
     public void testExecutePostAddsHeader() throws Exception {
         mJsonPoster.setUrl(URL);
-        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
         mJsonPoster.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
@@ -149,22 +144,7 @@ public class JsonPosterTest extends TestCase {
         assertThat(usedHeaderData.get(KamaParam.ACCEPT).toString(), is(KamaParam.APPLICATION_JSON));
     }
 
-    public void testNoReturnTypeClass() throws Exception {
-        mJsonPoster.setUrl(URL);
-
-        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
-        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
-
-        Object result = mJsonPoster.execute();
-
-        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
-
-        assertThat(result, is(nullValue()));
-    }
-
     public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
-        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
         try {
             mJsonPoster.execute();
             fail(MISSING_EXCEPTION);
@@ -176,7 +156,6 @@ public class JsonPosterTest extends TestCase {
 
     public void testNonHttpOkResult() throws Exception {
         mJsonPoster.setUrl(URL);
-        mJsonPoster.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_NOT_FOUND);

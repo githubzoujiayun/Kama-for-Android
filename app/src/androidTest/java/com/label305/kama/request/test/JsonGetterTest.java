@@ -1,9 +1,9 @@
 package com.label305.kama.request.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.request.JsonGetter;
 import com.label305.kama.utils.KamaParam;
-import com.label305.kama.exceptions.KamaException;
 import com.label305.stan.http.GetExecutor;
 import com.label305.stan.http.StatusCodes;
 
@@ -47,7 +47,7 @@ public class JsonGetterTest extends TestCase {
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
-    private JsonGetter mJsonGetter;
+    private JsonGetter<ParseObject> mJsonGetter;
 
     @Mock
     private GetExecutor mGetExecutor;
@@ -67,7 +67,7 @@ public class JsonGetterTest extends TestCase {
 
         MockitoAnnotations.initMocks(this);
 
-        mJsonGetter = new JsonGetter(mGetExecutor);
+        mJsonGetter = new JsonGetter(RETURN_TYPE, mGetExecutor);
 
         when(mGetExecutor.get(anyString(), any(Map.class))).thenReturn(mHttpResponse);
         when(mHttpResponse.getEntity()).thenReturn(mHttpEntity);
@@ -75,7 +75,6 @@ public class JsonGetterTest extends TestCase {
 
     public void testGetObject() throws Exception {
         mJsonGetter.setUrl(URL);
-        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
@@ -92,7 +91,6 @@ public class JsonGetterTest extends TestCase {
 
     public void testGetObjectsList() throws Exception {
         mJsonGetter.setUrl(URL);
-        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
@@ -110,7 +108,6 @@ public class JsonGetterTest extends TestCase {
 
     public void testGetObjectsListWithTitle() throws Exception {
         mJsonGetter.setUrl(URL);
-        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
         mJsonGetter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
@@ -130,7 +127,6 @@ public class JsonGetterTest extends TestCase {
 
     public void testExecuteGetAddsHeader() throws Exception {
         mJsonGetter.setUrl(URL);
-        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
         mJsonGetter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
@@ -149,17 +145,6 @@ public class JsonGetterTest extends TestCase {
     }
 
     public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
-        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
-        try {
-            mJsonGetter.execute();
-            fail(MISSING_EXCEPTION);
-        } catch (IllegalArgumentException ignored) {
-            /* Success */
-        }
-    }
-
-    public void testNoReturnTypeClassThrowsIllegalArgumentException() throws KamaException {
-        mJsonGetter.setUrl(URL);
         try {
             mJsonGetter.execute();
             fail(MISSING_EXCEPTION);
@@ -170,7 +155,6 @@ public class JsonGetterTest extends TestCase {
 
     public void testNonHttpOkResult() throws Exception {
         mJsonGetter.setUrl(URL);
-        mJsonGetter.setReturnTypeClass(RETURN_TYPE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_NOT_FOUND);

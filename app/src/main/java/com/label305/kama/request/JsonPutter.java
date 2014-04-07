@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class JsonPutter extends AbstractJsonRequester {
+public class JsonPutter<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
     private final PutExecutor mPutExecutor;
 
@@ -23,8 +23,18 @@ public class JsonPutter extends AbstractJsonRequester {
         mPutExecutor = new HttpHelper();
     }
 
-    public JsonPutter(final PutExecutor putExecutor) {
-        mPutExecutor = putExecutor;
+    public JsonPutter(final Class<ReturnType> clzz) {
+        super(clzz);
+        mPutExecutor = new HttpHelper();
+    }
+
+    public JsonPutter(final PutExecutor deleteExecutor) {
+        mPutExecutor = deleteExecutor;
+    }
+
+    public JsonPutter(final Class<ReturnType> clzz, final PutExecutor deleteExecutor) {
+        super(clzz);
+        mPutExecutor = deleteExecutor;
     }
 
     public void setPutData(final Map<String, Object> putData) throws KamaException {

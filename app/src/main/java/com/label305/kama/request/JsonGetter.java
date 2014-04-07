@@ -9,7 +9,7 @@ import org.apache.http.HttpResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public class JsonGetter extends AbstractJsonRequester {
+public class JsonGetter<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
     private final GetExecutor mGetExecutor;
 
@@ -17,19 +17,24 @@ public class JsonGetter extends AbstractJsonRequester {
         mGetExecutor = new HttpHelper();
     }
 
-    public JsonGetter(final GetExecutor getExecutor) {
-        mGetExecutor = getExecutor;
+    public JsonGetter(final Class<ReturnType> clzz) {
+        super(clzz);
+        mGetExecutor = new HttpHelper();
     }
 
+    public JsonGetter(final GetExecutor deleteExecutor) {
+        mGetExecutor = deleteExecutor;
+    }
+
+    public JsonGetter(final Class<ReturnType> clzz, final GetExecutor deleteExecutor) {
+        super(clzz);
+        mGetExecutor = deleteExecutor;
+    }
 
     @Override
     protected HttpResponse executeRequest() throws KamaException {
         if (getUrl() == null) {
             throw new IllegalArgumentException("Provide an url!");
-        }
-
-        if (getReturnTypeClass() == null) {
-            throw new IllegalArgumentException("Provide a return type class!");
         }
 
         String finalUrl = addUrlParams(getUrl(), getUrlData());

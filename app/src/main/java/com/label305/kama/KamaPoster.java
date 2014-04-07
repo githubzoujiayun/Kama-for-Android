@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class KamaPoster extends AbstractKamaRequester {
+public class KamaPoster<ReturnType> extends AbstractKamaRequester<ReturnType> {
 
     private final PostExecutor mPostExecutor;
 
@@ -28,6 +28,16 @@ public class KamaPoster extends AbstractKamaRequester {
 
     public KamaPoster(final Context context, final String apiKey, final PostExecutor postExecutor) {
         super(context, apiKey);
+        mPostExecutor = postExecutor;
+    }
+
+    public KamaPoster(final Class<ReturnType> clzz, final Context context, final String apiKey) {
+        super(clzz, context, apiKey);
+        mPostExecutor = new HttpHelper();
+    }
+
+    public KamaPoster(final Class<ReturnType> clzz, final Context context, final String apiKey, final PostExecutor postExecutor) {
+        super(clzz, context, apiKey);
         mPostExecutor = postExecutor;
     }
 

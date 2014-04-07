@@ -27,36 +27,36 @@ public class KamaJsonParserTest extends TestCase {
     private static final String TITLE = "title";
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
-    private KamaJsonParser mKamaJsonParser;
+    private KamaJsonParser<ParseObject> mKamaJsonParser;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        mKamaJsonParser = new KamaJsonParser();
+        mKamaJsonParser = new KamaJsonParser<ParseObject>(RETURN_TYPE);
     }
 
     /* Normal behavior tests */
 
     public void testParseObject() throws JsonKamaException {
-        ParseObject parseObject = mKamaJsonParser.parseObject(JSON_SINGLE, RETURN_TYPE, null);
+        ParseObject parseObject = mKamaJsonParser.parseObject(JSON_SINGLE, null);
         assertThat(parseObject.mInteger, is(4));
     }
 
     public void testParseObjectWithTitle() throws JsonKamaException {
-        ParseObject parseObject = mKamaJsonParser.parseObject(JSON_SINGLE_TITLE, RETURN_TYPE, TITLE);
+        ParseObject parseObject = mKamaJsonParser.parseObject(JSON_SINGLE_TITLE, TITLE);
         assertThat(parseObject.mInteger, is(4));
     }
 
     public void testParseObjectsList() throws JsonKamaException {
-        List<ParseObject> parseObjects = mKamaJsonParser.parseObjectsList(JSON_LIST, RETURN_TYPE, null);
+        List<ParseObject> parseObjects = mKamaJsonParser.parseObjectsList(JSON_LIST, null);
 
         assertThat(parseObjects, hasSize(greaterThan(0)));
         assertThat(parseObjects.get(0).mInteger, is(4));
     }
 
     public void testParseObjectsListWithTitle() throws JsonKamaException {
-        List<ParseObject> parseObjects = mKamaJsonParser.parseObjectsList(JSON_LIST_TITLE, RETURN_TYPE, TITLE);
+        List<ParseObject> parseObjects = mKamaJsonParser.parseObjectsList(JSON_LIST_TITLE, TITLE);
 
         assertThat(parseObjects, hasSize(greaterThan(0)));
         assertThat(parseObjects.get(0).mInteger, is(4));
@@ -65,7 +65,7 @@ public class KamaJsonParserTest extends TestCase {
     /* Wrong behavior tests */
     public void testParseMisformattedObject() {
         try {
-            mKamaJsonParser.parseObject(JSON_MISFORMAT, RETURN_TYPE, null);
+            mKamaJsonParser.parseObject(JSON_MISFORMAT, null);
             fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
@@ -74,7 +74,7 @@ public class KamaJsonParserTest extends TestCase {
 
     public void testParseMissingMeta() {
         try {
-            mKamaJsonParser.parseObject(JSON_MISSING_META, RETURN_TYPE, null);
+            mKamaJsonParser.parseObject(JSON_MISSING_META, null);
             fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */

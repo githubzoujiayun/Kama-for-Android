@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class JsonPoster extends AbstractJsonRequester {
+public class JsonPoster<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
     private final PostExecutor mPostExecutor;
 
@@ -23,9 +23,20 @@ public class JsonPoster extends AbstractJsonRequester {
         mPostExecutor = new HttpHelper();
     }
 
-    public JsonPoster(final PostExecutor postExecutor) {
-        mPostExecutor = postExecutor;
+    public JsonPoster(final Class<ReturnType> clzz) {
+        super(clzz);
+        mPostExecutor = new HttpHelper();
     }
+
+    public JsonPoster(final PostExecutor deleteExecutor) {
+        mPostExecutor = deleteExecutor;
+    }
+
+    public JsonPoster(final Class<ReturnType> clzz, final PostExecutor deleteExecutor) {
+        super(clzz);
+        mPostExecutor = deleteExecutor;
+    }
+
 
     public void setPostData(final Map<String, Object> postData) throws KamaException {
         if (postData != null) {

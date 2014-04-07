@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class KamaDeleter extends AbstractKamaRequester {
+public class KamaDeleter<ReturnType> extends AbstractKamaRequester<ReturnType> {
 
     private final DeleteExecutor mDeleteExecutor;
 
@@ -28,6 +28,17 @@ public class KamaDeleter extends AbstractKamaRequester {
 
     public KamaDeleter(final Context context, final String apiKey, final DeleteExecutor deleteExecutor) {
         super(context, apiKey);
+        mDeleteExecutor = deleteExecutor;
+    }
+
+
+    public KamaDeleter(final Class<ReturnType> clzz, final Context context, final String apiKey) {
+        super(clzz, context, apiKey);
+        mDeleteExecutor = new HttpHelper();
+    }
+
+    public KamaDeleter(final Class<ReturnType> clzz, final Context context, final String apiKey, final DeleteExecutor deleteExecutor) {
+        super(clzz, context, apiKey);
         mDeleteExecutor = deleteExecutor;
     }
 

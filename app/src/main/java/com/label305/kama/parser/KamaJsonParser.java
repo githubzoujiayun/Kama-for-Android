@@ -5,14 +5,18 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.label305.kama.utils.KamaParam;
 import com.label305.kama.exceptions.JsonKamaException;
+import com.label305.kama.utils.KamaParam;
 
 import java.io.IOException;
 
-public class KamaJsonParser extends MyJsonParser {
+public class KamaJsonParser<ReturnType> extends MyJsonParser<ReturnType> {
 
     private final ObjectMapper mObjectMapper = new ObjectMapper();
+
+    public KamaJsonParser(final Class<ReturnType> clzz) {
+        super(clzz);
+    }
 
     @Override
     protected JsonParser getJsonParserFromResponse(final String responseString) throws JsonKamaException {

@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class KamaPutter extends AbstractKamaRequester {
+public class KamaPutter<ReturnType> extends AbstractKamaRequester<ReturnType> {
 
     private final PutExecutor mPutExecutor;
 
@@ -28,6 +28,16 @@ public class KamaPutter extends AbstractKamaRequester {
 
     public KamaPutter(final Context context, final String apiKey, final PutExecutor putExecutor) {
         super(context, apiKey);
+        mPutExecutor = putExecutor;
+    }
+
+    public KamaPutter(final Class<ReturnType> clzz, final Context context, final String apiKey) {
+        super(clzz, context, apiKey);
+        mPutExecutor = new HttpHelper();
+    }
+
+    public KamaPutter(final Class<ReturnType> clzz, final Context context, final String apiKey, final PutExecutor putExecutor) {
+        super(clzz, context, apiKey);
         mPutExecutor = putExecutor;
     }
 
