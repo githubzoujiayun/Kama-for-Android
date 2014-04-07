@@ -153,6 +153,29 @@ public class JsonPosterTest extends TestCase {
         }
     }
 
+    public void testNoReturnTypeClass() throws Exception {
+        JsonPoster<ParseObject> jsonPoster = new JsonPoster<ParseObject>(mPostExecutor);
+        jsonPoster.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        ParseObject result = jsonPoster.execute();
+        assertThat(result, is(nullValue()));
+    }
+
+    public void testVoidReturnType() throws Exception {
+        JsonPoster<Void> jsonPoster = new JsonPoster<Void>(mPostExecutor);
+        jsonPoster.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        Void result = jsonPoster.execute();
+        assertThat(result, is(nullValue()));
+    }
 
     public void testNonHttpOkResult() throws Exception {
         mJsonPoster.setUrl(URL);

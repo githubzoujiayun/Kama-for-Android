@@ -47,7 +47,7 @@ public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequ
 
 
     @Override
-    public Object execute() throws KamaException {
+    public ReturnType execute() throws KamaException {
         prepareRequest();
 
         HttpResponse httpResponse = executeRequest();
@@ -60,7 +60,7 @@ public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequ
     }
 
     @Override
-    public List<?> executeReturnsObjectsList() throws KamaException {
+    public List<ReturnType> executeReturnsObjectsList() throws KamaException {
         prepareRequest();
 
         HttpResponse httpResponse = executeRequest();

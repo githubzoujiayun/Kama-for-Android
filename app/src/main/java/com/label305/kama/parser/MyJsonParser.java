@@ -21,39 +21,53 @@ public class MyJsonParser<ReturnType> {
         mReturnTypeClass = returnTypeClass;
     }
 
-    public ReturnType parseObject(final String responseString, final String objTitle) throws JsonKamaException {
-        ReturnType result;
+    /**
+     * Parse given response string into an instance of ReturnType.
+     * @param responseString the response string to parse
+     * @param jsonTitle the title of the object in the json string, or {@code null} if there is no title.
+     * @return the parsed ReturnType, or {@code null} if the given returnTypeClass was {@code null}  or {@code Void.class}.
+     * @throws JsonKamaException when an exception was thrown parsing.
+     */
+    public ReturnType parseObject(final String responseString, final String jsonTitle) throws JsonKamaException {
+        ReturnType result = null;
         JsonParser jsonParser = getJsonParserFromResponse(responseString);
 
-//        if (ReturnType.class != Void.class) {
-        try {
-            result = getJsonObject(jsonParser, objTitle);
-        } catch (JsonParseException e) {
-            throw new JsonKamaException(e);
-        } catch (JsonMappingException e) {
-            throw new JsonKamaException(e);
-        } catch (IOException e) {
-            throw new JsonKamaException(e);
+        if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
+            try {
+                result = getJsonObject(jsonParser, jsonTitle);
+            } catch (JsonParseException e) {
+                throw new JsonKamaException(e);
+            } catch (JsonMappingException e) {
+                throw new JsonKamaException(e);
+            } catch (IOException e) {
+                throw new JsonKamaException(e);
+            }
         }
-//        }
         return result;
     }
 
-    public List<ReturnType> parseObjectsList(final String responseString, final String objTitle) throws JsonKamaException {
-        List<ReturnType> result;
+    /**
+     * Parse given response string into a list of instances of ReturnType.
+     * @param responseString the response string to parse
+     * @param jsonTitle the title of the object in the json string, or {@code null} if there is no title.
+     * @return the parsed list of ReturnTypes, or {@code null} if the given returnTypeClass was {@code null}  or {@code Void.class}.
+     * @throws JsonKamaException when an exception was thrown parsing.
+     */
+    public List<ReturnType> parseObjectsList(final String responseString, final String jsonTitle) throws JsonKamaException {
+        List<ReturnType> result = null;
         JsonParser jsonParser = getJsonParserFromResponse(responseString);
 
-//        if (retType != null) {
-        try {
-            result = getJsonObjectsList(jsonParser, objTitle);
-        } catch (JsonParseException e) {
-            throw new JsonKamaException(e);
-        } catch (JsonMappingException e) {
-            throw new JsonKamaException(e);
-        } catch (IOException e) {
-            throw new JsonKamaException(e);
+        if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
+            try {
+                result = getJsonObjectsList(jsonParser, jsonTitle);
+            } catch (JsonParseException e) {
+                throw new JsonKamaException(e);
+            } catch (JsonMappingException e) {
+                throw new JsonKamaException(e);
+            } catch (IOException e) {
+                throw new JsonKamaException(e);
+            }
         }
-//        }
         return result;
     }
 

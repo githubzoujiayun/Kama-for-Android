@@ -154,6 +154,29 @@ public class JsonDeleterTest extends TestCase {
         }
     }
 
+    public void testNoReturnTypeClass() throws Exception {
+        JsonDeleter<ParseObject> jsonDeleteter = new JsonDeleter<ParseObject>(mDeleteExecutor);
+        jsonDeleteter.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        ParseObject result = jsonDeleteter.execute();
+        assertThat(result, is(nullValue()));
+    }
+
+    public void testVoidReturnType() throws Exception {
+        JsonDeleter<Void> jsonDeleteter = new JsonDeleter<Void>(mDeleteExecutor);
+        jsonDeleteter.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        Void result = jsonDeleteter.execute();
+        assertThat(result, is(nullValue()));
+    }
 
     public void testNonHttpOkResult() throws Exception {
         mJsonDeleter.setUrl(URL);

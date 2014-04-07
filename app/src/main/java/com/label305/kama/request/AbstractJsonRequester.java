@@ -80,8 +80,8 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return mHeaderData;
     }
 
-    public Object execute() throws KamaException {
-        Object result;
+    public ReturnType execute() throws KamaException {
+        ReturnType result;
 
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
@@ -94,8 +94,8 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return result;
     }
 
-    public List<?> executeReturnsObjectsList() throws KamaException {
-        List<?> result;
+    public List<ReturnType> executeReturnsObjectsList() throws KamaException {
+        List<ReturnType> result;
 
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);

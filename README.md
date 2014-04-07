@@ -66,9 +66,7 @@ If there is no parseable response, use `Void`:
     jsonDeleter.setUrl(MY_URL);
     jsonDeleter.setUrlData(myUrlData);
 
-
-
-
+If you forget to pass the class in the constructor, the execute methods will return `null`!
 
 ###Kama formatted json
 A Kama formatted json response looks like this:

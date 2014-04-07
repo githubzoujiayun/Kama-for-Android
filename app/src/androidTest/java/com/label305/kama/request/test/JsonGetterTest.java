@@ -153,6 +153,30 @@ public class JsonGetterTest extends TestCase {
         }
     }
 
+    public void testNoReturnTypeClass() throws Exception {
+        JsonGetter<ParseObject> jsonGetter = new JsonGetter<ParseObject>(mGetExecutor);
+        jsonGetter.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        ParseObject result = jsonGetter.execute();
+        assertThat(result, is(nullValue()));
+    }
+
+    public void testVoidReturnType() throws Exception {
+        JsonGetter<Void> jsonGetter = new JsonGetter<Void>(mGetExecutor);
+        jsonGetter.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        Void result = jsonGetter.execute();
+        assertThat(result, is(nullValue()));
+    }
+
     public void testNonHttpOkResult() throws Exception {
         mJsonGetter.setUrl(URL);
 

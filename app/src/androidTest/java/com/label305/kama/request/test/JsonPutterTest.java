@@ -153,6 +153,29 @@ public class JsonPutterTest extends TestCase {
         }
     }
 
+    public void testNoReturnTypeClass() throws Exception {
+        JsonPutter<ParseObject> jsonPutter = new JsonPutter<ParseObject>(mPutExecutor);
+        jsonPutter.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        ParseObject result = jsonPutter.execute();
+        assertThat(result, is(nullValue()));
+    }
+
+    public void testVoidReturnType() throws Exception {
+        JsonPutter<Void> jsonPutter = new JsonPutter<Void>(mPutExecutor);
+        jsonPutter.setUrl(URL);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
+
+        Void result = jsonPutter.execute();
+        assertThat(result, is(nullValue()));
+    }
 
     public void testNonHttpOkResult() throws Exception {
         mJsonPutter.setUrl(URL);
