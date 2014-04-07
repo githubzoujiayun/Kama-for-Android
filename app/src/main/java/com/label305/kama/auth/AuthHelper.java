@@ -7,7 +7,7 @@ import com.label305.kama.exceptions.status.UnauthorizedKamaException;
 import net.smartam.leeloo.common.exception.OAuthProblemException;
 import net.smartam.leeloo.common.exception.OAuthSystemException;
 
-class AuthHelper {
+public class AuthHelper {
 
     private AuthHelper() {
     }
@@ -44,5 +44,9 @@ class AuthHelper {
 
     public static void logOut(final Context context) {
         Authorization.setAuthToken(context, null);
+    }
+
+    public static boolean isAuthenticated(final Context context) {
+        return Authorization.getAuthToken(context) != null;
     }
 }

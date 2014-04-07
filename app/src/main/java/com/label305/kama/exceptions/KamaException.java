@@ -37,7 +37,7 @@ public class KamaException extends Exception {
     }
 
 
-    public Object getKamaError() {
+    public KamaError getKamaError() {
         return mKamaError;
     }
 
