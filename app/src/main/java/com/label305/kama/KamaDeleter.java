@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -55,7 +56,7 @@ public class KamaDeleter<ReturnType> extends AbstractKamaRequester<ReturnType> {
     public void setDeleteData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mDeleteData = new StringEntity(jsonData);
+                mDeleteData = new StringEntity(jsonData, HTTP.UTF_8);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }

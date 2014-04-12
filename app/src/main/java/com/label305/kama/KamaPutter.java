@@ -10,6 +10,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -54,7 +55,7 @@ public class KamaPutter<ReturnType> extends AbstractKamaRequester<ReturnType> {
     public void setPutData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mPutData = new StringEntity(jsonData);
+                mPutData = new StringEntity(jsonData, HTTP.UTF_8);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
