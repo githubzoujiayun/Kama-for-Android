@@ -1,3 +1,3 @@
 [submodule "app/dependencies/stan"]
 	path = app/dependencies/stan
-	url = git@bitbucket.org:Label305/stan-android.git
+	url = git@github.com:Label305/Stan-for-Android.git
