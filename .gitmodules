@@ -1,3 +1,0 @@
-[submodule "app/dependencies/stan"]
-	path = app/dependencies/stan
-	url = git@github.com:Label305/Stan-for-Android.git
