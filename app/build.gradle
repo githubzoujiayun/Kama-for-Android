@@ -31,8 +31,8 @@ dependencies {
     androidTestCompile 'commons-io:commons-io:+'
 
     /* Custom compiled dexmaker. Switch back to the original one once fix https://code.google.com/p/dexmaker/issues/detail?id=28 has been applied */
-    androidTestCompile files('/libs/dexmaker-1.1.jar')
-    androidTestCompile files('/libs/dexmaker-mockito-1.1-custom.jar')
+    androidTestCompile files('libs/dexmaker-1.1.jar')
+    androidTestCompile files('libs/dexmaker-mockito-1.1-custom.jar')
 }
 
 android {
