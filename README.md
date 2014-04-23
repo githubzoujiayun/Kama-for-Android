@@ -1,4 +1,4 @@
-#Kama for Android
+#Kama for Android [![Build Status](https://travis-ci.org/Label305/Kama-for-Android.svg?branch=master)](https://travis-ci.org/Label305/Kama-for-Android)
 
 Kama for Android is a library for easy executing HTTP requests, and parsing their JSON response into Pojo's. It uses [Jackson](https://github.com/FasterXML/jackson) to map JSON to Plain Old Java Objects.
 
