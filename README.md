@@ -90,4 +90,3 @@ A Kama formatted JSON response looks like this:
     }
 
 You can use the classes `KamaGetter`, `KamaPoster`, `KamaDeleter` and `KamaPutter` to do Kama requests. These classes add the necessary headers and url parameters for each request.
-
