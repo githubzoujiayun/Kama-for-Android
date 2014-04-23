@@ -31,7 +31,7 @@ To use this library, make the following changes:
 ##Usage
 
 ###POJO's
-A **P**lain **O**ld **J**ava **O**bject needs to be formatted according to the Jackson library as follows:
+A Plain Old Java Object needs to be formatted according to the Jackson library as follows:
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public class MyObject {
