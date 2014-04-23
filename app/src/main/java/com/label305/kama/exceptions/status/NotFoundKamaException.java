@@ -1,7 +1,7 @@
 package com.label305.kama.exceptions.status;
 
+import com.label305.kama.http.StatusCodes;
 import com.label305.kama.objects.KamaError;
-import com.label305.stan.http.StatusCodes;
 
 public class NotFoundKamaException extends HttpResponseKamaException {
 

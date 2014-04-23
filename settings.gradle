@@ -1,4 +1,1 @@
 include ':app'
-include ':stan'
-
-project(':stan').projectDir = new File(settingsDir, '/app/dependencies/stan/app')

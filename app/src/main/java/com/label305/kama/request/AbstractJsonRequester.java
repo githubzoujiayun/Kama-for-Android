@@ -6,10 +6,10 @@ import com.label305.kama.exceptions.status.HttpResponseKamaException;
 import com.label305.kama.exceptions.status.InternalErrorKamaException;
 import com.label305.kama.exceptions.status.NotFoundKamaException;
 import com.label305.kama.exceptions.status.UnauthorizedKamaException;
+import com.label305.kama.http.StatusCodes;
 import com.label305.kama.parser.MyJsonParser;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
-import com.label305.stan.http.StatusCodes;
 
 import org.apache.http.HttpResponse;
 
@@ -85,10 +85,11 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
-        if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (statusCode == StatusCodes.HTTP_OK || statusCode == StatusCodes.HTTP_ACCEPTED) {
             result = mMyJsonParser.parseObject(responseString, mJsonTitle);
         } else {
-            throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
+            throw createKamaException(responseString, statusCode);
         }
 
         return result;
@@ -99,10 +100,11 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
-        if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (statusCode == StatusCodes.HTTP_OK || statusCode == StatusCodes.HTTP_ACCEPTED) {
             result = mMyJsonParser.parseObjectsList(responseString, mJsonTitle);
         } else {
-            throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
+            throw createKamaException(responseString, statusCode);
         }
 
         return result;

@@ -10,13 +10,13 @@ import com.label305.kama.exceptions.status.HttpResponseKamaException;
 import com.label305.kama.exceptions.status.InternalErrorKamaException;
 import com.label305.kama.exceptions.status.NotFoundKamaException;
 import com.label305.kama.exceptions.status.UnauthorizedKamaException;
+import com.label305.kama.http.StatusCodes;
 import com.label305.kama.objects.KamaError;
 import com.label305.kama.parser.KamaJsonParser;
 import com.label305.kama.parser.MyJsonParser;
 import com.label305.kama.request.AbstractJsonRequester;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
-import com.label305.stan.http.StatusCodes;
 
 import org.apache.http.HttpResponse;
 

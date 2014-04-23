@@ -2,10 +2,10 @@ package com.label305.kama.request.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
+import com.label305.kama.http.GetExecutor;
+import com.label305.kama.http.StatusCodes;
 import com.label305.kama.request.JsonGetter;
 import com.label305.kama.utils.KamaParam;
-import com.label305.stan.http.GetExecutor;
-import com.label305.stan.http.StatusCodes;
 
 import junit.framework.TestCase;
 

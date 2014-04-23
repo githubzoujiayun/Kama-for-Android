@@ -11,12 +11,9 @@ buildscript {
 
 repositories {
     mavenCentral()
-    maven { url 'http://download.crashlytics.com/maven' }
 }
 
 dependencies {
-    compile project(':stan')
-
     compile 'com.fasterxml.jackson.core:jackson-core:2.3.+'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.+'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.+'

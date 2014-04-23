@@ -5,10 +5,10 @@ import android.test.AndroidTestCase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.KamaGetter;
 import com.label305.kama.exceptions.KamaException;
+import com.label305.kama.http.GetExecutor;
+import com.label305.kama.http.StatusCodes;
 import com.label305.kama.objects.KamaError;
 import com.label305.kama.utils.KamaParam;
-import com.label305.stan.http.GetExecutor;
-import com.label305.stan.http.StatusCodes;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;

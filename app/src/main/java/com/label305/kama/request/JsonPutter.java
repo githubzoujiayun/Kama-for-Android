@@ -1,8 +1,8 @@
 package com.label305.kama.request;
 
 import com.label305.kama.exceptions.KamaException;
-import com.label305.stan.http.HttpHelper;
-import com.label305.stan.http.PutExecutor;
+import com.label305.kama.http.HttpHelper;
+import com.label305.kama.http.PutExecutor;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
