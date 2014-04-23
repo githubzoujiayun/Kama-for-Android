@@ -1,24 +1,18 @@
 #Kama for Android
 
+Kama for Android is a library for easy executing HTTP requests, and parsing their JSON response into Pojo's. It uses [Jackson](https://github.com/FasterXML/jackson) to map JSON to Plain Old Java Objects.
+
 ##Setup
 
-This library includes the [Stan](https://bitbucket.org/Label305/stan-android) library.
 To use this library, make the following changes:
 
  * To `settings.gradle`:
 
         include ':kama'
-        include ':stan'
 
         project(':kama').projectDir = new File(settingsDir, 'path/to/kama/app')
-        project(':stan').projectDir = new File(settingsDir, 'path/to/stan/app')
-        // You can use the stan library that comes with kama, or provide your own path.
 
  * Your app's `build.gradle`:
-
-        repositories {
-            maven { url 'http://download.crashlytics.com/maven' }
-        }
 
         dependencies {
             compile project(':kama')
@@ -36,8 +30,19 @@ To use this library, make the following changes:
 
 ##Usage
 
+###POJO's
+A **P**lain **O**ld **J**ava **O**bject needs to be formatted according to the Jackson library as follows:
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public class MyObject {
+    
+        @JsonProperty("name")
+        private String name;
+
+    } 
+
 ###Json
-You can execute HTTP requests and parse their responses by using the `JsonGetter`, `JsonPoster`, `JsonDeleter` and `JsonPutter` classes.
+You can execute HTTP requests and parse their responses by using the `JsonGetter`, `JsonPoster`, `JsonDeleter` and `JsonPutter` classes. Do not forget to provide the `Class` parameter in the constructor! 
 
 Example:
 
@@ -70,8 +75,10 @@ If there is no parseable response, use `Void`:
 
 If you forget to pass the class in the constructor, the execute methods will return `null`!
 
-###Kama formatted json
-A Kama formatted json response looks like this:
+If the response code is not `200` or `202`, a `HttpResponseKamaException` is thrown, including the meta data, stored in an instance of `KamaError` class.
+
+###Kama formatted JSON
+A Kama formatted JSON response looks like this:
 
     {
         "meta": {
@@ -82,8 +89,5 @@ A Kama formatted json response looks like this:
         }
     }
 
-You can use the classes `KamaGetter`, `KamaPoster`, `KamaDeleter` and `KamaPutter` to do kama requests.
-These classes add the necessary headers and url parameters for each request.
-
-If the response code is not `200`, a `HttpResponseKamaException` is thrown, including the meta data, stored in an instance of `KamaError` class.
+You can use the classes `KamaGetter`, `KamaPoster`, `KamaDeleter` and `KamaPutter` to do Kama requests. These classes add the necessary headers and url parameters for each request.
 
