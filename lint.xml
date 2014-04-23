@@ -1,0 +1,7 @@
+<lint>
+    <!-- list of issues to configure -->
+    <issue id="InvalidPackage">
+        <ignore regexp=".*jettison.*" />
+        <ignore regexp=".*smartam.*"/>
+    </issue>
+</lint>

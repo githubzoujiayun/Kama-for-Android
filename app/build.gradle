@@ -46,6 +46,10 @@ android {
         exclude 'META-INF/NOTICE'
         exclude 'LICENSE.txt'
     }
+
+    lintOptions {
+        lintConfig file("../lint.xml")
+    }
 }
 
 android.libraryVariants.all { variant ->
