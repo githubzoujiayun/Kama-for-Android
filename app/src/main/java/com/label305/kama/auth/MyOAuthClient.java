@@ -77,8 +77,8 @@ class MyOAuthClient extends OAuthClient {
 
         request = OAuthClientRequest.tokenLocation(authUrl)
                 .setParameter("grant_type", "service_linkedin")
-                .setParameter("oauth_token", accessToken)
-                .setParameter("oauth_token_secret", accesTokenSecret)
+                .setParameter("oauth_token",accessToken)
+                .setParameter("oauth_token_secret",accesTokenSecret)
                 .setParameter("app_key", appKey)
                 .buildBodyMessage();
 
