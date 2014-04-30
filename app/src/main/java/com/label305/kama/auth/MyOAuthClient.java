@@ -67,4 +67,22 @@ class MyOAuthClient extends OAuthClient {
         request.setHeaders(header);
         return accessToken(request).getAccessToken();
     }
+
+    public String authenticateLinkedIn(final String authUrl, final String appKey, final String accessToken, final String accesTokenSecret) throws OAuthSystemException, OAuthProblemException {
+        OAuthClientRequest request;
+
+        Map<String, String> header = new HashMap<String, String>();
+
+        header.put("X-Expects", "Kama");
+
+        request = OAuthClientRequest.tokenLocation(authUrl)
+                .setParameter("grant_type", "service_linkedin")
+                .setParameter("oauth_token", accessToken)
+                .setParameter("oauth_token_secret", accesTokenSecret)
+                .setParameter("app_key", appKey)
+                .buildBodyMessage();
+
+        request.setHeaders(header);
+        return accessToken(request).getAccessToken();
+    }
 }
