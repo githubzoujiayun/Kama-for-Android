@@ -42,6 +42,21 @@ public class AuthHelper {
         }
     }
 
+    public static void authenticateLinkedIn(final Context context, final String authUrl, String apiKey, final String accessToken, final String accessTokenSecret) throws UnauthorizedKamaException {
+        MyOAuthClient oAuthClient = new MyOAuthClient(new MyURLConnectionClient());
+
+        try {
+            String authToken = oAuthClient.authenticateLinkedIn(authUrl, apiKey, accessToken, accessTokenSecret);
+            if (authToken != null && authToken.length() > 0) {
+                Authorization.setAuthToken(context, authToken);
+            }
+        } catch (OAuthProblemException e) {
+            throw new UnauthorizedKamaException(e);
+        } catch (OAuthSystemException e) {
+            throw new UnauthorizedKamaException(e);
+        }
+    }
+
     public static void logOut(final Context context) {
         Authorization.setAuthToken(context, null);
     }
