@@ -3,14 +3,17 @@ jdk: oraclejdk7
 
 env:
   matrix:
-  - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a ONETIMECALLS=false
-  - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a ONETIMECALLS=false
-  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a ONETIMECALLS=true
+  - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
+  - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
+  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true MAVEN=true JAVADOC=true
   global:
   - TERM=dumb
+  # FTP_USER, FTP_PASSWORD, HIPCHAT
   - secure: iOXtZTLTClnqpQZ+peuPJWfeXGwuA9bU/Wsj0ZkA7/aQfNHGdfjMbn3hzkGMUtE3jojyUsLwwj+I3tGn7kJyqGtadLng7fAz5MaNm/qTHgsdDIuXK8gs+xZCnt9suhG4KP2qVM8hGvPqV9IDkwQdwTAtvV8eHn4hwMpesv8mu5U=
   - secure: M4bgOt2x3ao/1YBN620Ks/QwtM27ewk3WNSSsQBQENE4pnBScVJ2KKOzNTuSTzr/mrYM9VeVa7+wSqlgxIHV/dduuoJEwdd51DZpyq9Wb0zBXLjtIlMKxq3Zu63bfFbjU7nWT4hNtU3cAEzwcn8m3n/xnnrMKiBTqFxO2KryuPE=
   - secure: pCXP9738vidPLx3s5jV927VW9z+n+RQH15CIwGNvZzTY0+pjOwaEaMi9ngigOxHwRjmYRaD2z7JIG8kMkjjrJTcFI/CY3q/SgcSEZtm/nCMnoAGJ9VZyfb2u7gqhffb1cBlD7g4evU77PeAbtlSf6v+gTDAI1d1NaCN5/XLhZOM=
+  # NEXUS_USERNAME, NEXUS_PASSWORD
+  - secure: \m83OO8zBxAeNJ3ij8rBwFqf+/hEDN9Ad3zSB4U1CRAdMPKi00dyQjTjkcjA6O75griECvREVXmsP5QwfhWpz4OSoi9NKt4SsFLd5Pt8KSX10eolaRjj/cQRMtEa9xdESVr7Sg0j1iUGJzID87dgS61gTOY9b30eeJ8l1A+vh0Ds=
 
 before_install:
   - sudo chmod +x gradlew
@@ -32,12 +35,14 @@ install:
 
 script:
   - ./gradlew connectedCheck
-  - if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew lint ; fi
+  - if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
 
 after_success:
-- if [[ $ONETIMECALLS == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
-- if [[ $ONETIMECALLS == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Kama for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
-- if [[ $ONETIMECALLS == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /kama-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
+  - if [[ $JAVADOC == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
+  - if [[ $JAVADOC == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Kama for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
+  - if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /kama-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
+
+  - if [[ $MAVEN == 'true' ]]; then ./gradlew uploadArchives -PnexusUsername=${NEXUS_USERNAME} -PnexusPassword=${NEXUS_PASSWORD} ; fi
 notifications:
   email: false
 
