@@ -1,6 +1,7 @@
 package com.label305.kama;
 
 import android.content.Context;
+import android.os.Debug;
 
 import com.label305.kama.auth.Authorization;
 import com.label305.kama.exceptions.JsonKamaException;
@@ -17,6 +18,7 @@ import com.label305.kama.request.AbstractJsonRequester;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 import java.net.HttpURLConnection;
@@ -25,6 +27,11 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequester<ReturnType> {
+
+    /**
+     * Name of the redirect url.
+     */
+    public static final String LOCATION = "Location";
 
     private final KamaJsonParser<ReturnType> mKamaJsonParser;
 
@@ -55,10 +62,19 @@ public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequ
         int statusCode = httpResponse.getStatusLine().getStatusCode();
         if (HttpUtils.isSuccessFul(statusCode)) {
             return mKamaJsonParser.parseObject(responseString, getJsonTitle());
-        } else {
-            throw createKamaException(responseString, statusCode);
+        } else if (HttpUtils.isRedirect(statusCode)) {
+            Header[] headers = httpResponse.getHeaders(LOCATION);
+            if(headers == null || headers.length == 0){
+                throw createKamaException(responseString, statusCode);
+            }
+            Header header = headers[0];
+            String url = header.getValue();
+            setUrl(url);
+            return execute();
         }
+        throw createKamaException(responseString, statusCode);
     }
+
 
     @Override
     public List<ReturnType> executeReturnsObjectsList() throws KamaException {
