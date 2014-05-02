@@ -1,6 +1,7 @@
 apply plugin: 'android-library'
 
 apply from: 'pushMaven.gradle'
+apply from: 'generateJavadoc.gradle'
 
 buildscript {
     repositories {
@@ -58,26 +59,5 @@ android {
 
     lintOptions {
         lintConfig file("../lint.xml")
-    }
-}
-
-android.libraryVariants.all { variant ->
-
-    task("generate${variant.name}Javadoc", type: Javadoc) {
-        if(project.hasProperty('TITLE') && project.hasProperty('OUTPUT') && project.hasProperty('ANDROID_HOME')) {
-            title = TITLE
-            description "Generates Javadoc for $variant.name."
-            source = variant.javaCompile.source
-            ext.androidJar =
-                    "${android.plugin.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
-            destinationDir file(OUTPUT)
-            classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar)
-            options.links("http://docs.oracle.com/javase/7/docs/api/");
-            options.linksOffline("http://d.android.com/reference", ANDROID_HOME + "/docs/reference")
-            options.setMemberLevel(JavadocMemberLevel.PACKAGE)
-            exclude '**/BuildConfig.java'
-            exclude '**/R.java'
-        }
-
     }
 }
