@@ -1,7 +1,6 @@
 package com.label305.kama;
 
 import android.content.Context;
-import android.os.Debug;
 
 import com.label305.kama.auth.Authorization;
 import com.label305.kama.exceptions.JsonKamaException;
