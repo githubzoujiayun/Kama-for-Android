@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.KamaGetter;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.GetExecutor;
-import com.label305.kama.http.StatusCodes;
 import com.label305.kama.objects.KamaError;
 import com.label305.kama.utils.KamaParam;
 
@@ -17,6 +16,7 @@ import org.apache.http.StatusLine;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.net.HttpURLConnection;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -75,7 +75,7 @@ public class KamaGetterTest extends AndroidTestCase {
         mKamaGetter.setAuthType(KamaParam.AuthenticationType.APIKEY);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         Object result = mKamaGetter.execute();
@@ -93,7 +93,7 @@ public class KamaGetterTest extends AndroidTestCase {
         mKamaGetter.setAuthType(KamaParam.AuthenticationType.APIKEY);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_NOT_FOUND);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_ERROR));
 
         try {
@@ -105,7 +105,7 @@ public class KamaGetterTest extends AndroidTestCase {
             Object kamaError = e.getKamaError();
             assertThat(kamaError, is(not(nullValue())));
             assertThat(kamaError, is(instanceOf(KamaError.class)));
-            assertThat(((KamaError) kamaError).getStatusCode(), is(StatusCodes.HTTP_NOT_FOUND));
+            assertThat(((KamaError) kamaError).getStatusCode(), is(HttpURLConnection.HTTP_NOT_FOUND));
         }
     }
 

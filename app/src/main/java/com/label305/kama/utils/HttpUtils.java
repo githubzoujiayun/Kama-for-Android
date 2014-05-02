@@ -21,6 +21,9 @@ import java.util.zip.GZIPOutputStream;
 @SuppressWarnings("UnusedDeclaration")
 public class HttpUtils {
 
+    public static final int HTTP_OK_LOWER = 200;
+    public static final int HTTP_OK_UPPER = 299;
+
     private static final String GZIP = "gzip";
     private static final String CONTENT_ENCODING = "Content-Encoding";
 
@@ -35,6 +38,10 @@ public class HttpUtils {
     public static boolean isInternetAvailable(final Context context) {
         NetworkInfo info = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return !(info == null || !info.isConnected());
+    }
+
+    public static boolean isSuccessFul(final int statusCode) {
+        return statusCode >= HTTP_OK_LOWER && statusCode <= HTTP_OK_UPPER;
     }
 
     public static boolean isGZip(final HttpMessage response) {

@@ -3,7 +3,6 @@ package com.label305.kama.request.test;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.DeleteExecutor;
-import com.label305.kama.http.StatusCodes;
 import com.label305.kama.request.JsonDeleter;
 import com.label305.kama.utils.KamaParam;
 
@@ -17,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -78,7 +78,7 @@ public class JsonDeleterTest extends TestCase {
         mJsonDeleter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         Object result = mJsonDeleter.execute();
@@ -94,7 +94,7 @@ public class JsonDeleterTest extends TestCase {
         mJsonDeleter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST));
 
         Object result = mJsonDeleter.executeReturnsObjectsList();
@@ -112,7 +112,7 @@ public class JsonDeleterTest extends TestCase {
         mJsonDeleter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
         Object result = mJsonDeleter.executeReturnsObjectsList();
@@ -131,7 +131,7 @@ public class JsonDeleterTest extends TestCase {
         mJsonDeleter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
         mJsonDeleter.executeReturnsObjectsList();
@@ -159,7 +159,7 @@ public class JsonDeleterTest extends TestCase {
         jsonDeleteter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         ParseObject result = jsonDeleteter.execute();
@@ -171,7 +171,7 @@ public class JsonDeleterTest extends TestCase {
         jsonDeleteter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_OK);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         Void result = jsonDeleteter.execute();
@@ -182,7 +182,7 @@ public class JsonDeleterTest extends TestCase {
         mJsonDeleter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
-        when(mStatusLine.getStatusCode()).thenReturn(StatusCodes.HTTP_NOT_FOUND);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         try {
