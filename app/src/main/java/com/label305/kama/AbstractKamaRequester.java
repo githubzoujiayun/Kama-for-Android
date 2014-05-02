@@ -10,7 +10,6 @@ import com.label305.kama.exceptions.status.HttpResponseKamaException;
 import com.label305.kama.exceptions.status.InternalErrorKamaException;
 import com.label305.kama.exceptions.status.NotFoundKamaException;
 import com.label305.kama.exceptions.status.UnauthorizedKamaException;
-import com.label305.kama.http.StatusCodes;
 import com.label305.kama.objects.KamaError;
 import com.label305.kama.parser.KamaJsonParser;
 import com.label305.kama.parser.MyJsonParser;
@@ -20,6 +19,7 @@ import com.label305.kama.utils.KamaParam;
 
 import org.apache.http.HttpResponse;
 
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +52,11 @@ public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequ
 
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
-        if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (HttpUtils.isSuccessFul(statusCode)) {
             return mKamaJsonParser.parseObject(responseString, getJsonTitle());
         } else {
-            throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
+            throw createKamaException(responseString, statusCode);
         }
     }
 
@@ -65,10 +66,11 @@ public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequ
 
         HttpResponse httpResponse = executeRequest();
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
-        if (httpResponse.getStatusLine().getStatusCode() == StatusCodes.HTTP_OK) {
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (HttpUtils.isSuccessFul(statusCode)) {
             return mKamaJsonParser.parseObjectsList(responseString, getJsonTitle());
         } else {
-            throw createKamaException(responseString, httpResponse.getStatusLine().getStatusCode());
+            throw createKamaException(responseString, statusCode);
         }
     }
 
@@ -140,16 +142,16 @@ public abstract class AbstractKamaRequester<ReturnType> extends AbstractJsonRequ
         }
 
         switch (statusCode) {
-            case StatusCodes.HTTP_BAD_REQUEST:
+            case HttpURLConnection.HTTP_BAD_REQUEST:
                 kamaException = new BadRequestKamaException(responseString, kamaError);
                 break;
-            case StatusCodes.HTTP_UNAUTHORIZED:
+            case HttpURLConnection.HTTP_UNAUTHORIZED:
                 kamaException = new UnauthorizedKamaException(responseString, kamaError);
                 break;
-            case StatusCodes.HTTP_NOT_FOUND:
+            case HttpURLConnection.HTTP_NOT_FOUND:
                 kamaException = new NotFoundKamaException(responseString, kamaError);
                 break;
-            case StatusCodes.HTTP_INTERNAL_ERROR:
+            case HttpURLConnection.HTTP_INTERNAL_ERROR:
                 kamaException = new InternalErrorKamaException(responseString, kamaError);
                 break;
             default:

@@ -6,13 +6,13 @@ import com.label305.kama.exceptions.status.HttpResponseKamaException;
 import com.label305.kama.exceptions.status.InternalErrorKamaException;
 import com.label305.kama.exceptions.status.NotFoundKamaException;
 import com.label305.kama.exceptions.status.UnauthorizedKamaException;
-import com.label305.kama.http.StatusCodes;
 import com.label305.kama.parser.MyJsonParser;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
 
 import org.apache.http.HttpResponse;
 
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,79 +39,6 @@ public abstract class AbstractJsonRequester<ReturnType> {
         mMyJsonParser = new MyJsonParser<ReturnType>(returnTypeClass);
     }
 
-    public void setUrl(final String url) {
-        mUrl = url;
-    }
-
-    /**
-     * Set the title of the json object returned, or null for no title.
-     */
-    public void setJsonTitle(final String jsonTitle) {
-        mJsonTitle = jsonTitle;
-    }
-
-    /**
-     * Set url parameters to be appended to the url.
-     */
-    public void setUrlData(final Map<String, Object> urlData) {
-        mUrlData = urlData;
-    }
-
-    /**
-     * Set the data which should be put in the headers.
-     */
-    public void setHeaderData(final Map<String, Object> headerData) {
-        mHeaderData = headerData;
-    }
-
-    protected String getUrl() {
-        return mUrl;
-    }
-
-    protected String getJsonTitle() {
-        return mJsonTitle;
-    }
-
-    protected Map<String, Object> getUrlData() {
-        return mUrlData;
-    }
-
-    protected Map<String, Object> getHeaderData() {
-        return mHeaderData;
-    }
-
-    public ReturnType execute() throws KamaException {
-        ReturnType result;
-
-        HttpResponse httpResponse = executeRequest();
-        String responseString = HttpUtils.getStringFromResponse(httpResponse);
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (statusCode == StatusCodes.HTTP_OK || statusCode == StatusCodes.HTTP_ACCEPTED) {
-            result = mMyJsonParser.parseObject(responseString, mJsonTitle);
-        } else {
-            throw createKamaException(responseString, statusCode);
-        }
-
-        return result;
-    }
-
-    public List<ReturnType> executeReturnsObjectsList() throws KamaException {
-        List<ReturnType> result;
-
-        HttpResponse httpResponse = executeRequest();
-        String responseString = HttpUtils.getStringFromResponse(httpResponse);
-        int statusCode = httpResponse.getStatusLine().getStatusCode();
-        if (statusCode == StatusCodes.HTTP_OK || statusCode == StatusCodes.HTTP_ACCEPTED) {
-            result = mMyJsonParser.parseObjectsList(responseString, mJsonTitle);
-        } else {
-            throw createKamaException(responseString, statusCode);
-        }
-
-        return result;
-    }
-
-    protected abstract HttpResponse executeRequest() throws KamaException;
-
     protected static String addUrlParams(final String url, final Map<String, Object> urlData) {
         StringBuilder urlBuilder = new StringBuilder(url);
 
@@ -135,6 +62,79 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return value.replace(" ", "%20");
     }
 
+    protected String getUrl() {
+        return mUrl;
+    }
+
+    public void setUrl(final String url) {
+        mUrl = url;
+    }
+
+    protected String getJsonTitle() {
+        return mJsonTitle;
+    }
+
+    /**
+     * Set the title of the json object returned, or null for no title.
+     */
+    public void setJsonTitle(final String jsonTitle) {
+        mJsonTitle = jsonTitle;
+    }
+
+    protected Map<String, Object> getUrlData() {
+        return mUrlData;
+    }
+
+    /**
+     * Set url parameters to be appended to the url.
+     */
+    public void setUrlData(final Map<String, Object> urlData) {
+        mUrlData = urlData;
+    }
+
+    protected Map<String, Object> getHeaderData() {
+        return mHeaderData;
+    }
+
+    /**
+     * Set the data which should be put in the headers.
+     */
+    public void setHeaderData(final Map<String, Object> headerData) {
+        mHeaderData = headerData;
+    }
+
+    public ReturnType execute() throws KamaException {
+        ReturnType result;
+
+        HttpResponse httpResponse = executeRequest();
+        String responseString = HttpUtils.getStringFromResponse(httpResponse);
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (HttpUtils.isSuccessFul(statusCode)) {
+            result = mMyJsonParser.parseObject(responseString, mJsonTitle);
+        } else {
+            throw createKamaException(responseString, statusCode);
+        }
+
+        return result;
+    }
+
+    public List<ReturnType> executeReturnsObjectsList() throws KamaException {
+        List<ReturnType> result;
+
+        HttpResponse httpResponse = executeRequest();
+        String responseString = HttpUtils.getStringFromResponse(httpResponse);
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        if (HttpUtils.isSuccessFul(statusCode)) {
+            result = mMyJsonParser.parseObjectsList(responseString, mJsonTitle);
+        } else {
+            throw createKamaException(responseString, statusCode);
+        }
+
+        return result;
+    }
+
+    protected abstract HttpResponse executeRequest() throws KamaException;
+
     protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData) {
         Map<String, Object> modifiedHeaderData = headerData == null ? new HashMap<String, Object>() : new HashMap<String, Object>(headerData);
         modifiedHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_JSON);
@@ -145,16 +145,16 @@ public abstract class AbstractJsonRequester<ReturnType> {
         KamaException kamaException;
 
         switch (statusCode) {
-            case StatusCodes.HTTP_BAD_REQUEST:
+            case HttpURLConnection.HTTP_BAD_REQUEST:
                 kamaException = new BadRequestKamaException(responseString);
                 break;
-            case StatusCodes.HTTP_UNAUTHORIZED:
+            case HttpURLConnection.HTTP_UNAUTHORIZED:
                 kamaException = new UnauthorizedKamaException(responseString);
                 break;
-            case StatusCodes.HTTP_NOT_FOUND:
+            case HttpURLConnection.HTTP_NOT_FOUND:
                 kamaException = new NotFoundKamaException(responseString);
                 break;
-            case StatusCodes.HTTP_INTERNAL_ERROR:
+            case HttpURLConnection.HTTP_INTERNAL_ERROR:
                 kamaException = new InternalErrorKamaException(responseString);
                 break;
             default:
