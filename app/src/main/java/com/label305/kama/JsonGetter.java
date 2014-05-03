@@ -1,40 +1,36 @@
 package com.label305.kama;
 
-import android.content.Context;
-
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.GetExecutor;
 import com.label305.kama.http.HttpHelper;
+import com.label305.kama.request.AbstractJsonRequester;
 
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class KamaGetter<ReturnType> extends AbstractKamaRequester<ReturnType> {
+public class JsonGetter<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
     private final GetExecutor mGetExecutor;
 
-    public KamaGetter(final Context context, final String apiKey) {
-        super(context, apiKey);
+    public JsonGetter() {
         mGetExecutor = new HttpHelper();
     }
 
-    public KamaGetter(final Context context, final String apiKey, final GetExecutor getExecutor) {
-        super(context, apiKey);
-        mGetExecutor = getExecutor;
-    }
-
-    public KamaGetter(final Class<ReturnType> clzz, final Context context, final String apiKey) {
-        super(clzz, context, apiKey);
+    public JsonGetter(final Class<ReturnType> clzz) {
+        super(clzz);
         mGetExecutor = new HttpHelper();
     }
 
-    public KamaGetter(final Class<ReturnType> clzz, final Context context, final String apiKey, final GetExecutor getExecutor) {
-        super(clzz, context, apiKey);
-        mGetExecutor = getExecutor;
+    public JsonGetter(final GetExecutor deleteExecutor) {
+        mGetExecutor = deleteExecutor;
     }
 
+    public JsonGetter(final Class<ReturnType> clzz, final GetExecutor deleteExecutor) {
+        super(clzz);
+        mGetExecutor = deleteExecutor;
+    }
 
     @Override
     protected HttpResponse executeRequest() throws KamaException {

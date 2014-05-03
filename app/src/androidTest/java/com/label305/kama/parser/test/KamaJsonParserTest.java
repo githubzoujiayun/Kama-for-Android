@@ -6,6 +6,8 @@ import com.label305.kama.parser.KamaJsonParser;
 
 import junit.framework.TestCase;
 
+import org.junit.Assert;
+
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +35,7 @@ public class KamaJsonParserTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        mKamaJsonParser = new KamaJsonParser<ParseObject>(RETURN_TYPE);
+        mKamaJsonParser = new KamaJsonParser<>(RETURN_TYPE);
     }
 
     /* Normal behavior tests */
@@ -66,7 +68,7 @@ public class KamaJsonParserTest extends TestCase {
     public void testParseMisformattedObject() {
         try {
             mKamaJsonParser.parseObject(JSON_MISFORMAT, null);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -75,7 +77,7 @@ public class KamaJsonParserTest extends TestCase {
     public void testParseMissingMeta() {
         try {
             mKamaJsonParser.parseObject(JSON_MISSING_META, null);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }

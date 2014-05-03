@@ -6,6 +6,8 @@ import com.label305.kama.parser.MyJsonParser;
 
 import junit.framework.TestCase;
 
+import org.junit.Assert;
+
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -34,7 +36,7 @@ public class MyJsonParserTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
 
-        mMyJsonParser = new MyJsonParser<ParseObject>(RETURN_TYPE);
+        mMyJsonParser = new MyJsonParser<>(RETURN_TYPE);
     }
 
     /* Normal behavior tests */
@@ -68,7 +70,7 @@ public class MyJsonParserTest extends TestCase {
     public void testParseObjectWithMissingTitle() {
         try {
             mMyJsonParser.parseObject(JSON_SINGLE, TITLE);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -77,7 +79,7 @@ public class MyJsonParserTest extends TestCase {
     public void testParseObjectWithExtraTitle() {
         try {
             mMyJsonParser.parseObject(JSON_SINGLE_TITLE, null);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -86,7 +88,7 @@ public class MyJsonParserTest extends TestCase {
     public void testParseObjectWithWrongTitle() {
         try {
             mMyJsonParser.parseObject(JSON_SINGLE_WRONG_TITLE, TITLE);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -95,7 +97,7 @@ public class MyJsonParserTest extends TestCase {
     public void testParseObjectsListWithMissingTitle() {
         try {
             mMyJsonParser.parseObjectsList(JSON_LIST, TITLE);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -104,7 +106,7 @@ public class MyJsonParserTest extends TestCase {
     public void testParseObjectsListWithExtraTitle() {
         try {
             mMyJsonParser.parseObjectsList(JSON_LIST_TITLE, null);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -113,7 +115,7 @@ public class MyJsonParserTest extends TestCase {
     public void testParseObjectsListWithWrongTitle() {
         try {
             mMyJsonParser.parseObjectsList(JSON_LIST_WRONG_TITLE, TITLE);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -122,7 +124,7 @@ public class MyJsonParserTest extends TestCase {
     public void testParseMisformattedObject() {
         try {
             mMyJsonParser.parseObject(JSON_MISFORMAT, null);
-            fail("Missing Exception");
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }
@@ -130,8 +132,8 @@ public class MyJsonParserTest extends TestCase {
 
     public void testParseWrongObject() {
         try {
-            new MyJsonParser<WrongObject>(WrongObject.class).parseObject(JSON_SINGLE, null);
-            fail("Missing Exception");
+            new MyJsonParser<>(WrongObject.class).parseObject(JSON_SINGLE, null);
+            Assert.fail("Missing Exception");
         } catch (JsonKamaException ignored) {
             /* Success */
         }

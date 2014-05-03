@@ -1,9 +1,9 @@
-package com.label305.kama.request.test;
+package com.label305.kama.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
-import com.label305.kama.http.PostExecutor;
-import com.label305.kama.request.JsonPoster;
+import com.label305.kama.http.PutExecutor;
+import com.label305.kama.JsonPutter;
 import com.label305.kama.utils.KamaParam;
 
 import junit.framework.TestCase;
@@ -34,8 +34,8 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection", "rawtypes", "UnusedDeclaration", "AccessingNonPublicFieldOfAnotherObject"})
-public class JsonPosterTest extends TestCase {
+@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection", "AccessingNonPublicFieldOfAnotherObject", "rawtypes", "UnusedDeclaration"})
+public class JsonPutterTest extends TestCase {
 
     private static final String MISSING_EXCEPTION = "Missing exception";
 
@@ -47,10 +47,10 @@ public class JsonPosterTest extends TestCase {
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
-    private JsonPoster<ParseObject> mJsonPoster;
+    private JsonPutter<ParseObject> mJsonPutter;
 
     @Mock
-    private PostExecutor mPostExecutor;
+    private PutExecutor mPutExecutor;
 
     @Mock
     private HttpResponse mHttpResponse;
@@ -67,37 +67,37 @@ public class JsonPosterTest extends TestCase {
 
         MockitoAnnotations.initMocks(this);
 
-        mJsonPoster = new JsonPoster<ParseObject>(RETURN_TYPE, mPostExecutor);
+        mJsonPutter = new JsonPutter<ParseObject>(RETURN_TYPE, mPutExecutor);
 
-        when(mPostExecutor.post(anyString(), any(Map.class), any(HttpEntity.class))).thenReturn(mHttpResponse);
+        when(mPutExecutor.put(anyString(), any(Map.class), any(HttpEntity.class))).thenReturn(mHttpResponse);
         when(mHttpResponse.getEntity()).thenReturn(mHttpEntity);
     }
 
-    public void testPostObject() throws Exception {
-        mJsonPoster.setUrl(URL);
+    public void testPutObject() throws Exception {
+        mJsonPutter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        Object result = mJsonPoster.execute();
+        Object result = mJsonPutter.execute();
 
-        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
+        verify(mPutExecutor).put(eq(URL), any(Map.class), any(HttpEntity.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(RETURN_TYPE)));
         assertThat(((ParseObject) result).mInteger, is(4));
     }
 
-    public void testPostObjectsList() throws Exception {
-        mJsonPoster.setUrl(URL);
+    public void testPutObjectsList() throws Exception {
+        mJsonPutter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST));
 
-        Object result = mJsonPoster.executeReturnsObjectsList();
-        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
+        Object result = mJsonPutter.executeReturnsObjectsList();
+        verify(mPutExecutor).put(eq(URL), any(Map.class), any(HttpEntity.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(List.class)));
@@ -106,16 +106,16 @@ public class JsonPosterTest extends TestCase {
         assertThat(((List<?>) result).get(0), is(instanceOf(RETURN_TYPE)));
     }
 
-    public void testPostObjectsListWithTitle() throws Exception {
-        mJsonPoster.setUrl(URL);
-        mJsonPoster.setJsonTitle(TITLE);
+    public void testPutObjectsListWithTitle() throws Exception {
+        mJsonPutter.setUrl(URL);
+        mJsonPutter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        Object result = mJsonPoster.executeReturnsObjectsList();
-        verify(mPostExecutor).post(eq(URL), any(Map.class), any(HttpEntity.class));
+        Object result = mJsonPutter.executeReturnsObjectsList();
+        verify(mPutExecutor).put(eq(URL), any(Map.class), any(HttpEntity.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(List.class)));
@@ -125,18 +125,18 @@ public class JsonPosterTest extends TestCase {
         assertThat(list.get(0), is(instanceOf(RETURN_TYPE)));
     }
 
-    public void testExecutePostAddsHeader() throws Exception {
-        mJsonPoster.setUrl(URL);
-        mJsonPoster.setJsonTitle(TITLE);
+    public void testExecutePutAddsHeader() throws Exception {
+        mJsonPutter.setUrl(URL);
+        mJsonPutter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        mJsonPoster.executeReturnsObjectsList();
+        mJsonPutter.executeReturnsObjectsList();
 
         ArgumentCaptor<Map> mapArgumentCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mPostExecutor).post(eq(URL), mapArgumentCaptor.capture(), any(HttpEntity.class));
+        verify(mPutExecutor).put(eq(URL), mapArgumentCaptor.capture(), any(HttpEntity.class));
 
         Map<String, Object> usedHeaderData = mapArgumentCaptor.getValue();
         assertThat(usedHeaderData.size(), is(greaterThan(0)));
@@ -146,7 +146,7 @@ public class JsonPosterTest extends TestCase {
 
     public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
         try {
-            mJsonPoster.execute();
+            mJsonPutter.execute();
             fail(MISSING_EXCEPTION);
         } catch (IllegalArgumentException ignored) {
             /* Success */
@@ -154,38 +154,38 @@ public class JsonPosterTest extends TestCase {
     }
 
     public void testNoReturnTypeClass() throws Exception {
-        JsonPoster<ParseObject> jsonPoster = new JsonPoster<ParseObject>(mPostExecutor);
-        jsonPoster.setUrl(URL);
+        JsonPutter<ParseObject> jsonPutter = new JsonPutter<ParseObject>(mPutExecutor);
+        jsonPutter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        ParseObject result = jsonPoster.execute();
+        ParseObject result = jsonPutter.execute();
         assertThat(result, is(nullValue()));
     }
 
     public void testVoidReturnType() throws Exception {
-        JsonPoster<Void> jsonPoster = new JsonPoster<Void>(mPostExecutor);
-        jsonPoster.setUrl(URL);
+        JsonPutter<Void> jsonPutter = new JsonPutter<Void>(mPutExecutor);
+        jsonPutter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        Void result = jsonPoster.execute();
+        Void result = jsonPutter.execute();
         assertThat(result, is(nullValue()));
     }
 
     public void testNonHttpOkResult() throws Exception {
-        mJsonPoster.setUrl(URL);
+        mJsonPutter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         try {
-            mJsonPoster.execute();
+            mJsonPutter.execute();
             fail(MISSING_EXCEPTION);
         } catch (KamaException ignored) {
             /* Success */

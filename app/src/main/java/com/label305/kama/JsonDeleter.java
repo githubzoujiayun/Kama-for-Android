@@ -1,8 +1,9 @@
-package com.label305.kama.request;
+package com.label305.kama;
 
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.DeleteExecutor;
 import com.label305.kama.http.HttpHelper;
+import com.label305.kama.request.AbstractJsonRequester;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;

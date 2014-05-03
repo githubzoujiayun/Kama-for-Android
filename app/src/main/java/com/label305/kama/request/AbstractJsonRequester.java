@@ -26,10 +26,11 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     private final MyJsonParser<ReturnType> mMyJsonParser;
 
+    private final Map<String, Object> mUrlData = new HashMap<>(5);
+    private final Map<String, Object> mHeaderData = new HashMap<>(5);
+
     private String mUrl;
     private String mJsonTitle;
-    private Map<String, Object> mUrlData;
-    private Map<String, Object> mHeaderData;
 
     protected AbstractJsonRequester() {
         mMyJsonParser = new MyJsonParser<ReturnType>(null);
@@ -85,22 +86,38 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return mUrlData;
     }
 
+    public void addUrlParameter(final String key, final Object value) {
+        mUrlData.put(key, value);
+    }
+
     /**
      * Set url parameters to be appended to the url.
+     * @deprecated use {@link #addUrlParameter(String, Object)} instead.
      */
+    @Deprecated
     public void setUrlData(final Map<String, Object> urlData) {
-        mUrlData = urlData;
+        for (final Map.Entry<String, Object> entry : urlData.entrySet()) {
+            mUrlData.put(entry.getKey(), entry.getValue());
+        }
     }
 
     protected Map<String, Object> getHeaderData() {
         return mHeaderData;
     }
 
+    public void addHeader(final String key, final Object value) {
+        mHeaderData.put(key, value);
+    }
+
     /**
      * Set the data which should be put in the headers.
+     * @deprecated use {@link #addHeader(String, Object)} instead;
      */
+    @Deprecated
     public void setHeaderData(final Map<String, Object> headerData) {
-        mHeaderData = headerData;
+        for (final Map.Entry<String, Object> entry : headerData.entrySet()) {
+            addHeader(entry.getKey(), entry.getValue());
+        }
     }
 
     public ReturnType execute() throws KamaException {

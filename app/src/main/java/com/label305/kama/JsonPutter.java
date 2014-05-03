@@ -1,45 +1,41 @@
 package com.label305.kama;
 
-import android.content.Context;
-
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.HttpHelper;
 import com.label305.kama.http.PutExecutor;
+import com.label305.kama.request.AbstractJsonRequester;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class KamaPutter<ReturnType> extends AbstractKamaRequester<ReturnType> {
+public class JsonPutter<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
     private final PutExecutor mPutExecutor;
 
     private AbstractHttpEntity mPutData;
 
-    public KamaPutter(final Context context, final String apiKey) {
-        super(context, apiKey);
+    public JsonPutter() {
         mPutExecutor = new HttpHelper();
     }
 
-    public KamaPutter(final Context context, final String apiKey, final PutExecutor putExecutor) {
-        super(context, apiKey);
-        mPutExecutor = putExecutor;
-    }
-
-    public KamaPutter(final Class<ReturnType> clzz, final Context context, final String apiKey) {
-        super(clzz, context, apiKey);
+    public JsonPutter(final Class<ReturnType> clzz) {
+        super(clzz);
         mPutExecutor = new HttpHelper();
     }
 
-    public KamaPutter(final Class<ReturnType> clzz, final Context context, final String apiKey, final PutExecutor putExecutor) {
-        super(clzz, context, apiKey);
-        mPutExecutor = putExecutor;
+    public JsonPutter(final PutExecutor deleteExecutor) {
+        mPutExecutor = deleteExecutor;
+    }
+
+    public JsonPutter(final Class<ReturnType> clzz, final PutExecutor deleteExecutor) {
+        super(clzz);
+        mPutExecutor = deleteExecutor;
     }
 
     public void setPutData(final Map<String, Object> putData) throws KamaException {
@@ -55,7 +51,7 @@ public class KamaPutter<ReturnType> extends AbstractKamaRequester<ReturnType> {
     public void setPutData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mPutData = new StringEntity(jsonData, HTTP.UTF_8);
+                mPutData = new StringEntity(jsonData);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }

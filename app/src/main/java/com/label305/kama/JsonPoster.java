@@ -1,46 +1,43 @@
 package com.label305.kama;
 
-import android.content.Context;
-
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.HttpHelper;
 import com.label305.kama.http.PostExecutor;
+import com.label305.kama.request.AbstractJsonRequester;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-public class KamaPoster<ReturnType> extends AbstractKamaRequester<ReturnType> {
+public class JsonPoster<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
     private final PostExecutor mPostExecutor;
 
     private AbstractHttpEntity mPostData;
 
-    public KamaPoster(final Context context, final String apiKey) {
-        super(context, apiKey);
+    public JsonPoster() {
         mPostExecutor = new HttpHelper();
     }
 
-    public KamaPoster(final Context context, final String apiKey, final PostExecutor postExecutor) {
-        super(context, apiKey);
-        mPostExecutor = postExecutor;
-    }
-
-    public KamaPoster(final Class<ReturnType> clzz, final Context context, final String apiKey) {
-        super(clzz, context, apiKey);
+    public JsonPoster(final Class<ReturnType> clzz) {
+        super(clzz);
         mPostExecutor = new HttpHelper();
     }
 
-    public KamaPoster(final Class<ReturnType> clzz, final Context context, final String apiKey, final PostExecutor postExecutor) {
-        super(clzz, context, apiKey);
-        mPostExecutor = postExecutor;
+    public JsonPoster(final PostExecutor deleteExecutor) {
+        mPostExecutor = deleteExecutor;
     }
+
+    public JsonPoster(final Class<ReturnType> clzz, final PostExecutor deleteExecutor) {
+        super(clzz);
+        mPostExecutor = deleteExecutor;
+    }
+
 
     public void setPostData(final Map<String, Object> postData) throws KamaException {
         if (postData != null) {
@@ -55,7 +52,7 @@ public class KamaPoster<ReturnType> extends AbstractKamaRequester<ReturnType> {
     public void setPostData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mPostData = new StringEntity(jsonData, HTTP.UTF_8);
+                mPostData = new StringEntity(jsonData);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
