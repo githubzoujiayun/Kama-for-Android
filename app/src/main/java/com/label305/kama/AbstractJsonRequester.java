@@ -9,9 +9,11 @@ import com.label305.kama.exceptions.status.UnauthorizedKamaException;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +25,8 @@ import java.util.Map;
  * Executes the request and parses the result to an object type or a list if necessary.
  */
 abstract class AbstractJsonRequester<ReturnType> {
+
+    private static final String LOCATION = "Location";
 
     private final MyJsonParser<ReturnType> mMyJsonParser;
 
@@ -93,11 +97,23 @@ abstract class AbstractJsonRequester<ReturnType> {
         int statusCode = httpResponse.getStatusLine().getStatusCode();
         if (HttpUtils.isSuccessFul(statusCode)) {
             result = mMyJsonParser.parseObject(responseString, mJsonTitle);
+        } else if (HttpUtils.isRedirect(statusCode)) {
+            return executeRedirect(httpResponse, responseString, statusCode);
         } else {
             throw createKamaException(responseString, statusCode);
         }
 
         return result;
+    }
+
+    private ReturnType executeRedirect(final HttpResponse httpResponse, final String responseString, final int statusCode) throws KamaException {
+        Header[] headers = httpResponse.getHeaders(LOCATION);
+        if (headers == null || headers.length == 0) {
+            throw createKamaException(responseString, statusCode);
+        }
+        Header header = headers[0];
+        mUrl = header.getValue();
+        return execute();
     }
 
     /**
@@ -111,11 +127,23 @@ abstract class AbstractJsonRequester<ReturnType> {
         int statusCode = httpResponse.getStatusLine().getStatusCode();
         if (HttpUtils.isSuccessFul(statusCode)) {
             result = mMyJsonParser.parseObjectsList(responseString, mJsonTitle);
+        } else if (HttpUtils.isRedirect(statusCode)) {
+            return executeRedirectReturnsObjectsList(httpResponse, responseString, statusCode);
         } else {
             throw createKamaException(responseString, statusCode);
         }
 
         return result;
+    }
+
+    private List<ReturnType> executeRedirectReturnsObjectsList(final HttpResponse httpResponse, final String responseString, final int statusCode) throws KamaException {
+        Header[] headers = httpResponse.getHeaders(LOCATION);
+        if (headers == null || headers.length == 0) {
+            throw createKamaException(responseString, statusCode);
+        }
+        Header header = headers[0];
+        mUrl = header.getValue();
+        return executeReturnsObjectsList();
     }
 
     /**

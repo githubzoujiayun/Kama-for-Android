@@ -1,4 +1,4 @@
-package com.label305.kama.test;
+package com.label305.kama;
 
 import android.test.InstrumentationTestCase;
 

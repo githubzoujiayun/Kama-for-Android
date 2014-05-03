@@ -1,4 +1,4 @@
-package com.label305.kama.parser.test;
+package com.label305.kama;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.JsonKamaException;

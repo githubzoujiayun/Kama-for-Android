@@ -1,9 +1,9 @@
-package com.label305.kama.test;
+package com.label305.kama;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
-import com.label305.kama.http.DeleteExecutor;
-import com.label305.kama.JsonDeleter;
+import com.label305.kama.http.GetExecutor;
+import com.label305.kama.JsonGetter;
 import com.label305.kama.utils.KamaParam;
 
 import junit.framework.TestCase;
@@ -12,7 +12,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
-import org.junit.Assert;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -35,8 +34,8 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection", "rawtypes", "AccessingNonPublicFieldOfAnotherObject"})
-public class JsonDeleterTest extends TestCase {
+@SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection"})
+public class JsonGetterTest extends TestCase {
 
     private static final String MISSING_EXCEPTION = "Missing exception";
 
@@ -48,10 +47,10 @@ public class JsonDeleterTest extends TestCase {
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
-    private JsonDeleter<ParseObject> mJsonDeleter;
+    private JsonGetter<ParseObject> mJsonGetter;
 
     @Mock
-    private DeleteExecutor mDeleteExecutor;
+    private GetExecutor mGetExecutor;
 
     @Mock
     private HttpResponse mHttpResponse;
@@ -68,37 +67,37 @@ public class JsonDeleterTest extends TestCase {
 
         MockitoAnnotations.initMocks(this);
 
-        mJsonDeleter = new JsonDeleter<ParseObject>(RETURN_TYPE, mDeleteExecutor);
+        mJsonGetter = new JsonGetter(RETURN_TYPE, mGetExecutor);
 
-        when(mDeleteExecutor.delete(anyString(), any(Map.class), any(HttpEntity.class))).thenReturn(mHttpResponse);
+        when(mGetExecutor.get(anyString(), any(Map.class))).thenReturn(mHttpResponse);
         when(mHttpResponse.getEntity()).thenReturn(mHttpEntity);
     }
 
-    public void testDeleteObject() throws Exception {
-        mJsonDeleter.setUrl(URL);
+    public void testGetObject() throws Exception {
+        mJsonGetter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        Object result = mJsonDeleter.execute();
+        Object result = mJsonGetter.execute();
 
-        verify(mDeleteExecutor).delete(eq(URL), any(Map.class), any(HttpEntity.class));
+        verify(mGetExecutor).get(eq(URL), any(Map.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(RETURN_TYPE)));
         assertThat(((ParseObject) result).mInteger, is(4));
     }
 
-    public void testDeleteObjectsList() throws Exception {
-        mJsonDeleter.setUrl(URL);
+    public void testGetObjectsList() throws Exception {
+        mJsonGetter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST));
 
-        Object result = mJsonDeleter.executeReturnsObjectsList();
-        verify(mDeleteExecutor).delete(eq(URL), any(Map.class), any(HttpEntity.class));
+        Object result = mJsonGetter.executeReturnsObjectsList();
+        verify(mGetExecutor).get(eq(URL), any(Map.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(List.class)));
@@ -107,16 +106,16 @@ public class JsonDeleterTest extends TestCase {
         assertThat(((List<?>) result).get(0), is(instanceOf(RETURN_TYPE)));
     }
 
-    public void testDeleteObjectsListWithTitle() throws Exception {
-        mJsonDeleter.setUrl(URL);
-        mJsonDeleter.setJsonTitle(TITLE);
+    public void testGetObjectsListWithTitle() throws Exception {
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        Object result = mJsonDeleter.executeReturnsObjectsList();
-        verify(mDeleteExecutor).delete(eq(URL), any(Map.class), any(HttpEntity.class));
+        Object result = mJsonGetter.executeReturnsObjectsList();
+        verify(mGetExecutor).get(eq(URL), any(Map.class));
 
         assertThat(result, is(not(nullValue())));
         assertThat(result, is(instanceOf(List.class)));
@@ -126,18 +125,18 @@ public class JsonDeleterTest extends TestCase {
         assertThat(list.get(0), is(instanceOf(RETURN_TYPE)));
     }
 
-    public void testExecuteAddsHeader() throws Exception {
-        mJsonDeleter.setUrl(URL);
-        mJsonDeleter.setJsonTitle(TITLE);
+    public void testExecuteGetAddsHeader() throws Exception {
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setJsonTitle(TITLE);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_LIST_TITLE));
 
-        mJsonDeleter.executeReturnsObjectsList();
+        mJsonGetter.executeReturnsObjectsList();
 
         ArgumentCaptor<Map> mapArgumentCaptor = ArgumentCaptor.forClass(Map.class);
-        verify(mDeleteExecutor).delete(eq(URL), mapArgumentCaptor.capture(), any(HttpEntity.class));
+        verify(mGetExecutor).get(eq(URL), mapArgumentCaptor.capture());
 
         Map<String, Object> usedHeaderData = mapArgumentCaptor.getValue();
         assertThat(usedHeaderData.size(), is(greaterThan(0)));
@@ -147,53 +146,52 @@ public class JsonDeleterTest extends TestCase {
 
     public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
         try {
-            mJsonDeleter.execute();
-            Assert.fail(MISSING_EXCEPTION);
+            mJsonGetter.execute();
+            fail(MISSING_EXCEPTION);
         } catch (IllegalArgumentException ignored) {
             /* Success */
         }
     }
 
     public void testNoReturnTypeClass() throws Exception {
-        JsonDeleter<ParseObject> jsonDeleteter = new JsonDeleter<ParseObject>(mDeleteExecutor);
-        jsonDeleteter.setUrl(URL);
+        JsonGetter<ParseObject> jsonGetter = new JsonGetter<ParseObject>(mGetExecutor);
+        jsonGetter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        ParseObject result = jsonDeleteter.execute();
+        ParseObject result = jsonGetter.execute();
         assertThat(result, is(nullValue()));
     }
 
     public void testVoidReturnType() throws Exception {
-        JsonDeleter<Void> jsonDeleteter = new JsonDeleter<Void>(mDeleteExecutor);
-        jsonDeleteter.setUrl(URL);
+        JsonGetter<Void> jsonGetter = new JsonGetter<Void>(mGetExecutor);
+        jsonGetter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
-        Void result = jsonDeleteter.execute();
+        Void result = jsonGetter.execute();
         assertThat(result, is(nullValue()));
     }
 
     public void testNonHttpOkResult() throws Exception {
-        mJsonDeleter.setUrl(URL);
+        mJsonGetter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON_SINGLE));
 
         try {
-            mJsonDeleter.execute();
-            Assert.fail(MISSING_EXCEPTION);
+            mJsonGetter.execute();
+            fail(MISSING_EXCEPTION);
         } catch (KamaException ignored) {
             /* Success */
         }
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     private static class ParseObject {
 
         @JsonProperty("integer")
