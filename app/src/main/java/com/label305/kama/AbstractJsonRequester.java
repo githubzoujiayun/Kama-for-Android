@@ -1,4 +1,4 @@
-package com.label305.kama.request;
+package com.label305.kama;
 
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.exceptions.status.BadRequestKamaException;
@@ -6,7 +6,6 @@ import com.label305.kama.exceptions.status.HttpResponseKamaException;
 import com.label305.kama.exceptions.status.InternalErrorKamaException;
 import com.label305.kama.exceptions.status.NotFoundKamaException;
 import com.label305.kama.exceptions.status.UnauthorizedKamaException;
-import com.label305.kama.parser.MyJsonParser;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
 
@@ -20,9 +19,10 @@ import java.util.Map;
 
 /**
  * An abstract class which can be extended to execute http requests.
+ * Handles url, url parameters and headers.
  * Executes the request and parses the result to an object type or a list if necessary.
  */
-public abstract class AbstractJsonRequester<ReturnType> {
+abstract class AbstractJsonRequester<ReturnType> {
 
     private final MyJsonParser<ReturnType> mMyJsonParser;
 
@@ -32,47 +32,25 @@ public abstract class AbstractJsonRequester<ReturnType> {
     private String mUrl;
     private String mJsonTitle;
 
-    protected AbstractJsonRequester() {
-        mMyJsonParser = new MyJsonParser<ReturnType>(null);
+    AbstractJsonRequester() {
+        mMyJsonParser = new MyJsonParser<>(null);
+        init();
     }
 
-    protected AbstractJsonRequester(final Class<ReturnType> returnTypeClass) {
-        mMyJsonParser = new MyJsonParser<ReturnType>(returnTypeClass);
+    AbstractJsonRequester(final Class<ReturnType> returnTypeClass) {
+        mMyJsonParser = new MyJsonParser<>(returnTypeClass);
+        init();
     }
 
-    protected static String addUrlParams(final String url, final Map<String, Object> urlData) {
-        StringBuilder urlBuilder = new StringBuilder(url);
-
-        if (urlData != null && !urlData.isEmpty()) {
-            urlBuilder.append(KamaParam.URLPARAM);
-
-            for (Iterator<String> iterator = urlData.keySet().iterator(); iterator.hasNext(); ) {
-                String key = iterator.next();
-                urlBuilder.append(key).append('=').append(replaceInvalidChars(urlData.get(key).toString()));
-
-                if (iterator.hasNext()) {
-                    urlBuilder.append(KamaParam.URLPARAMCONCAT);
-                }
-            }
-        }
-
-        return urlBuilder.toString();
+    private void init() {
+        mHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_JSON);
     }
 
-    private static String replaceInvalidChars(final String value) {
-        return value.replace(" ", "%20");
-    }
-
-    protected String getUrl() {
-        return mUrl;
-    }
-
+    /**
+     * Set the url to execute the request to.
+     */
     public void setUrl(final String url) {
         mUrl = url;
-    }
-
-    protected String getJsonTitle() {
-        return mJsonTitle;
     }
 
     /**
@@ -82,48 +60,35 @@ public abstract class AbstractJsonRequester<ReturnType> {
         mJsonTitle = jsonTitle;
     }
 
-    protected Map<String, Object> getUrlData() {
-        return mUrlData;
-    }
-
+    /**
+     * Add a url parameter.
+     * @param key the key of the parameter.
+     * @param value the value of the parameter. Will be displayed using the {@code toString()} method.
+     */
     public void addUrlParameter(final String key, final Object value) {
         mUrlData.put(key, value);
     }
 
     /**
-     * Set url parameters to be appended to the url.
-     * @deprecated use {@link #addUrlParameter(String, Object)} instead.
+     * Add a header.
+     * @param key the key of the header.
+     * @param value the value of the header. Will be displayed using the {@code toString()} method.
      */
-    @Deprecated
-    public void setUrlData(final Map<String, Object> urlData) {
-        for (final Map.Entry<String, Object> entry : urlData.entrySet()) {
-            mUrlData.put(entry.getKey(), entry.getValue());
-        }
-    }
-
-    protected Map<String, Object> getHeaderData() {
-        return mHeaderData;
-    }
-
     public void addHeader(final String key, final Object value) {
         mHeaderData.put(key, value);
     }
 
     /**
-     * Set the data which should be put in the headers.
-     * @deprecated use {@link #addHeader(String, Object)} instead;
+     * Executes the request, and returns the parsed object.
      */
-    @Deprecated
-    public void setHeaderData(final Map<String, Object> headerData) {
-        for (final Map.Entry<String, Object> entry : headerData.entrySet()) {
-            addHeader(entry.getKey(), entry.getValue());
-        }
-    }
-
     public ReturnType execute() throws KamaException {
+        if (mUrl == null) {
+            throw new IllegalArgumentException("Provide an url!");
+        }
+
         ReturnType result;
 
-        HttpResponse httpResponse = executeRequest();
+        HttpResponse httpResponse = executeRequest(createParameterizedUrl(), mHeaderData);
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
         int statusCode = httpResponse.getStatusLine().getStatusCode();
         if (HttpUtils.isSuccessFul(statusCode)) {
@@ -135,10 +100,13 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return result;
     }
 
+    /**
+     * Executes the request, and returns a List with the parsed objects.
+     */
     public List<ReturnType> executeReturnsObjectsList() throws KamaException {
         List<ReturnType> result;
 
-        HttpResponse httpResponse = executeRequest();
+        HttpResponse httpResponse = executeRequest(createParameterizedUrl(), mHeaderData);
         String responseString = HttpUtils.getStringFromResponse(httpResponse);
         int statusCode = httpResponse.getStatusLine().getStatusCode();
         if (HttpUtils.isSuccessFul(statusCode)) {
@@ -150,15 +118,33 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return result;
     }
 
-    protected abstract HttpResponse executeRequest() throws KamaException;
+    /**
+     * Execute the request and return the HttpResponse.
+     * @param parameterizedUrl the complete url including parameters.
+     * @param headerData key-value pairs of headers.
+     */
+    protected abstract HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException;
 
-    protected Map<String, Object> addNecessaryHeaders(final Map<String, Object> headerData) {
-        Map<String, Object> modifiedHeaderData = headerData == null ? new HashMap<String, Object>() : new HashMap<String, Object>(headerData);
-        modifiedHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_JSON);
-        return modifiedHeaderData;
+    private String createParameterizedUrl() {
+        StringBuilder urlBuilder = new StringBuilder(mUrl);
+
+        if (!mUrlData.isEmpty()) {
+            urlBuilder.append(KamaParam.URLPARAM);
+
+            for (Iterator<String> iterator = mUrlData.keySet().iterator(); iterator.hasNext(); ) {
+                String key = iterator.next();
+                urlBuilder.append(key).append('=').append(replaceInvalidChars(mUrlData.get(key).toString()));
+
+                if (iterator.hasNext()) {
+                    urlBuilder.append(KamaParam.URLPARAMCONCAT);
+                }
+            }
+        }
+
+        return urlBuilder.toString();
     }
 
-    protected KamaException createKamaException(final String responseString, final int statusCode) {
+    private static KamaException createKamaException(final String responseString, final int statusCode) {
         KamaException kamaException;
 
         switch (statusCode) {
@@ -179,5 +165,9 @@ public abstract class AbstractJsonRequester<ReturnType> {
         }
 
         return kamaException;
+    }
+
+    private static String replaceInvalidChars(final String value) {
+        return value.replace(" ", "%20");
     }
 }

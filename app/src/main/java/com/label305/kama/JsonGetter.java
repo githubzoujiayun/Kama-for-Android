@@ -3,7 +3,6 @@ package com.label305.kama;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.GetExecutor;
 import com.label305.kama.http.HttpHelper;
-import com.label305.kama.request.AbstractJsonRequester;
 
 import org.apache.http.HttpResponse;
 
@@ -33,16 +32,9 @@ public class JsonGetter<ReturnType> extends AbstractJsonRequester<ReturnType> {
     }
 
     @Override
-    protected HttpResponse executeRequest() throws KamaException {
-        if (getUrl() == null) {
-            throw new IllegalArgumentException("Provide an url!");
-        }
-
-        String finalUrl = addUrlParams(getUrl(), getUrlData());
-        Map<String, Object> finalHeaderData = addNecessaryHeaders(getHeaderData());
-
+    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException {
         try {
-            return mGetExecutor.get(finalUrl, finalHeaderData);
+            return mGetExecutor.get(parameterizedUrl, headerData);
         } catch (IOException e) {
             throw new KamaException(e);
         }

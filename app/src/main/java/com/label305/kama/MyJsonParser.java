@@ -1,4 +1,4 @@
-package com.label305.kama.parser;
+package com.label305.kama;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -11,13 +11,13 @@ import com.label305.kama.exceptions.JsonKamaException;
 import java.io.IOException;
 import java.util.List;
 
-public class MyJsonParser<ReturnType> {
+class MyJsonParser<ReturnType> {
 
     private final ObjectMapper mObjectMapper = new ObjectMapper();
 
     private final Class<ReturnType> mReturnTypeClass;
 
-    public MyJsonParser(final Class<ReturnType> returnTypeClass) {
+    MyJsonParser(final Class<ReturnType> returnTypeClass) {
         mReturnTypeClass = returnTypeClass;
     }
 

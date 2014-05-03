@@ -2,7 +2,7 @@ package com.label305.kama.parser.test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.JsonKamaException;
-import com.label305.kama.parser.MyJsonParser;
+import com.label305.kama.MyJsonParser;
 
 import junit.framework.TestCase;
 
