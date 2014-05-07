@@ -3,8 +3,6 @@ package com.label305.kama;
 import android.test.InstrumentationTestCase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.label305.kama.JsonGetter;
-import com.label305.kama.KamaWrapper;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.GetExecutor;
 import com.label305.kama.objects.KamaObject;
@@ -18,7 +16,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -26,8 +26,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -47,7 +47,26 @@ public class KamaWrapperTest extends InstrumentationTestCase {
             "        }\n" +
             "    }\n" +
             "}";
+
+    private static final String JSONLIST = "{\n" +
+            "    \"meta\": {\n" +
+            "        \"code\": 200,\n" +
+            "        \"headers\": [],\n" +
+            "        \"timestamp\": \"2014-05-02 17:13:59\"\n" +
+            "    },\n" +
+            "    \"response\": {\n" +
+            "        \"MyObjects\": [\n" +
+            "           {\n" +
+            "               \"name\": \"Niek\"\n" +
+            "           },\n" +
+            "           {\n" +
+            "               \"name\": \"Nick\"\n" +
+            "           }\n" +
+            "        ]\n" +
+            "    }\n" +
+            "}";
     public static final String JSON_TITLE = "MyObject";
+    public static final String JSON_LIST_TITLE = "MyObjects";
     public static final String API_KEY = "apiKey";
 
 
@@ -69,6 +88,21 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     @Mock
     private KamaObject mKamaObject;
 
+    @Mock
+    private GetExecutor mListGetExecutor;
+
+    @Mock
+    private HttpResponse mListHttpResponse;
+
+    @Mock
+    private HttpEntity mListHttpEntity;
+
+    @Mock
+    private JsonGetter<KamaObject> mListJsonGetter;
+
+    @Mock
+    private KamaObject mListKamaObject;
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -89,6 +123,25 @@ public class KamaWrapperTest extends InstrumentationTestCase {
         when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSON));
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_OK);
+
+        List<Map<String, Object>> subMapList = new ArrayList<>();
+        Map<String, Object> subMap1 = new HashMap<>(1);
+        Map<String, Object> subMap2 = new HashMap<>(1);
+        subMap1.put("name", "Niek");
+        subMap2.put("name", "Nick");
+        subMapList.add(subMap1);
+        subMapList.add(subMap2);
+
+        Map<String, Object> responseListMap = new HashMap<>(1);
+        responseMap.put("MyObjects", subMapList);
+
+        when(mListJsonGetter.execute()).thenReturn(mListKamaObject);
+        when(mListKamaObject.getResponseMap()).thenReturn(responseListMap);
+        when(mListGetExecutor.get(anyString(), any(Map.class))).thenReturn(mListHttpResponse);
+        when(mListHttpResponse.getEntity()).thenReturn(mListHttpEntity);
+        when(mListHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(JSONLIST));
+        when(mListHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+
     }
 
     /**
@@ -105,6 +158,24 @@ public class KamaWrapperTest extends InstrumentationTestCase {
         MyObject myObject = requester.execute();
         assertThat(myObject, is(not(nullValue())));
         assertThat(myObject.getName(), is("Niek"));
+    }
+
+    /**
+     * Tests whether the parsing of the complete url results in a valid MyObject instance.
+     */
+    public void testGetMyObjectList() throws KamaException {
+        /* Test real JSON parsing */
+        mListJsonGetter = new JsonGetter<>(KamaObject.class, mListGetExecutor);
+        mListJsonGetter.setUrl("url");
+
+        KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mListJsonGetter, MyObject.class);
+        requester.setJsonTitle(JSON_LIST_TITLE);
+
+        List<MyObject> myObjectsList = requester.executeReturnsObjectsList();
+        assertThat(myObjectsList, is(not(nullValue())));
+        assertThat(myObjectsList.size(), is(2));
+        assertThat(myObjectsList.get(0).getName(), is("Niek"));
+        assertThat(myObjectsList.get(1).getName(), is("Nick"));
     }
 
     /**

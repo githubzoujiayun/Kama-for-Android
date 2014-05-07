@@ -95,8 +95,7 @@ public class KamaWrapper<ReturnType> {
         try {
             KamaObject execute = mJsonRequester.execute();
             Map<String, Object> responseMap = execute.getResponseMap();
-            Object o = responseMap.get(mJsonTitle);
-            String json = new ObjectMapper().writeValueAsString(o);
+            String json = new ObjectMapper().writeValueAsString(responseMap);
             return new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
         } catch (IOException e) {
             throw new KamaException(e);
