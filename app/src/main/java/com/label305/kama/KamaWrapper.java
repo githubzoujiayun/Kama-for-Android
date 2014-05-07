@@ -9,6 +9,7 @@ import com.label305.kama.objects.KamaObject;
 import com.label305.kama.utils.KamaParam;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class KamaWrapper<ReturnType> {
@@ -78,6 +79,25 @@ public class KamaWrapper<ReturnType> {
             Object o = responseMap.get(mJsonTitle);
             String json = new ObjectMapper().writeValueAsString(o);
             return new ObjectMapper().readValue(json, mReturnTypeClass);
+        } catch (IOException e) {
+            throw new KamaException(e);
+        }
+    }
+
+    /**
+     * Executes the wrapped request, using the Kama protocol.
+     * @return the list of objects that was embedded in the JSON response.
+     * @throws KamaException when something went wrong.
+     */
+    public List<ReturnType> executeReturnsObjectsList() throws KamaException {
+        prepareRequest();
+
+        try {
+            KamaObject execute = mJsonRequester.execute();
+            Map<String, Object> responseMap = execute.getResponseMap();
+            Object o = responseMap.get(mJsonTitle);
+            String json = new ObjectMapper().writeValueAsString(o);
+            return new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
         } catch (IOException e) {
             throw new KamaException(e);
         }
