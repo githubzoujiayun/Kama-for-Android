@@ -1,9 +1,9 @@
-package com.label305.kama.request.test;
+package com.label305.kama;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.PutExecutor;
-import com.label305.kama.request.JsonPutter;
+import com.label305.kama.JsonPutter;
 import com.label305.kama.utils.KamaParam;
 
 import junit.framework.TestCase;

@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpConnectionParams;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,12 +23,16 @@ import java.util.Map;
  */
 public class HttpHelper implements GetExecutor, PostExecutor, PutExecutor, DeleteExecutor {
 
+    private static final int TIMEOUT = 5000;
     private static final String ANDROID = "Android";
 
     /**
      * The AndroidHttpClient to use. We use a single instance and for now, do not close it. // TODO: When should we??
      */
     private static final AndroidHttpClient HTTP_CLIENT = AndroidHttpClient.newInstance(ANDROID);
+    static {
+        HttpConnectionParams.setConnectionTimeout(HTTP_CLIENT.getParams(), TIMEOUT);
+    }
 
     @Override
     public HttpResponse delete(final String url, final Map<String, Object> headerData, final HttpEntity deleteDataEntity) throws IOException {

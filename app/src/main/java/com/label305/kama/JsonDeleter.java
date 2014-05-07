@@ -1,4 +1,4 @@
-package com.label305.kama.request;
+package com.label305.kama;
 
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.DeleteExecutor;
@@ -62,16 +62,9 @@ public class JsonDeleter<ReturnType> extends AbstractJsonRequester<ReturnType> {
     }
 
     @Override
-    protected HttpResponse executeRequest() throws KamaException {
-        if (getUrl() == null) {
-            throw new IllegalArgumentException("Provide an url!");
-        }
-
-        String finalUrl = addUrlParams(getUrl(), getUrlData());
-        Map<String, Object> finalHeaderData = addNecessaryHeaders(getHeaderData());
-
+    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException {
         try {
-            return mDeleteExecutor.delete(finalUrl, finalHeaderData, mDeleteData);
+            return mDeleteExecutor.delete(parameterizedUrl, headerData, mDeleteData);
         } catch (IOException e) {
             throw new KamaException(e);
         }

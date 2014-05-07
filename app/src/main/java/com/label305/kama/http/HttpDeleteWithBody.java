@@ -12,16 +12,13 @@ public class HttpDeleteWithBody extends HttpEntityEnclosingRequestBase {
     }
 
     public HttpDeleteWithBody(final String uri) {
-        super();
         setURI(URI.create(uri));
     }
 
     public HttpDeleteWithBody(final URI uri) {
-        super();
         setURI(uri);
     }
 
     public HttpDeleteWithBody() {
-        super();
     }
 }
