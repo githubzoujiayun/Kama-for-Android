@@ -1,11 +1,13 @@
 package com.label305.kama;
 
+import com.label305.kama.exceptions.JsonKamaException;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.exceptions.status.BadRequestKamaException;
 import com.label305.kama.exceptions.status.HttpResponseKamaException;
 import com.label305.kama.exceptions.status.InternalErrorKamaException;
 import com.label305.kama.exceptions.status.NotFoundKamaException;
 import com.label305.kama.exceptions.status.UnauthorizedKamaException;
+import com.label305.kama.objects.KamaError;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
 
@@ -13,7 +15,6 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,6 +67,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     /**
      * Get the title of the json object
+     *
      * @return title name
      */
     public String getJsonTitle() {
@@ -74,7 +76,8 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     /**
      * Add a url parameter.
-     * @param key the key of the parameter.
+     *
+     * @param key   the key of the parameter.
      * @param value the value of the parameter. Will be displayed using the {@code toString()} method.
      */
     public void addUrlParameter(final String key, final Object value) {
@@ -83,7 +86,8 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     /**
      * Add a header.
-     * @param key the key of the header.
+     *
+     * @param key   the key of the header.
      * @param value the value of the header. Will be displayed using the {@code toString()} method.
      */
     public void addHeader(final String key, final Object value) {
@@ -156,8 +160,9 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     /**
      * Execute the request and return the HttpResponse.
+     *
      * @param parameterizedUrl the complete url including parameters.
-     * @param headerData key-value pairs of headers.
+     * @param headerData       key-value pairs of headers.
      */
     protected abstract HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException;
 
@@ -183,18 +188,27 @@ public abstract class AbstractJsonRequester<ReturnType> {
     private static KamaException createKamaException(final String responseString, final int statusCode) {
         KamaException kamaException;
 
+        KamaError kamaError = null;
+        try {
+            kamaError = new MyJsonParser<KamaError>(KamaError.class).parseObject(responseString, KamaParam.META);
+        } catch (JsonKamaException e) {
+            /* We don't care if the error object parsing fails */
+            //noinspection CallToPrintStackTrace
+            e.printStackTrace();
+        }
+
         switch (statusCode) {
             case HttpURLConnection.HTTP_BAD_REQUEST:
-                kamaException = new BadRequestKamaException(responseString);
+                kamaException = new BadRequestKamaException(responseString, kamaError);
                 break;
             case HttpURLConnection.HTTP_UNAUTHORIZED:
-                kamaException = new UnauthorizedKamaException(responseString);
+                kamaException = new UnauthorizedKamaException(responseString, kamaError);
                 break;
             case HttpURLConnection.HTTP_NOT_FOUND:
-                kamaException = new NotFoundKamaException(responseString);
+                kamaException = new NotFoundKamaException(responseString, kamaError);
                 break;
             case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                kamaException = new InternalErrorKamaException(responseString);
+                kamaException = new InternalErrorKamaException(responseString, kamaError);
                 break;
             default:
                 kamaException = new HttpResponseKamaException("Unexpected error. " + '\n' + responseString, statusCode);
