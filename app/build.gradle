@@ -1,7 +1,7 @@
 apply plugin: 'android-library'
 
-apply from: 'pushMaven.gradle'
 apply from: 'generateJavadoc.gradle'
+apply from: 'pushMaven.gradle'
 
 buildscript {
     repositories {

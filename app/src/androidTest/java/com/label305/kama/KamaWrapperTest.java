@@ -153,7 +153,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
         mJsonGetter.setUrl("url");
 
         KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mJsonGetter, MyObject.class);
-        requester.setJsonTitle(JSON_TITLE);
+        mJsonGetter.setJsonTitle(JSON_TITLE);
 
         MyObject myObject = requester.execute();
         assertThat(myObject, is(not(nullValue())));
@@ -169,7 +169,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
         mListJsonGetter.setUrl("url");
 
         KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mListJsonGetter, MyObject.class);
-        requester.setJsonTitle(JSON_LIST_TITLE);
+        mListJsonGetter.setJsonTitle(JSON_LIST_TITLE);
 
         List<MyObject> myObjectsList = requester.executeReturnsObjectsList();
         assertThat(myObjectsList, is(not(nullValue())));
