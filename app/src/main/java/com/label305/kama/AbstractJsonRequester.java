@@ -24,7 +24,7 @@ import java.util.Map;
  * Handles url, url parameters and headers.
  * Executes the request and parses the result to an object type or a list if necessary.
  */
-abstract class AbstractJsonRequester<ReturnType> {
+public abstract class AbstractJsonRequester<ReturnType> {
 
     private static final String LOCATION = "Location";
 
@@ -62,6 +62,14 @@ abstract class AbstractJsonRequester<ReturnType> {
      */
     public void setJsonTitle(final String jsonTitle) {
         mJsonTitle = jsonTitle;
+    }
+
+    /**
+     * Get the title of the json object
+     * @return title name
+     */
+    public String getJsonTitle() {
+        return mJsonTitle;
     }
 
     /**

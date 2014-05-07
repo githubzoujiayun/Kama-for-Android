@@ -73,6 +73,9 @@ public class KamaWrapper<ReturnType> {
     public ReturnType execute() throws KamaException {
         prepareRequest();
 
+
+        mJsonTitle = mJsonRequester.getJsonTitle();
+        mJsonRequester.setJsonTitle(null);
         try {
             KamaObject execute = mJsonRequester.execute();
             Map<String, Object> responseMap = execute.getResponseMap();
@@ -92,6 +95,8 @@ public class KamaWrapper<ReturnType> {
     public List<ReturnType> executeReturnsObjectsList() throws KamaException {
         prepareRequest();
 
+        mJsonTitle = mJsonRequester.getJsonTitle();
+        mJsonRequester.setJsonTitle(null);
         try {
             KamaObject execute = mJsonRequester.execute();
             Map<String, Object> responseMap = execute.getResponseMap();
