@@ -1,11 +1,9 @@
-language: java
+language: android
 jdk: oraclejdk7
 
 env:
   matrix:
-  - ANDROID_SDKS=android-17,sysimg-17 ANDROID_TARGET=android-17 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
-  - ANDROID_SDKS=android-18,sysimg-18 ANDROID_TARGET=android-18 ANDROID_ABI=armeabi-v7a LINT=false MAVEN=false JAVADOC=false
-  - ANDROID_SDKS=sysimg-19            ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true MAVEN=true JAVADOC=true
+  - ANDROID_SDKS=sysimg-19 ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true MAVEN=true JAVADOC=true
   global:
   - TERM=dumb
   # FTP_USER, FTP_PASSWORD, HIPCHAT
@@ -13,37 +11,35 @@ env:
   - secure: M4bgOt2x3ao/1YBN620Ks/QwtM27ewk3WNSSsQBQENE4pnBScVJ2KKOzNTuSTzr/mrYM9VeVa7+wSqlgxIHV/dduuoJEwdd51DZpyq9Wb0zBXLjtIlMKxq3Zu63bfFbjU7nWT4hNtU3cAEzwcn8m3n/xnnrMKiBTqFxO2KryuPE=
   - secure: pCXP9738vidPLx3s5jV927VW9z+n+RQH15CIwGNvZzTY0+pjOwaEaMi9ngigOxHwRjmYRaD2z7JIG8kMkjjrJTcFI/CY3q/SgcSEZtm/nCMnoAGJ9VZyfb2u7gqhffb1cBlD7g4evU77PeAbtlSf6v+gTDAI1d1NaCN5/XLhZOM=
   # NEXUS_USERNAME, NEXUS_PASSWORD
-  - secure: \m83OO8zBxAeNJ3ij8rBwFqf+/hEDN9Ad3zSB4U1CRAdMPKi00dyQjTjkcjA6O75griECvREVXmsP5QwfhWpz4OSoi9NKt4SsFLd5Pt8KSX10eolaRjj/cQRMtEa9xdESVr7Sg0j1iUGJzID87dgS61gTOY9b30eeJ8l1A+vh0Ds=
+  - secure: m83OO8zBxAeNJ3ij8rBwFqf+/hEDN9Ad3zSB4U1CRAdMPKi00dyQjTjkcjA6O75griECvREVXmsP5QwfhWpz4OSoi9NKt4SsFLd5Pt8KSX10eolaRjj/cQRMtEa9xdESVr7Sg0j1iUGJzID87dgS61gTOY9b30eeJ8l1A+vh0Ds=
 
 before_install:
-  - sudo chmod +x gradlew
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq libstdc++6:i386 lib32z1 expect
-  - export COMPONENTS=extra-android-m2repository,build-tools-19.0.3,android-19,doc-19,$ANDROID_SDKS
-  - curl -3L https://raw.github.com/embarkmobile/android-sdk-installer/version-2/android-sdk-installer | bash /dev/stdin --install=$COMPONENTS
-  - source ~/.android-sdk-installer/env
+  - curl -3L -o wait_for_emulator https://github.com/embarkmobile/android-sdk-installer/raw/version-2/wait_for_emulator
+  - sudo chmod +x wait_for_emulator
 
   # Start the emulator
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
 
 before_script:
-  - wait_for_emulator
+  # Force a build
+  - gradle
+  - ./wait_for_emulator
 
 install:
   - true
 
 script:
-  - ./gradlew connectedCheck
-  - if [[ $LINT == 'true' ]]; then ./gradlew lint ; fi
+  - gradle connectedCheck
+  - if [[ $LINT == 'true' ]]; then gradle lint ; fi
 
 after_success:
   - if [[ $JAVADOC == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
-  - if [[ $JAVADOC == 'true' ]]; then ./gradlew generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Kama for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
+  - if [[ $JAVADOC == 'true' ]]; then gradle generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Kama for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
   - if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /kama-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
 
-  - if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' ]]; then ./gradlew uploadArchives -PnexusUsername=${NEXUS_USERNAME} -PnexusPassword=${NEXUS_PASSWORD} ; fi
-  
+  - if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' ]]; then gradle uploadArchives -PnexusUsername=${NEXUS_USERNAME} -PnexusPassword=${NEXUS_PASSWORD} ; fi
+
 notifications:
   email: false
 
