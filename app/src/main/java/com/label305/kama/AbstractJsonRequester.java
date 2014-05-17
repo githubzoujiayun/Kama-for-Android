@@ -103,11 +103,12 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     /**
      * Set custom Error type, error type defaults to KamaError.
-     * Don't forget to set the ErrorTitle, if necessary
+     * Don't forget to set the ErrorTitle after this function, if necessary
      * @param customErrorObjType the class type of the custom error object
      */
     public void setCustomErrorObjType(Class<?> customErrorObjType) {
         mErrorJsonParser = new MyJsonParser<>(customErrorObjType);
+        setErrorTitle(null);
     }
 
     /**
