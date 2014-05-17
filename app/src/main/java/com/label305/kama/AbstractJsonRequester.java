@@ -37,14 +37,21 @@ public abstract class AbstractJsonRequester<ReturnType> {
     private String mUrl;
     private String mJsonTitle;
 
+    private static MyJsonParser<?> mErrorJsonParser;
+    private static String mErrorTitle;
+
     AbstractJsonRequester() {
         mMyJsonParser = new MyJsonParser<>(null);
         init();
+        mErrorJsonParser = new MyJsonParser<>(KamaError.class);
+        mErrorTitle = KamaParam.META;
     }
 
     AbstractJsonRequester(final Class<ReturnType> returnTypeClass) {
         mMyJsonParser = new MyJsonParser<>(returnTypeClass);
         init();
+        mErrorJsonParser = new MyJsonParser<>(KamaError.class);
+        mErrorTitle = KamaParam.META;
     }
 
     private void init() {
@@ -92,6 +99,23 @@ public abstract class AbstractJsonRequester<ReturnType> {
      */
     public void addHeader(final String key, final Object value) {
         mHeaderData.put(key, value);
+    }
+
+    /**
+     * Set custom Error type, error type defaults to KamaError.
+     * Don't forget to set the ErrorTitle, if necessary
+     * @param customErrorObjType the class type of the custom error object
+     */
+    public void setCustomErrorObjType(Class<?> customErrorObjType) {
+        mErrorJsonParser = new MyJsonParser<>(customErrorObjType);
+    }
+
+    /**
+     * Set title for the Error Object
+     * @param errorTitle the title of the error object
+     */
+    public static void setErrorTitle(String errorTitle) {
+        AbstractJsonRequester.mErrorTitle = errorTitle;
     }
 
     /**
@@ -188,9 +212,9 @@ public abstract class AbstractJsonRequester<ReturnType> {
     private static KamaException createKamaException(final String responseString, final int statusCode) {
         KamaException kamaException;
 
-        KamaError kamaError = null;
+        Object errorObj = null;
         try {
-            kamaError = new MyJsonParser<KamaError>(KamaError.class).parseObject(responseString, KamaParam.META);
+                errorObj = mErrorJsonParser.parseObject(responseString, mErrorTitle);
         } catch (JsonKamaException e) {
             /* We don't care if the error object parsing fails */
             //noinspection CallToPrintStackTrace
@@ -199,16 +223,16 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
         switch (statusCode) {
             case HttpURLConnection.HTTP_BAD_REQUEST:
-                kamaException = new BadRequestKamaException(responseString, kamaError);
+                kamaException = new BadRequestKamaException(responseString, errorObj);
                 break;
             case HttpURLConnection.HTTP_UNAUTHORIZED:
-                kamaException = new UnauthorizedKamaException(responseString, kamaError);
+                kamaException = new UnauthorizedKamaException(responseString, errorObj);
                 break;
             case HttpURLConnection.HTTP_NOT_FOUND:
-                kamaException = new NotFoundKamaException(responseString, kamaError);
+                kamaException = new NotFoundKamaException(responseString, errorObj);
                 break;
             case HttpURLConnection.HTTP_INTERNAL_ERROR:
-                kamaException = new InternalErrorKamaException(responseString, kamaError);
+                kamaException = new InternalErrorKamaException(responseString, errorObj);
                 break;
             default:
                 kamaException = new HttpResponseKamaException("Unexpected error. " + '\n' + responseString, statusCode);

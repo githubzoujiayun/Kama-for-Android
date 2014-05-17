@@ -14,11 +14,11 @@ public class InternalErrorKamaException extends HttpResponseKamaException {
         super(message, HttpURLConnection.HTTP_INTERNAL_ERROR);
     }
 
-    public InternalErrorKamaException(final Exception e, final KamaError kamaError) {
+    public InternalErrorKamaException(final Exception e, final Object kamaError) {
         super(e, kamaError, HttpURLConnection.HTTP_INTERNAL_ERROR);
     }
 
-    public InternalErrorKamaException(final String message, final KamaError kamaError) {
+    public InternalErrorKamaException(final String message, final Object kamaError) {
         super(message, kamaError, HttpURLConnection.HTTP_INTERNAL_ERROR);
     }
 }

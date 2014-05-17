@@ -5,14 +5,14 @@ import com.label305.kama.objects.KamaError;
 @SuppressWarnings("UnusedDeclaration")
 public class KamaException extends Exception {
 
-    private final KamaError mKamaError;
+    private final Object mKamaError;
 
     public KamaException(final Exception e) {
         super(e);
         mKamaError = null;
     }
 
-    public KamaException(final Exception e, final KamaError kamaError) {
+    public KamaException(final Exception e, final Object kamaError) {
         super(e);
         mKamaError = kamaError;
     }
@@ -22,7 +22,7 @@ public class KamaException extends Exception {
         mKamaError = null;
     }
 
-    public KamaException(final String message, final KamaError kamaError) {
+    public KamaException(final String message, final Object kamaError) {
         super(message);
         mKamaError = kamaError;
     }
@@ -32,12 +32,16 @@ public class KamaException extends Exception {
         mKamaError = null;
     }
 
-    public KamaException(final KamaError kamaError) {
+    public KamaException(final Object kamaError) {
         mKamaError = kamaError;
     }
 
 
     public KamaError getKamaError() {
+        return mKamaError instanceof KamaError ? (KamaError) mKamaError : null;
+    }
+
+    public Object getErrorObj() {
         return mKamaError;
     }
 
