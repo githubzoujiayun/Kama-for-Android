@@ -37,25 +37,22 @@ public abstract class AbstractJsonRequester<ReturnType> {
     private String mUrl;
     private String mJsonTitle;
 
-    private static MyJsonParser<?> mErrorJsonParser;
+    private static Class<?> mErrorObjectClass;
     private static String mErrorTitle;
 
     AbstractJsonRequester() {
         mMyJsonParser = new MyJsonParser<>(null);
         init();
-        mErrorJsonParser = new MyJsonParser<>(KamaError.class);
-        mErrorTitle = KamaParam.META;
     }
 
     AbstractJsonRequester(final Class<ReturnType> returnTypeClass) {
         mMyJsonParser = new MyJsonParser<>(returnTypeClass);
         init();
-        mErrorJsonParser = new MyJsonParser<>(KamaError.class);
-        mErrorTitle = KamaParam.META;
     }
 
     private void init() {
         mHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_JSON);
+        mErrorObjectClass = KamaError.class;
     }
 
     /**
@@ -103,16 +100,17 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     /**
      * Set custom Error type, error type defaults to KamaError.
-     * Don't forget to set the ErrorTitle after this function, if necessary
+     * Don't forget to set the errorTitle if necessary
+     *
      * @param customErrorObjType the class type of the custom error object
      */
     public void setCustomErrorObjType(Class<?> customErrorObjType) {
-        mErrorJsonParser = new MyJsonParser<>(customErrorObjType);
-        setErrorTitle(null);
+        mErrorObjectClass = customErrorObjType;
     }
 
     /**
      * Set title for the Error Object
+     *
      * @param errorTitle the title of the error object
      */
     public static void setErrorTitle(String errorTitle) {
@@ -215,7 +213,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
         Object errorObj = null;
         try {
-                errorObj = mErrorJsonParser.parseObject(responseString, mErrorTitle);
+            errorObj = new MyJsonParser<>(mErrorObjectClass).parseObject(responseString, mErrorObjectClass.getName().equals(KamaError.class.getName()) ? KamaParam.META : mErrorTitle);
         } catch (JsonKamaException e) {
             /* We don't care if the error object parsing fails */
             //noinspection CallToPrintStackTrace
