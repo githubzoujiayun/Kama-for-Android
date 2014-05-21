@@ -43,7 +43,7 @@ public class JsonGetterTest extends TestCase {
     private static final String JSON_LIST = "[{\"integer\":4}]";
     private static final String JSON_LIST_TITLE = "{\"list\":[{\"integer\":4}]}";
     private static final String TITLE = "list";
-    private static final String Custom_ERROR = "{\"error\":\"Error message\"}";
+    private static final String CUSTOM_ERROR = "{\"error\":\"Error message\"}";
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
@@ -198,7 +198,7 @@ public class JsonGetterTest extends TestCase {
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
         when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
-        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(Custom_ERROR));
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(CUSTOM_ERROR));
 
         try {
             mJsonGetter.execute();
