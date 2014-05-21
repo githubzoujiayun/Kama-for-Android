@@ -5,6 +5,7 @@ import android.content.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.label305.kama.auth.Authorization;
 import com.label305.kama.exceptions.KamaException;
+import com.label305.kama.objects.KamaError;
 import com.label305.kama.objects.KamaObject;
 import com.label305.kama.utils.KamaParam;
 
@@ -26,6 +27,8 @@ public class KamaWrapper<ReturnType> {
         mContext = context;
         mJsonRequester = jsonRequester;
         mReturnTypeClass = returnTypeClass;
+        jsonRequester.setCustomErrorObjType(KamaError.class);
+        jsonRequester.setErrorTitle(KamaParam.META);
     }
 
     /**

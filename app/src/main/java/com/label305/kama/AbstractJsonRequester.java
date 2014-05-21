@@ -7,7 +7,6 @@ import com.label305.kama.exceptions.status.HttpResponseKamaException;
 import com.label305.kama.exceptions.status.InternalErrorKamaException;
 import com.label305.kama.exceptions.status.NotFoundKamaException;
 import com.label305.kama.exceptions.status.UnauthorizedKamaException;
-import com.label305.kama.objects.KamaError;
 import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
 
@@ -37,8 +36,8 @@ public abstract class AbstractJsonRequester<ReturnType> {
     private String mUrl;
     private String mJsonTitle;
 
-    private static Class<?> mErrorObjectClass;
-    private static String mErrorTitle;
+    private Class<?> mErrorObjectClass;
+    private String mErrorTitle;
 
     AbstractJsonRequester() {
         mMyJsonParser = new MyJsonParser<>(null);
@@ -52,7 +51,6 @@ public abstract class AbstractJsonRequester<ReturnType> {
 
     private void init() {
         mHeaderData.put(KamaParam.ACCEPT, KamaParam.APPLICATION_JSON);
-        mErrorObjectClass = KamaError.class;
     }
 
     /**
@@ -113,8 +111,8 @@ public abstract class AbstractJsonRequester<ReturnType> {
      *
      * @param errorTitle the title of the error object
      */
-    public static void setErrorTitle(String errorTitle) {
-        AbstractJsonRequester.mErrorTitle = errorTitle;
+    public void setErrorTitle(String errorTitle) {
+        mErrorTitle = errorTitle;
     }
 
     /**
@@ -208,12 +206,12 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return urlBuilder.toString();
     }
 
-    private static KamaException createKamaException(final String responseString, final int statusCode) {
+    private KamaException createKamaException(final String responseString, final int statusCode) {
         KamaException kamaException;
 
         Object errorObj = null;
         try {
-            errorObj = new MyJsonParser<>(mErrorObjectClass).parseObject(responseString, mErrorObjectClass.getName().equals(KamaError.class.getName()) ? KamaParam.META : mErrorTitle);
+            errorObj = new MyJsonParser<>(mErrorObjectClass).parseObject(responseString, mErrorTitle);
         } catch (JsonKamaException e) {
             /* We don't care if the error object parsing fails */
             //noinspection CallToPrintStackTrace
