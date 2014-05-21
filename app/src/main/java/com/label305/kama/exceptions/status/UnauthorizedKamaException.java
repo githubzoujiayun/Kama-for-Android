@@ -1,7 +1,5 @@
 package com.label305.kama.exceptions.status;
 
-import com.label305.kama.objects.KamaError;
-
 import java.net.HttpURLConnection;
 
 public class UnauthorizedKamaException extends HttpResponseKamaException {
@@ -10,7 +8,7 @@ public class UnauthorizedKamaException extends HttpResponseKamaException {
         super(e, HttpURLConnection.HTTP_UNAUTHORIZED);
     }
 
-    public UnauthorizedKamaException(final Exception e, final KamaError kamaError) {
+    public UnauthorizedKamaException(final Exception e, final Object kamaError) {
         super(e, kamaError, HttpURLConnection.HTTP_UNAUTHORIZED);
     }
 
@@ -18,7 +16,7 @@ public class UnauthorizedKamaException extends HttpResponseKamaException {
         super(message, HttpURLConnection.HTTP_UNAUTHORIZED);
     }
 
-    public UnauthorizedKamaException(final String message, final KamaError kamaError) {
+    public UnauthorizedKamaException(final String message, final Object kamaError) {
         super(message, kamaError, HttpURLConnection.HTTP_UNAUTHORIZED);
     }
 

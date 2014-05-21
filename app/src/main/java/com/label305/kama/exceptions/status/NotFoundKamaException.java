@@ -14,11 +14,11 @@ public class NotFoundKamaException extends HttpResponseKamaException {
         super(message, HttpURLConnection.HTTP_NOT_FOUND);
     }
 
-    public NotFoundKamaException(final Exception e, final KamaError kamaError) {
+    public NotFoundKamaException(final Exception e, final Object kamaError) {
         super(e, kamaError, HttpURLConnection.HTTP_NOT_FOUND);
     }
 
-    public NotFoundKamaException(final String message, final KamaError kamaError) {
+    public NotFoundKamaException(final String message, final Object kamaError) {
         super(message, kamaError, HttpURLConnection.HTTP_NOT_FOUND);
     }
 }

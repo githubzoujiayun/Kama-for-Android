@@ -5,6 +5,7 @@ import android.test.InstrumentationTestCase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.GetExecutor;
+import com.label305.kama.objects.KamaError;
 import com.label305.kama.objects.KamaObject;
 import com.label305.kama.utils.KamaParam;
 
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -34,6 +36,8 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings({"HardCodedStringLiteral", "PublicInnerClass", "UnusedDeclaration"})
 public class KamaWrapperTest extends InstrumentationTestCase {
+
+    private static final String MISSING_EXCEPTION = "Missing exception";
 
     private static final String JSON = "{\n" +
             "    \"meta\": {\n" +
@@ -68,6 +72,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     public static final String JSON_TITLE = "MyObject";
     public static final String JSON_LIST_TITLE = "MyObjects";
     public static final String API_KEY = "apiKey";
+    private static final String KAMA_ERROR = "{\"meta\":{\"code\":404,\"message\":\"Not found\",\"timestamp\":\"2014-05-17 14:00:02\"}}";
 
 
     @Mock
@@ -241,6 +246,28 @@ public class KamaWrapperTest extends InstrumentationTestCase {
         requester.execute();
 
         verify(mJsonGetter).addUrlParameter(KamaParam.APIKEYPARAM, API_KEY);
+    }
+
+    public void testNonHttpOkResultWithKamaErrorObj() throws Exception {
+
+        when(mListHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
+        when(mListHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(KAMA_ERROR));
+
+        mListJsonGetter = new JsonGetter<>(KamaObject.class, mListGetExecutor);
+        mListJsonGetter.setUrl("url");
+
+        KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mListJsonGetter, MyObject.class);
+        mListJsonGetter.setJsonTitle(JSON_LIST_TITLE);
+
+        try {
+            requester.execute();
+            fail(MISSING_EXCEPTION);
+        } catch (KamaException ignored) {
+            assertThat(ignored.getKamaError(), is(instanceOf(KamaError.class)));
+            assertThat(ignored.getKamaError().getStatusCode(), is(HttpURLConnection.HTTP_NOT_FOUND));
+            assertThat(ignored.getKamaError().getMessage(), is("Not found"));
+        }
     }
 
     public static class MyObject {

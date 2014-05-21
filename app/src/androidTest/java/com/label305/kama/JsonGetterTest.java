@@ -3,7 +3,6 @@ package com.label305.kama;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.GetExecutor;
-import com.label305.kama.JsonGetter;
 import com.label305.kama.utils.KamaParam;
 
 import junit.framework.TestCase;
@@ -44,6 +43,7 @@ public class JsonGetterTest extends TestCase {
     private static final String JSON_LIST = "[{\"integer\":4}]";
     private static final String JSON_LIST_TITLE = "{\"list\":[{\"integer\":4}]}";
     private static final String TITLE = "list";
+    private static final String CUSTOM_ERROR = "{\"error\":\"Error message\"}";
 
     private static final Class<ParseObject> RETURN_TYPE = ParseObject.class;
 
@@ -177,7 +177,7 @@ public class JsonGetterTest extends TestCase {
         assertThat(result, is(nullValue()));
     }
 
-    public void testNonHttpOkResult() throws Exception {
+    public void testNonHttpOkResultWithoutErrorObj() throws Exception {
         mJsonGetter.setUrl(URL);
 
         when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
@@ -188,7 +188,25 @@ public class JsonGetterTest extends TestCase {
             mJsonGetter.execute();
             fail(MISSING_EXCEPTION);
         } catch (KamaException ignored) {
-            /* Success */
+            /* success */
+        }
+    }
+
+    public void testNonHttpOkResultWithCustomErrorObj() throws Exception {
+        mJsonGetter.setUrl(URL);
+        mJsonGetter.setCustomErrorObjType(CustomErrorObject.class);
+
+        when(mHttpResponse.getStatusLine()).thenReturn(mStatusLine);
+        when(mStatusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_NOT_FOUND);
+        when(mHttpEntity.getContent()).thenReturn(IOUtils.toInputStream(CUSTOM_ERROR));
+
+        try {
+            mJsonGetter.execute();
+            fail(MISSING_EXCEPTION);
+        } catch (KamaException ignored) {
+            assertThat(ignored.getKamaError(), is(nullValue()));
+            assertThat(ignored.getErrorObj(), is(instanceOf(CustomErrorObject.class)));
+            assertThat(((CustomErrorObject)ignored.getErrorObj()).mErrorString, is("Error message"));
         }
     }
 
@@ -196,6 +214,12 @@ public class JsonGetterTest extends TestCase {
 
         @JsonProperty("integer")
         private int mInteger;
+
+    }
+
+    private static class CustomErrorObject {
+        @JsonProperty("error")
+        private String mErrorString;
 
     }
 }
