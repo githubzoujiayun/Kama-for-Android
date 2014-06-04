@@ -4,29 +4,11 @@ Kama for Android is a library for easy executing HTTP requests, and parsing thei
 
 ##Setup
 
-To use this library, make the following changes:
+To use this library, add the following dependency to your `build.gradle`:
 
- * To `settings.gradle`:
-    ```
-    include ':kama'
-
-    project(':kama').projectDir = new File(settingsDir, 'path/to/kama/app')
-    ```
-
- * Your app's `build.gradle`:
     ```
     dependencies {
-        compile project(':kama')
-    }
-
-    android {
-        packagingOptions {
-            exclude 'META-INF/LICENSE.txt'
-            exclude 'META-INF/LICENSE'
-            exclude 'META-INF/NOTICE.txt'
-            exclude 'META-INF/NOTICE'
-            exclude 'LICENSE.txt'
-        }
+        compile 'com.label305.kama-for-android:library:0.1.+'
     }
     ```
     
