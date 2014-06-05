@@ -39,7 +39,7 @@ script:
   - if [[ $LINT == 'true' ]]; then gradle lint ; fi
 
 after_success:
-  - if [[ $JAVADOC == 'true' ]]; gradle generateReleaseJavadoc publishGhPages -PBRANCH=$TRAVIS_BRANCH ; fi
+  - if [[ $JAVADOC == 'true' ]]; then gradle generateReleaseJavadoc publishGhPages -PBRANCH=$TRAVIS_BRANCH ; fi
   - if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' ]]; then gradle uploadArchives -PnexusUsername=${NEXUS_USERNAME} -PnexusPassword=${NEXUS_PASSWORD} ; fi
 
 notifications:
