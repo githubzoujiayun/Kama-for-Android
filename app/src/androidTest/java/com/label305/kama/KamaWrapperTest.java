@@ -111,7 +111,6 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        System.setProperty("dexmaker.dexcache", getInstrumentation().getTargetContext().getCacheDir().getPath());
 
         MockitoAnnotations.initMocks(this);
 
