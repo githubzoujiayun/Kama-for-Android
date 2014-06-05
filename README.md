@@ -39,7 +39,7 @@ jsonGetter.setUrlData(myUrlData);
 
 MyObject myObject = jsonGetter.execute();
 
-/* Retrieve and parse a single object */
+/* Retrieve and parse a list of objects */
 JsonGetter<MyObject> jsonGetter = new JsonGetter<MyObject>(MyObject.class);
 jsonGetter.setUrl(MY_URL);
 jsonGetter.setJsonTitle("my_object");
@@ -77,7 +77,18 @@ A Kama formatted JSON response looks like this:
 }
 ```
 
-You can use the classes `KamaGetter`, `KamaPoster`, `KamaDeleter` and `KamaPutter` to do Kama requests. These classes add the necessary headers and url parameters for each request.
+You can use the `KamaWrapper` class to do Kama requests. This class wraps a `AbstractJsonRequester` and adds the necessary headers and url parameters for the request. Instead of providing your `MyObject` class to the `AbstractJsonRequester`, provide `KamaObject`. Provide the `MyObject` class to the `KamaWrapper`:
+
+```java
+/* Retrieve and parse a single object */
+JsonGetter<KamaObject> jsonGetter = new JsonGetter<>(KamaObject.class);
+jsonGetter.setUrl(MY_URL);
+jsonGetter.setJsonTitle("my_object");
+jsonGetter.setUrlData(myUrlData);
+
+KamaWrapper<MyObject> wrapper = new KamaWrapper(mContext, jsonGetter, MyObject.class);
+MyObject myObject = wrapper.execute();
+```
 
 ## License
 Copyright 2014 Label305 B.V.
