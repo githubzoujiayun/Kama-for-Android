@@ -1,6 +1,11 @@
 language: android
 jdk: oraclejdk7
 
+android:
+  components:
+    - build-tools-19.1.0
+    - doc-19
+
 env:
   matrix:
   - ANDROID_SDKS=sysimg-19 ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a LINT=true MAVEN=true JAVADOC=true
@@ -34,10 +39,7 @@ script:
   - if [[ $LINT == 'true' ]]; then gradle lint ; fi
 
 after_success:
-  - if [[ $JAVADOC == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
-  - if [[ $JAVADOC == 'true' ]]; then gradle generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Kama for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
-  - if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /kama-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
-
+  - if [[ $JAVADOC == 'true' ]]; - gradle generateReleaseJavadoc publishGhPages -PBRANCH=$TRAVIS_BRANCH ; fi
   - if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' ]]; then gradle uploadArchives -PnexusUsername=${NEXUS_USERNAME} -PnexusPassword=${NEXUS_PASSWORD} ; fi
 
 notifications:
