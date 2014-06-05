@@ -28,18 +28,14 @@ class MyJsonParser<ReturnType> {
      * @return the parsed ReturnType, or {@code null} if the given returnTypeClass was {@code null}  or {@code Void.class}.
      * @throws JsonKamaException when an exception was thrown parsing.
      */
-    public ReturnType parseObject(final String responseString, final String jsonTitle) throws JsonKamaException {
+    public ReturnType parseObject(final String responseString, final String jsonTitle) throws JsonKamaException, IOException {
         ReturnType result = null;
         JsonParser jsonParser = getJsonParserFromResponse(responseString);
 
         if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
             try {
                 result = getJsonObject(jsonParser, jsonTitle);
-            } catch (JsonParseException e) {
-                throw new JsonKamaException(e);
-            } catch (JsonMappingException e) {
-                throw new JsonKamaException(e);
-            } catch (IOException e) {
+            } catch (JsonParseException | JsonMappingException e) {
                 throw new JsonKamaException(e);
             }
         }
@@ -53,18 +49,14 @@ class MyJsonParser<ReturnType> {
      * @return the parsed list of ReturnTypes, or {@code null} if the given returnTypeClass was {@code null}  or {@code Void.class}.
      * @throws JsonKamaException when an exception was thrown parsing.
      */
-    public List<ReturnType> parseObjectsList(final String responseString, final String jsonTitle) throws JsonKamaException {
+    public List<ReturnType> parseObjectsList(final String responseString, final String jsonTitle) throws JsonKamaException, IOException {
         List<ReturnType> result = null;
         JsonParser jsonParser = getJsonParserFromResponse(responseString);
 
         if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
             try {
                 result = getJsonObjectsList(jsonParser, jsonTitle);
-            } catch (JsonParseException e) {
-                throw new JsonKamaException(e);
-            } catch (JsonMappingException e) {
-                throw new JsonKamaException(e);
-            } catch (IOException e) {
+            } catch (JsonParseException | JsonMappingException e) {
                 throw new JsonKamaException(e);
             }
         }
@@ -72,15 +64,13 @@ class MyJsonParser<ReturnType> {
     }
 
 
-    protected JsonParser getJsonParserFromResponse(final String responseString) throws JsonKamaException {
+    protected JsonParser getJsonParserFromResponse(final String responseString) throws JsonKamaException, IOException {
         JsonParser result;
 
         JsonFactory jsonFactory = new JsonFactory();
         try {
             result = jsonFactory.createParser(responseString);
         } catch (JsonParseException e) {
-            throw new JsonKamaException(e);
-        } catch (IOException e) {
             throw new JsonKamaException(e);
         }
         return result;

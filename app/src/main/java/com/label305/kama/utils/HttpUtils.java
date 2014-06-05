@@ -103,7 +103,7 @@ public class HttpUtils {
         return stringBuilder.toString();
     }
 
-    public static String getStringFromResponse(final HttpResponse response) throws JsonKamaException {
+    public static String getStringFromResponse(final HttpResponse response) throws JsonKamaException, IOException {
         String responseString = "";
 
         try {
@@ -114,8 +114,6 @@ public class HttpUtils {
                     responseString = EntityUtils.toString(response.getEntity());
                 }
             }
-        } catch (IOException e) {
-            throw new JsonKamaException(e);
         } catch (ParseException e) {
             throw new JsonKamaException(e);
         }

@@ -11,8 +11,10 @@ import com.label305.kama.utils.HttpUtils;
 import com.label305.kama.utils.KamaParam;
 
 import org.apache.http.Header;
+import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -102,7 +104,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
      *
      * @param customErrorObjType the class type of the custom error object
      */
-    public void setCustomErrorObjType(Class<?> customErrorObjType) {
+    public void setCustomErrorObjType(final Class<?> customErrorObjType) {
         mErrorObjectClass = customErrorObjType;
     }
 
@@ -111,14 +113,14 @@ public abstract class AbstractJsonRequester<ReturnType> {
      *
      * @param errorTitle the title of the error object
      */
-    public void setErrorTitle(String errorTitle) {
+    public void setErrorTitle(final String errorTitle) {
         mErrorTitle = errorTitle;
     }
 
     /**
      * Executes the request, and returns the parsed object.
      */
-    public ReturnType execute() throws KamaException {
+    public ReturnType execute() throws IOException, KamaException {
         if (mUrl == null) {
             throw new IllegalArgumentException("Provide an url!");
         }
@@ -139,7 +141,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return result;
     }
 
-    private ReturnType executeRedirect(final HttpResponse httpResponse, final String responseString, final int statusCode) throws KamaException {
+    private ReturnType executeRedirect(final HttpMessage httpResponse, final String responseString, final int statusCode) throws KamaException, IOException {
         Header[] headers = httpResponse.getHeaders(LOCATION);
         if (headers == null || headers.length == 0) {
             throw createKamaException(responseString, statusCode);
@@ -152,7 +154,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
     /**
      * Executes the request, and returns a List with the parsed objects.
      */
-    public List<ReturnType> executeReturnsObjectsList() throws KamaException {
+    public List<ReturnType> executeReturnsObjectsList() throws KamaException, IOException {
         List<ReturnType> result;
 
         HttpResponse httpResponse = executeRequest(createParameterizedUrl(), mHeaderData);
@@ -169,7 +171,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return result;
     }
 
-    private List<ReturnType> executeRedirectReturnsObjectsList(final HttpResponse httpResponse, final String responseString, final int statusCode) throws KamaException {
+    private List<ReturnType> executeRedirectReturnsObjectsList(final HttpMessage httpResponse, final String responseString, final int statusCode) throws KamaException, IOException {
         Header[] headers = httpResponse.getHeaders(LOCATION);
         if (headers == null || headers.length == 0) {
             throw createKamaException(responseString, statusCode);
@@ -185,7 +187,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
      * @param parameterizedUrl the complete url including parameters.
      * @param headerData       key-value pairs of headers.
      */
-    protected abstract HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException;
+    protected abstract HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws IOException;
 
     private String createParameterizedUrl() {
         StringBuilder urlBuilder = new StringBuilder(mUrl);
@@ -206,7 +208,7 @@ public abstract class AbstractJsonRequester<ReturnType> {
         return urlBuilder.toString();
     }
 
-    private KamaException createKamaException(final String responseString, final int statusCode) {
+    private KamaException createKamaException(final String responseString, final int statusCode) throws IOException {
         KamaException kamaException;
 
         Object errorObj = null;
