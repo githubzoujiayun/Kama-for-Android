@@ -3,7 +3,6 @@ package com.label305.kama;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.DeleteExecutor;
-import com.label305.kama.JsonDeleter;
 import com.label305.kama.utils.KamaParam;
 
 import junit.framework.TestCase;
@@ -13,10 +12,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.junit.Assert;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.List;
@@ -29,11 +27,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings({"unchecked", "DuplicateStringLiteralInspection", "rawtypes", "AccessingNonPublicFieldOfAnotherObject"})
 public class JsonDeleterTest extends TestCase {
@@ -145,7 +139,7 @@ public class JsonDeleterTest extends TestCase {
         assertThat(usedHeaderData.get(KamaParam.ACCEPT).toString(), is(KamaParam.APPLICATION_JSON));
     }
 
-    public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
+    public void testNoUrlThrowsIllegalArgumentException() throws KamaException, IOException {
         try {
             mJsonDeleter.execute();
             Assert.fail(MISSING_EXCEPTION);

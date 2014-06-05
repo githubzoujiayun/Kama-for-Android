@@ -16,6 +16,7 @@ import org.apache.http.StatusLine;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -151,7 +152,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     /**
      * Tests whether the parsing of the complete url results in a valid MyObject instance.
      */
-    public void testGetMyObject() throws KamaException {
+    public void testGetMyObject() throws KamaException, IOException {
         /* Test real JSON parsing */
         mJsonGetter = new JsonGetter<>(KamaObject.class, mGetExecutor);
         mJsonGetter.setUrl("url");
@@ -167,7 +168,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     /**
      * Tests whether the parsing of the complete url results in a valid MyObject instance.
      */
-    public void testGetMyObjectList() throws KamaException {
+    public void testGetMyObjectList() throws KamaException, IOException {
         /* Test real JSON parsing */
         mListJsonGetter = new JsonGetter<>(KamaObject.class, mListGetExecutor);
         mListJsonGetter.setUrl("url");
@@ -185,7 +186,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     /**
      * Tests whether the Kama headers are set.
      */
-    public void testHeadersSet() throws KamaException {
+    public void testHeadersSet() throws KamaException, IOException {
         KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mJsonGetter, MyObject.class);
         requester.setJsonTitle(JSON_TITLE);
 
@@ -198,7 +199,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     /**
      * Tests whether the OAuth2 header is set when using OAuth2 authentication.
      */
-    public void testOAuthHeaderSet() throws KamaException {
+    public void testOAuthHeaderSet() throws KamaException, IOException {
         KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mJsonGetter, MyObject.class);
         requester.useOAuthAuthentication();
         requester.setJsonTitle(JSON_TITLE);
@@ -212,7 +213,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     /**
      * Tests that no api key param is set when not using any authentication.
      */
-    public void testUrlParametersNotSet() throws KamaException {
+    public void testUrlParametersNotSet() throws KamaException, IOException {
         KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mJsonGetter, MyObject.class);
         requester.setJsonTitle(JSON_TITLE);
 
@@ -224,7 +225,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     /**
      * Tests whether the api key param is set when using the api key authentication.
      */
-    public void testUrlParametersSetApiKey() throws KamaException {
+    public void testUrlParametersSetApiKey() throws KamaException, IOException {
         KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mJsonGetter, MyObject.class);
         requester.useApiKeyAuthentication(API_KEY);
         requester.setJsonTitle(JSON_TITLE);
@@ -237,7 +238,7 @@ public class KamaWrapperTest extends InstrumentationTestCase {
     /**
      * Tests whether the api key param is set when using the OAuth2 and api key authentication.
      */
-    public void testUrlParametersSetOAuthAndApiKey() throws KamaException {
+    public void testUrlParametersSetOAuthAndApiKey() throws KamaException, IOException {
         KamaWrapper<MyObject> requester = new KamaWrapper<>(getInstrumentation().getContext(), mJsonGetter, MyObject.class);
         requester.useOAuthAndApiKeyAuthentication(API_KEY);
         requester.setJsonTitle(JSON_TITLE);

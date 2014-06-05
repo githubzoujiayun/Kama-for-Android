@@ -16,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.List;
@@ -144,7 +145,7 @@ public class JsonPosterTest extends TestCase {
         assertThat(usedHeaderData.get(KamaParam.ACCEPT).toString(), is(KamaParam.APPLICATION_JSON));
     }
 
-    public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
+    public void testNoUrlThrowsIllegalArgumentException() throws KamaException, IOException {
         try {
             mJsonPoster.execute();
             fail(MISSING_EXCEPTION);
