@@ -23,6 +23,10 @@ public class KamaWrapper<ReturnType> {
     private String mApiKey;
     private KamaParam.AuthenticationType mAuthType = KamaParam.AuthenticationType.NONE;
 
+    public KamaWrapper(final Context context, final AbstractJsonRequester<KamaObject> jsonRequester) {
+        this(context, jsonRequester, null);
+    }
+
     public KamaWrapper(final Context context, final AbstractJsonRequester<KamaObject> jsonRequester, final Class<ReturnType> returnTypeClass) {
         mContext = context;
         mJsonRequester = jsonRequester;
@@ -70,44 +74,58 @@ public class KamaWrapper<ReturnType> {
 
     /**
      * Executes the wrapped request, using the Kama protocol.
-     * @return the object that was embedded in the JSON response.
+     *
+     * @return the object that was embedded in the JSON response, or null if void.
+     *
      * @throws KamaException when something went wrong.
      */
     public ReturnType execute() throws KamaException {
-        prepareRequest();
+        ReturnType result = null;
 
+        prepareRequest();
 
         mJsonTitle = mJsonRequester.getJsonTitle();
         mJsonRequester.setJsonTitle(null);
         try {
             KamaObject execute = mJsonRequester.execute();
-            Map<String, Object> responseMap = execute.getResponseMap();
-            Object o = responseMap.get(mJsonTitle);
-            String json = new ObjectMapper().writeValueAsString(o);
-            return new ObjectMapper().readValue(json, mReturnTypeClass);
+            if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
+                Map<String, Object> responseMap = execute.getResponseMap();
+                Object o = responseMap.get(mJsonTitle);
+                String json = new ObjectMapper().writeValueAsString(o);
+                result = new ObjectMapper().readValue(json, mReturnTypeClass);
+            }
         } catch (IOException e) {
             throw new KamaException(e);
         }
+
+        return result;
     }
 
     /**
      * Executes the wrapped request, using the Kama protocol.
+     *
      * @return the list of objects that was embedded in the JSON response.
+     *
      * @throws KamaException when something went wrong.
      */
     public List<ReturnType> executeReturnsObjectsList() throws KamaException {
+        List<ReturnType> result = null;
+
         prepareRequest();
 
         mJsonTitle = mJsonRequester.getJsonTitle();
         mJsonRequester.setJsonTitle(null);
         try {
             KamaObject execute = mJsonRequester.execute();
-            Map<String, Object> responseMap = execute.getResponseMap();
-            String json = new ObjectMapper().writeValueAsString(responseMap);
-            return new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
+            if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
+                Map<String, Object> responseMap = execute.getResponseMap();
+                String json = new ObjectMapper().writeValueAsString(responseMap);
+                result = new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
+            }
         } catch (IOException e) {
             throw new KamaException(e);
         }
+        return result;
     }
 
     private void prepareRequest() {
