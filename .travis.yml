@@ -4,6 +4,7 @@ jdk: oraclejdk7
 android:
   components:
     - build-tools-19.1.0
+    - doc-19
 
 env:
   matrix:
@@ -16,6 +17,8 @@ env:
   - secure: pCXP9738vidPLx3s5jV927VW9z+n+RQH15CIwGNvZzTY0+pjOwaEaMi9ngigOxHwRjmYRaD2z7JIG8kMkjjrJTcFI/CY3q/SgcSEZtm/nCMnoAGJ9VZyfb2u7gqhffb1cBlD7g4evU77PeAbtlSf6v+gTDAI1d1NaCN5/XLhZOM=
   # NEXUS_USERNAME, NEXUS_PASSWORD
   - secure: m83OO8zBxAeNJ3ij8rBwFqf+/hEDN9Ad3zSB4U1CRAdMPKi00dyQjTjkcjA6O75griECvREVXmsP5QwfhWpz4OSoi9NKt4SsFLd5Pt8KSX10eolaRjj/cQRMtEa9xdESVr7Sg0j1iUGJzID87dgS61gTOY9b30eeJ8l1A+vh0Ds=
+  # GH_TOKEN_KAMA
+  - secure: "SUBxyZz8hdHKvR6mvbIrv6zBN9FRNq0uk47ku4Ri3QdX8mt2ndfnEVSALiinTYxvxWOMYbSzeLVhOlpq6ULuCmnxuFU3KCuOGiawgrcKgZF9173HQ0Y3laAxsRVDdiB61NVEhKe5STTaOFNewKe1JkAfSpyfgd6sB2FT3lXxG8w="
 
 before_install:
   - curl -3L -o wait_for_emulator https://github.com/embarkmobile/android-sdk-installer/raw/version-2/wait_for_emulator
@@ -38,11 +41,8 @@ script:
   - if [[ $LINT == 'true' ]]; then gradle lint ; fi
 
 after_success:
-  - if [[ $JAVADOC == 'true' ]]; then sudo apt-get install -qq ncftp ; fi
-  - if [[ $JAVADOC == 'true' ]]; then gradle generateDebugJavadoc -PANDROID_HOME=$ANDROID_HOME -PTITLE="Kama for Android ($TRAVIS_BRANCH - $TRAVIS_BUILD-NUMBER)" -POUTPUT="$HOME/docs" ; fi
-  - if [[ $JAVADOC == 'true' ]]; then ncftpput -R -m -u $FTP_USER -p $FTP_PASSWORD host3.label305.com /kama-for-android/$TRAVIS_BRANCH $HOME/docs/* ; fi
-
-  - if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' ]]; then gradle uploadArchives -PnexusUsername=${NEXUS_USERNAME} -PnexusPassword=${NEXUS_PASSWORD} ; fi
+  - if [[ $JAVADOC == 'true' && TRAVIS_PULL_REQUEST == 'false' ]]; then gradle generateReleaseJavadoc publishGhPages -PBRANCH=$TRAVIS_BRANCH ; fi
+  - if [[ $MAVEN == 'true' && $TRAVIS_BRANCH == 'dev' && $TRAVIS_PULL_REQUEST == 'false' ]]; then gradle uploadArchives -PnexusUsername=${NEXUS_USERNAME} -PnexusPassword=${NEXUS_PASSWORD} ; fi
 
 notifications:
   email: false

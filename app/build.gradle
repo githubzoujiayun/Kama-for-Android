@@ -1,4 +1,5 @@
 apply plugin: 'android-library'
+apply plugin: 'github-pages'
 
 apply from: 'generateJavadoc.gradle'
 apply from: 'pushMaven.gradle'
@@ -9,6 +10,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.10.+'
+        classpath 'org.ajoberstar:gradle-git:0.8.+'
     }
 }
 
@@ -64,5 +66,26 @@ android {
 
     lintOptions {
         lintConfig file("../lint.xml")
+    }
+}
+
+import org.ajoberstar.grgit.*
+def repo = Grgit.open(".")
+
+def branch = repo.branch.current.name
+if(project.hasProperty('BRANCH')) {
+    branch = BRANCH
+}
+
+githubPages {
+
+    repoUri = 'https://github.com/label305/Kama-for-Android.git'
+    commitMessage = 'Updated docs for branch ' + branch
+    pages {
+        from './build/docs/'
+    }
+    credentials {
+        username = System.getenv('GH_TOKEN_KAMA')
+        password = '\n'
     }
 }
