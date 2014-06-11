@@ -8,7 +8,7 @@ To use this library, add the following dependency to your `build.gradle`:
 
 ```
 dependencies {
-       compile 'com.label305.kama-for-android:library:0.1.+'
+       compile 'com.label305.kama-for-android:library:0.2.+'
 }
 ```
     

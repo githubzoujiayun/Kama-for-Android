@@ -62,11 +62,7 @@ public class JsonPutter<ReturnType> extends AbstractJsonRequester<ReturnType> {
     }
 
     @Override
-    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException {
-        try {
-            return mPutExecutor.put(parameterizedUrl, headerData, mPutData);
-        } catch (IOException e) {
-            throw new KamaException(e);
-        }
+    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws IOException {
+        return mPutExecutor.put(parameterizedUrl, headerData, mPutData);
     }
 }

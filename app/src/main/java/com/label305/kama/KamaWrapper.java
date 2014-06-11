@@ -73,21 +73,17 @@ public class KamaWrapper<ReturnType> {
      * @return the object that was embedded in the JSON response.
      * @throws KamaException when something went wrong.
      */
-    public ReturnType execute() throws KamaException {
+    public ReturnType execute() throws KamaException, IOException {
         prepareRequest();
 
 
         mJsonTitle = mJsonRequester.getJsonTitle();
         mJsonRequester.setJsonTitle(null);
-        try {
-            KamaObject execute = mJsonRequester.execute();
-            Map<String, Object> responseMap = execute.getResponseMap();
-            Object o = responseMap.get(mJsonTitle);
-            String json = new ObjectMapper().writeValueAsString(o);
-            return new ObjectMapper().readValue(json, mReturnTypeClass);
-        } catch (IOException e) {
-            throw new KamaException(e);
-        }
+        KamaObject execute = mJsonRequester.execute();
+        Map<String, Object> responseMap = execute.getResponseMap();
+        Object o = responseMap.get(mJsonTitle);
+        String json = new ObjectMapper().writeValueAsString(o);
+        return new ObjectMapper().readValue(json, mReturnTypeClass);
     }
 
     /**
@@ -95,19 +91,15 @@ public class KamaWrapper<ReturnType> {
      * @return the list of objects that was embedded in the JSON response.
      * @throws KamaException when something went wrong.
      */
-    public List<ReturnType> executeReturnsObjectsList() throws KamaException {
+    public List<ReturnType> executeReturnsObjectsList() throws KamaException, IOException {
         prepareRequest();
 
         mJsonTitle = mJsonRequester.getJsonTitle();
         mJsonRequester.setJsonTitle(null);
-        try {
-            KamaObject execute = mJsonRequester.execute();
-            Map<String, Object> responseMap = execute.getResponseMap();
-            String json = new ObjectMapper().writeValueAsString(responseMap);
-            return new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
-        } catch (IOException e) {
-            throw new KamaException(e);
-        }
+        KamaObject execute = mJsonRequester.execute();
+        Map<String, Object> responseMap = execute.getResponseMap();
+        String json = new ObjectMapper().writeValueAsString(responseMap);
+        return new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
     }
 
     private void prepareRequest() {

@@ -63,11 +63,7 @@ public class JsonPoster<ReturnType> extends AbstractJsonRequester<ReturnType> {
     }
 
     @Override
-    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException {
-        try {
-            return mPostExecutor.post(parameterizedUrl, headerData, mPostData);
-        } catch (IOException e) {
-            throw new KamaException(e);
-        }
+    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws IOException {
+        return mPostExecutor.post(parameterizedUrl, headerData, mPostData);
     }
 }

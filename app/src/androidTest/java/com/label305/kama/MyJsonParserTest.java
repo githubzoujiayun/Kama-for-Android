@@ -2,12 +2,12 @@ package com.label305.kama;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.JsonKamaException;
-import com.label305.kama.MyJsonParser;
 
 import junit.framework.TestCase;
 
 import org.junit.Assert;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,24 +41,24 @@ public class MyJsonParserTest extends TestCase {
 
     /* Normal behavior tests */
 
-    public void testParseObject() throws JsonKamaException {
+    public void testParseObject() throws Exception {
         ParseObject parseObject = mMyJsonParser.parseObject(JSON_SINGLE, null);
         assertThat(parseObject.mInteger, is(4));
     }
 
-    public void testParseObjectWithTitle() throws JsonKamaException {
+    public void testParseObjectWithTitle() throws Exception {
         ParseObject parseObject = mMyJsonParser.parseObject(JSON_SINGLE_TITLE, TITLE);
         assertThat(parseObject.mInteger, is(4));
     }
 
-    public void testParseObjectsList() throws JsonKamaException {
+    public void testParseObjectsList() throws Exception {
         List<ParseObject> parseObjects = mMyJsonParser.parseObjectsList(JSON_LIST, null);
 
         assertThat(parseObjects, hasSize(greaterThan(0)));
         assertThat(parseObjects.get(0).mInteger, is(4));
     }
 
-    public void testParseObjectsListWithTitle() throws JsonKamaException {
+    public void testParseObjectsListWithTitle() throws Exception {
         List<ParseObject> parseObjects = mMyJsonParser.parseObjectsList(JSON_LIST_TITLE, TITLE);
 
         assertThat(parseObjects, hasSize(greaterThan(0)));
@@ -67,7 +67,7 @@ public class MyJsonParserTest extends TestCase {
 
     /* Wrong behavior */
 
-    public void testParseObjectWithMissingTitle() {
+    public void testParseObjectWithMissingTitle() throws IOException {
         try {
             mMyJsonParser.parseObject(JSON_SINGLE, TITLE);
             Assert.fail("Missing Exception");
@@ -76,7 +76,7 @@ public class MyJsonParserTest extends TestCase {
         }
     }
 
-    public void testParseObjectWithExtraTitle() {
+    public void testParseObjectWithExtraTitle() throws IOException {
         try {
             mMyJsonParser.parseObject(JSON_SINGLE_TITLE, null);
             Assert.fail("Missing Exception");
@@ -85,7 +85,7 @@ public class MyJsonParserTest extends TestCase {
         }
     }
 
-    public void testParseObjectWithWrongTitle() {
+    public void testParseObjectWithWrongTitle() throws IOException {
         try {
             mMyJsonParser.parseObject(JSON_SINGLE_WRONG_TITLE, TITLE);
             Assert.fail("Missing Exception");
@@ -94,7 +94,7 @@ public class MyJsonParserTest extends TestCase {
         }
     }
 
-    public void testParseObjectsListWithMissingTitle() {
+    public void testParseObjectsListWithMissingTitle() throws IOException {
         try {
             mMyJsonParser.parseObjectsList(JSON_LIST, TITLE);
             Assert.fail("Missing Exception");
@@ -103,7 +103,7 @@ public class MyJsonParserTest extends TestCase {
         }
     }
 
-    public void testParseObjectsListWithExtraTitle() {
+    public void testParseObjectsListWithExtraTitle() throws IOException {
         try {
             mMyJsonParser.parseObjectsList(JSON_LIST_TITLE, null);
             Assert.fail("Missing Exception");
@@ -112,7 +112,7 @@ public class MyJsonParserTest extends TestCase {
         }
     }
 
-    public void testParseObjectsListWithWrongTitle() {
+    public void testParseObjectsListWithWrongTitle() throws IOException {
         try {
             mMyJsonParser.parseObjectsList(JSON_LIST_WRONG_TITLE, TITLE);
             Assert.fail("Missing Exception");
@@ -121,7 +121,7 @@ public class MyJsonParserTest extends TestCase {
         }
     }
 
-    public void testParseMisformattedObject() {
+    public void testParseMisformattedObject() throws IOException {
         try {
             mMyJsonParser.parseObject(JSON_MISFORMAT, null);
             Assert.fail("Missing Exception");
@@ -130,7 +130,7 @@ public class MyJsonParserTest extends TestCase {
         }
     }
 
-    public void testParseWrongObject() {
+    public void testParseWrongObject() throws IOException {
         try {
             new MyJsonParser<>(WrongObject.class).parseObject(JSON_SINGLE, null);
             Assert.fail("Missing Exception");

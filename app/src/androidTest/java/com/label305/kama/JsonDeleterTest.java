@@ -3,7 +3,6 @@ package com.label305.kama;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.label305.kama.exceptions.KamaException;
 import com.label305.kama.http.DeleteExecutor;
-import com.label305.kama.JsonDeleter;
 import com.label305.kama.utils.KamaParam;
 
 import junit.framework.TestCase;
@@ -17,6 +16,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.Collection;
 import java.util.List;
@@ -145,7 +145,7 @@ public class JsonDeleterTest extends TestCase {
         assertThat(usedHeaderData.get(KamaParam.ACCEPT).toString(), is(KamaParam.APPLICATION_JSON));
     }
 
-    public void testNoUrlThrowsIllegalArgumentException() throws KamaException {
+    public void testNoUrlThrowsIllegalArgumentException() throws KamaException, IOException {
         try {
             mJsonDeleter.execute();
             Assert.fail(MISSING_EXCEPTION);

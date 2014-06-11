@@ -62,11 +62,7 @@ public class JsonDeleter<ReturnType> extends AbstractJsonRequester<ReturnType> {
     }
 
     @Override
-    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws KamaException {
-        try {
-            return mDeleteExecutor.delete(parameterizedUrl, headerData, mDeleteData);
-        } catch (IOException e) {
-            throw new KamaException(e);
-        }
+    protected HttpResponse executeRequest(final String parameterizedUrl, final Map<String, Object> headerData) throws IOException {
+        return mDeleteExecutor.delete(parameterizedUrl, headerData, mDeleteData);
     }
 }
