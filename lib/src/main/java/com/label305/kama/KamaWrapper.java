@@ -76,23 +76,21 @@ public class KamaWrapper<ReturnType> {
      * Executes the wrapped request, using the Kama protocol.
      *
      * @return the object that was embedded in the JSON response, or null if void.
-     *
-     * @throws KamaException when something went wrong.
      */
     public ReturnType execute() throws KamaException, IOException {
-        ReturnType result = null;
-
         prepareRequest();
 
         mJsonTitle = mJsonRequester.getJsonTitle();
         mJsonRequester.setJsonTitle(null);
         KamaObject execute = mJsonRequester.execute();
-            if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
-                Map<String, Object> responseMap = execute.getResponseMap();
-                Object o = responseMap.get(mJsonTitle);
-                String json = new ObjectMapper().writeValueAsString(o);
-                result = new ObjectMapper().readValue(json, mReturnTypeClass);
-            }
+
+        ReturnType result = null;
+        if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
+            Map<String, Object> responseMap = execute.getResponseMap();
+            Object o = responseMap.get(mJsonTitle);
+            String json = new ObjectMapper().writeValueAsString(o);
+            result = new ObjectMapper().readValue(json, mReturnTypeClass);
+        }
 
         return result;
     }
@@ -101,22 +99,20 @@ public class KamaWrapper<ReturnType> {
      * Executes the wrapped request, using the Kama protocol.
      *
      * @return the list of objects that was embedded in the JSON response.
-     *
-     * @throws KamaException when something went wrong.
      */
     public List<ReturnType> executeReturnsObjectsList() throws KamaException, IOException {
-        List<ReturnType> result = null;
-
         prepareRequest();
 
         mJsonTitle = mJsonRequester.getJsonTitle();
         mJsonRequester.setJsonTitle(null);
         KamaObject execute = mJsonRequester.execute();
-            if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
-                Map<String, Object> responseMap = execute.getResponseMap();
-                String json = new ObjectMapper().writeValueAsString(responseMap);
-                result = new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
-            }
+
+        List<ReturnType> result = null;
+        if (mReturnTypeClass != null && !mReturnTypeClass.equals(Void.class)) {
+            Map<String, Object> responseMap = execute.getResponseMap();
+            String json = new ObjectMapper().writeValueAsString(responseMap);
+            result = new MyJsonParser<>(mReturnTypeClass).parseObjectsList(json, mJsonTitle);
+        }
         return result;
     }
 
@@ -132,6 +128,9 @@ public class KamaWrapper<ReturnType> {
         }
 
         switch (mAuthType) {
+            case NONE:
+            case OAUTH2:
+                break;
             case APIKEY:
             case OAUTHANDKEY:
                 if (mApiKey == null) {
