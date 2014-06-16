@@ -8,7 +8,7 @@ Kama-for-Android Release Process
  2. Check the version number in the root `gradle.properties`.
  3. Make the release!
 
-        gradlew clean generateReleaseJavadoc uploadArchives -DisRelease=true
+        gradlew clean generateReleaseJavadoc uploadArchives -DisRelease=true -PnexusUsername={username} -PnexusPassword={password}
 
  4. Promote the Maven artifact on Sonatype's OSS Nexus install.
  5. Tag commit as release (`x.x.x`)
