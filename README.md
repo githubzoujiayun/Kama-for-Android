@@ -8,7 +8,7 @@ To use this library, add the following dependency to your `build.gradle`:
 
 ```
 dependencies {
-       compile 'com.label305.kama-for-android:library:0.1.+'
+       compile 'com.label305.kama-for-android:library:0.2.+'
 }
 ```
     
@@ -89,6 +89,10 @@ jsonGetter.setUrlData(myUrlData);
 KamaWrapper<MyObject> wrapper = new KamaWrapper(mContext, jsonGetter, MyObject.class);
 MyObject myObject = wrapper.execute();
 ```
+
+###Automated javadoc publishing
+The `publishGhPages` task automatically creates a commit on the `gh-pages` branch and pushes it. For this to work, an environment variable `GH_TOKEN_KAMA` with the github token 
+should be set. This can be acquired on the Github page.
 
 ## License
 Copyright 2014 Label305 B.V.
