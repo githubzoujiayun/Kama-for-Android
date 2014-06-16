@@ -90,6 +90,10 @@ KamaWrapper<MyObject> wrapper = new KamaWrapper(mContext, jsonGetter, MyObject.c
 MyObject myObject = wrapper.execute();
 ```
 
+###Automated javadoc publishing
+The `publishGhPages` task automatically creates a commit on the `gh-pages` branch and pushes it. For this to work, an environment variable `GH_TOKEN_KAMA` with the github token 
+should be set. This can be acquired on the Github page.
+
 ## License
 Copyright 2014 Label305 B.V.
 

@@ -66,7 +66,7 @@ if (project.hasProperty("mavenProperties")) {
         }
 
         task androidJavadocs(type: Javadoc) {
-            source = android.sourceSets.main.allJava
+            source = android.sourceSets.main.java
         }
 
         task androidJavadocsJar(type: Jar) {
@@ -76,11 +76,11 @@ if (project.hasProperty("mavenProperties")) {
 
         task androidSourcesJar(type: Jar) {
             classifier = 'sources'
-            from android.sourceSets.main.allSource
+            from android.sourceSets.main.java.sourceFiles
         }
 
         task coreLibJar(type: Jar) {
-            from fileTree(dir: 'build/classes/release').matching { include 'com/label305/kama/**' }
+            from fileTree(dir: './build/intermediates/classes/release').matching { include 'com/label305/kama/**' }
         }
 
         artifacts {
