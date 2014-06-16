@@ -270,6 +270,15 @@ public class KamaWrapperTest extends InstrumentationTestCase {
         }
     }
 
+    public void testVoidKamaWrapper() throws Exception {
+        JsonGetter<KamaObject> jsonGetter = new JsonGetter<>(KamaObject.class, mListGetExecutor);
+        jsonGetter.setUrl("url");
+
+        KamaWrapper<Void> requester = new KamaWrapper<>(getInstrumentation().getContext(), jsonGetter);
+
+        requester.execute();
+    }
+
     public static class MyObject {
 
         @JsonProperty("name")
