@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class JsonPoster<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
+    private static final String UTF_8 = "UTF-8";
+
     private final PostExecutor mPostExecutor;
 
     private AbstractHttpEntity mPostData;
@@ -51,7 +53,7 @@ public class JsonPoster<ReturnType> extends AbstractJsonRequester<ReturnType> {
     public void setPostData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mPostData = new StringEntity(jsonData);
+                mPostData = new StringEntity(jsonData, UTF_8);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }

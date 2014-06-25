@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class JsonPutter<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
+    private static final String UTF_8 = "UTF-8";
+
     private final PutExecutor mPutExecutor;
 
     private AbstractHttpEntity mPutData;
@@ -50,7 +52,7 @@ public class JsonPutter<ReturnType> extends AbstractJsonRequester<ReturnType> {
     public void setPutData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mPutData = new StringEntity(jsonData);
+                mPutData = new StringEntity(jsonData, UTF_8);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }

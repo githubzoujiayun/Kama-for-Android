@@ -15,6 +15,8 @@ import java.util.Map;
 
 public class JsonDeleter<ReturnType> extends AbstractJsonRequester<ReturnType> {
 
+    private static final String UTF_8 = "UTF-8";
+    
     private final DeleteExecutor mDeleteExecutor;
 
     private AbstractHttpEntity mDeleteData;
@@ -50,7 +52,7 @@ public class JsonDeleter<ReturnType> extends AbstractJsonRequester<ReturnType> {
     public void setDeleteData(final String jsonData) throws KamaException {
         if (jsonData != null) {
             try {
-                mDeleteData = new StringEntity(jsonData);
+                mDeleteData = new StringEntity(jsonData, UTF_8);
             } catch (UnsupportedEncodingException e) {
                 throw new KamaException(e);
             }
