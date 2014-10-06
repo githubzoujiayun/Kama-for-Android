@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpConnectionParams;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,11 +107,12 @@ public class HttpHelper implements GetExecutor, PostExecutor, PutExecutor, Delet
     }
 
 
-    public static List<NameValuePair> convert(final Map<String, Object> data) {
-        List<NameValuePair> results = new ArrayList<NameValuePair>();
+    public static List<NameValuePair> convert(@NotNull final Map<String, Object> data) {
+        List<NameValuePair> results = new ArrayList<>();
 
         for (final Map.Entry<String, Object> stringObjectEntry : data.entrySet()) {
-            results.add(new BasicNameValuePair(stringObjectEntry.getKey(), stringObjectEntry.getValue().toString()));
+            String value = stringObjectEntry.getValue() == null ? "null" : stringObjectEntry.getValue().toString();
+            results.add(new BasicNameValuePair(stringObjectEntry.getKey(), value));
         }
 
         return results;
